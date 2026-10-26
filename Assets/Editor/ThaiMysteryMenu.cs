@@ -20,6 +20,7 @@ namespace ThaiMystery.Editor
         public static void CreatePrototype()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            System.IO.Directory.CreateDirectory("Assets/Scenes");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             var cam = new GameObject("Main Camera") { tag = "MainCamera" };

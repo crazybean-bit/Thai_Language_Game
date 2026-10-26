@@ -4,12 +4,14 @@ A 2D mystery RPG prototype in the spirit of *7 Days to End with You*, except the
 
 ## Opening the project
 
-1. Install **Unity 6** (6000.0 LTS) through Unity Hub. Older versions won't work because the scripts use the TextMeshPro that ships inside `com.unity.ugui` 2.0.
+1. Install **Unity 6** (any 6000.x LTS, e.g. 6000.3) through Unity Hub. Older versions like 2020 or 2022 won't work because the scripts use the TextMeshPro that ships inside `com.unity.ugui` 2.0. If Hub asks for a missing editor version, just pick the latest Unity 6 LTS.
 2. In Unity Hub choose **Add > Add project from disk** and pick this folder. Unity fills in the rest of `ProjectSettings` on first open.
 3. If Unity asks to import **TMP Essentials**, click *Import TMP Essentials* (or use *Window > TextMeshPro > Import TMP Essential Resources*).
-4. Open `Assets/Scenes/Prototype.unity` (or use the menu **Thai Mystery > Open Prototype Scene**) and press **Play**.
+4. Use the menu **Thai Mystery > Open Prototype Scene**. The first time, this creates `Assets/Scenes/Prototype.unity` (choose *Don't Save* if asked about the Untitled scene). Then press **Play**.
 
-If the scene ever breaks, **Thai Mystery > Rebuild Prototype Scene** recreates it. The scene only holds one `GameBootstrap` object; everything else (map, characters, camera, UI) is built in code from the JSON files.
+If the scene ever breaks, **Thai Mystery > Rebuild Prototype Scene** recreates it. The scene only holds a camera and one `GameBootstrap` object; everything else (map, characters, camera, UI) is built in code from the JSON files.
+
+The yellow "Input Manager is marked for deprecation" warning is harmless: `GameInput.cs` works with either the old Input Manager or the new Input System.
 
 ## Controls
 
