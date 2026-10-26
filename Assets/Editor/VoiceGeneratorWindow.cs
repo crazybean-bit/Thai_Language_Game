@@ -54,7 +54,7 @@ namespace ThaiMystery.Editor
         private int total;
         private int finished;
         private double nextRequestTime;
-        private string status = "";
+        [SerializeField] private string status = "";
         private Vector2 scroll;
 
         [MenuItem("Thai Mystery/Generate Voices...")]
@@ -77,7 +77,12 @@ namespace ThaiMystery.Editor
             }
         }
 
-        private void OnDisable() => StopAll("Stopped.");
+        // Unity reloads scripts when entering Play mode, which disables this window.
+        // Only report an interruption if a run was actually in progress.
+        private void OnDisable()
+        {
+            if (IsRunning) StopAll($"Interrupted after {finished} of {total} clips. Click Generate voices to finish the rest.");
+        }
 
         private void SavePrefs()
         {
