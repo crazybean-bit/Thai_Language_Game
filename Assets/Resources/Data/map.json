@@ -15,22 +15,27 @@
   "playerFacing": "left",
   "introDialogue": "intro",
   "objects": [
-    { "id": "bed", "sprite": "bed", "x": 1, "y": 2, "rules": [ { "dialogue": "bed" } ] },
-    { "id": "window_left", "sprite": "window", "x": 3, "y": 1, "rules": [ { "dialogue": "window" } ] },
-    { "id": "mirror", "sprite": "mirror", "x": 5, "y": 1, "rules": [ { "dialogue": "mirror" } ] },
-    { "id": "window_right", "sprite": "window", "x": 8, "y": 1, "rules": [ { "dialogue": "window" } ] },
-    { "id": "door", "sprite": "door", "x": 10, "y": 1, "rules": [ { "dialogue": "door" } ] },
-    { "id": "table", "sprite": "table", "x": 8, "y": 6, "rules": [ { "dialogue": "table" } ] },
-    { "id": "water_jar", "sprite": "jar", "x": 10, "y": 7, "rules": [ { "dialogue": "jar" } ] },
-    { "id": "cat", "sprite": "cat", "x": 2, "y": 6, "rules": [ { "dialogue": "cat" } ] },
-    {
-      "id": "mali", "sprite": "mali", "x": 6, "y": 3, "character": true,
-      "rules": [
-        { "dialogue": "mali_first", "blockFlag": "met_mali" },
-        { "dialogue": "mali_door", "requireFlag": "tried_door", "blockFlag": "warned_door" },
-        { "dialogue": "mali_letter", "requireFlag": "read_letter", "blockFlag": "asked_letter" },
-        { "dialogue": "mali_idle" }
-      ]
-    }
-  ]
+    {"id": "bed", "sprite": "bed", "x": 1, "y": 2, "rules": [{"dialogue": "bed"}]},
+    {"id": "window_left", "sprite": "window", "x": 3, "y": 1, "rules": [{"dialogue": "window"}]},
+    {"id": "mirror", "sprite": "mirror", "x": 5, "y": 1, "rules": [{"dialogue": "mirror"}]},
+    {"id": "window_right", "sprite": "window", "x": 8, "y": 1, "rules": [{"dialogue": "window"}]},
+    {"id": "door", "sprite": "door", "x": 10, "y": 1, "rules": [{"dialogue": "door"}]},
+    {"id": "shrine", "sprite": "shrine", "x": 1, "y": 1, "rules": [{"dialogue": "shrine"}]},
+    {"id": "lamp", "sprite": "lamp", "x": 1, "y": 4, "rules": [{"dialogue": "lamp"}]},
+    {"id": "plant", "sprite": "plant", "x": 1, "y": 7},
+    {"id": "table", "sprite": "table", "x": 8, "y": 6, "rules": [{"dialogue": "table"}]},
+    {"id": "water_jar", "sprite": "jar", "x": 10, "y": 7, "rules": [{"dialogue": "jar"}]},
+    {"id": "cat", "sprite": "cat", "x": 2, "y": 6, "rules": [{"dialogue": "cat"}]},
+    {"id": "mali", "sprite": "mali", "x": 6, "y": 3, "character": true, "rules": [{"dialogue": "mali_first", "blockFlag": "met_mali"}, {"dialogue": "mali_door", "requireFlag": "tried_door", "blockFlag": "warned_door"}, {"dialogue": "mali_letter", "requireFlag": "read_letter", "blockFlag": "asked_letter"}, {"dialogue": "mali_idle"}]}
+  ],
+  "lighting": {
+    "darkness": 0.72,
+    "darkColor": "#0B0814",
+    "lights": [
+      {"x": 1, "y": 4, "radius": 4.5, "intensity": 1.1, "color": "#FFB060", "flicker": true},
+      {"x": 8, "y": 6, "radius": 2.6, "intensity": 0.8, "color": "#FFC27A", "flicker": true},
+      {"x": 3, "y": 2, "radius": 3.2, "intensity": 0.7, "color": "#A8C0D8", "flicker": false},
+      {"x": 8, "y": 2, "radius": 3.2, "intensity": 0.7, "color": "#A8C0D8", "flicker": false}
+    ]
+  }
 }

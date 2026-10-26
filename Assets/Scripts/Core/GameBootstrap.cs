@@ -36,6 +36,10 @@ namespace ThaiMystery
                 }
             }
 
+            var lightGo = new GameObject("Lighting");
+            lightGo.AddComponent<SpriteRenderer>();
+            lightGo.AddComponent<LightingOverlay>().Build(map.lighting, Game.Map);
+
             var playerGo = new GameObject("Player");
             playerGo.AddComponent<SpriteRenderer>();
             Game.Player = playerGo.AddComponent<PlayerController>();
@@ -48,8 +52,9 @@ namespace ThaiMystery
             Game.UI = uiGo.AddComponent<GameUI>();
             Game.UI.Build();
 
+            Game.Voice = uiGo.AddComponent<VoicePlayer>();
             Game.Dialogue = uiGo.AddComponent<DialogueRunner>();
-            Game.Dialogue.Init(dialogue, Game.UI.DialogueBox);
+            Game.Dialogue.Init(dialogue, Game.UI.DialogueBox, Game.Voice);
 
             yield return Game.UI.FadeIn(1.8f);
             if (!string.IsNullOrEmpty(map.introDialogue)) Game.Dialogue.Play(map.introDialogue);

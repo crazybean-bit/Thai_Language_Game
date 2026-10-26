@@ -1,0 +1,16 @@
+{
+  "_comment": "Which text-to-speech voice reads each speaker. Keys are the speaker names from dialogue.json; \"\" is narration (object labels). \"words\" reads single words in the journal. Azure Thai voices: th-TH-PremwadeeNeural (female), th-TH-AcharaNeural (female), th-TH-NiwatNeural (male). Google Thai voices include th-TH-Neural2-C and th-TH-Standard-A.",
+  "azure": {
+    "มะลิ": "th-TH-PremwadeeNeural",
+    "???": "th-TH-PremwadeeNeural",
+    "": "th-TH-NiwatNeural",
+    "words": "th-TH-AcharaNeural"
+  },
+  "google": {
+    "มะลิ": "th-TH-Neural2-C",
+    "???": "th-TH-Neural2-C",
+    "": "th-TH-Standard-A",
+    "words": "th-TH-Neural2-C"
+  },
+  "wordRate": "-20%"
+}

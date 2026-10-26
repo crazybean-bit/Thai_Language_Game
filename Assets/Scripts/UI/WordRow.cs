@@ -133,8 +133,14 @@ namespace ThaiMystery
 
         public static void Clear(RectTransform container)
         {
+            // Detach first: Destroy only happens at the end of the frame, and callers
+            // rebuild (and count children) straight away.
             for (int i = container.childCount - 1; i >= 0; i--)
-                UnityEngine.Object.Destroy(container.GetChild(i).gameObject);
+            {
+                var child = container.GetChild(i);
+                child.SetParent(null, false);
+                UnityEngine.Object.Destroy(child.gameObject);
+            }
         }
     }
 }

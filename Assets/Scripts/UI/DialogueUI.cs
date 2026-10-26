@@ -6,12 +6,15 @@ using UnityEngine.UI;
 
 namespace ThaiMystery
 {
-    // The message box at the bottom of the screen: nameplate, Thai words with the
-    // player's guesses under them, and choice buttons when the line asks a question.
+    // The message box at the bottom of the screen: nameplate, an optional character
+    // portrait, Thai words with the player's guesses under them, and choice buttons.
+    // Text appears gradually; DialogueRunner drives the reveal with SetRevealed.
     public class DialogueUI
     {
         private const float BoxWidth = 1100f;
         private const float BoxHeight = 210f;
+        private const float TextInset = 40f;
+        private const float PortraitInset = 200f;
 
         private readonly GameObject root;
         private readonly RectTransform words;
@@ -19,11 +22,17 @@ namespace ThaiMystery
         private readonly TextMeshProUGUI nameText;
         private readonly TextMeshProUGUI thoughtText;
         private readonly GameObject continueArrow;
+        private readonly Image portrait;
         private readonly RectTransform choicesRoot;
         private readonly Action<string> onWordClicked;
 
         private readonly List<WordChip> chips = new List<WordChip>();
         private readonly List<Image> choiceBackgrounds = new List<Image>();
+        private bool thaiLine;
+
+        // How many steps the current line reveals in: words for Thai, characters for thoughts.
+        public int RevealUnits { get; private set; }
+        public bool IsThaiLine => thaiLine;
 
         public DialogueUI(Transform canvas, Action onBoxClicked, Action<string> onWordClicked)
         {
@@ -39,7 +48,7 @@ namespace ThaiMystery
             UIFactory.MakeButton(box.gameObject, onBoxClicked).transition = Selectable.Transition.None;
 
             words = UIFactory.Rect("Words", box.transform);
-            UIFactory.Stretch(words, 40, 40, 26, 20);
+            UIFactory.Stretch(words, TextInset, TextInset, 26, 20);
 
             thoughtText = UIFactory.Text("Thought", box.transform, "", 30, Theme.InkSoft);
             thoughtText.fontStyle = FontStyles.Italic;
@@ -58,14 +67,20 @@ namespace ThaiMystery
             UIFactory.Place(arrow.rectTransform, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-28, 20), new Vector2(24, 24));
             continueArrow = arrow.gameObject;
 
+            // The portrait stands at the right edge, in front of the box, like a visual novel.
+            portrait = UIFactory.Panel("Portrait", rootRt, Color.white, false);
+            portrait.preserveAspect = true;
+            UIFactory.Place(portrait.rectTransform, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-20, 0), new Vector2(272, 340));
+            portrait.gameObject.SetActive(false);
+
             choicesRoot = UIFactory.Rect("Choices", rootRt);
-            UIFactory.Place(choicesRoot, new Vector2(0.5f, 0), new Vector2(1, 0),
-                new Vector2(BoxWidth / 2, 24 + BoxHeight + 60), new Vector2(460, 10));
+            UIFactory.Place(choicesRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0),
+                new Vector2(-120, 24 + BoxHeight + 60), new Vector2(460, 10));
 
             root.SetActive(false);
         }
 
-        public void ShowLine(LineData line)
+        public void ShowLine(LineData line, string portraitSprite)
         {
             root.SetActive(true);
             HideChoices();
@@ -74,22 +89,47 @@ namespace ThaiMystery
             namePlate.SetActive(hasName);
             nameText.text = hasName ? line.speaker : "";
 
+            var sprite = string.IsNullOrEmpty(portraitSprite) ? null : SpriteLibrary.Get(portraitSprite);
+            portrait.sprite = sprite;
+            portrait.gameObject.SetActive(sprite != null);
+            float rightInset = TextInset + (sprite != null ? PortraitInset : 0f);
+            words.offsetMax = new Vector2(-rightInset, words.offsetMax.y);
+
             WordRow.Clear(words);
             chips.Clear();
             string text = line.text ?? "";
+            thaiLine = WordBook.IsThai(text);
 
-            if (WordBook.IsThai(text))
+            if (thaiLine)
             {
                 thoughtText.text = "";
-                chips.AddRange(WordRow.Build(words, text, 46, 20, BoxWidth - 80, onWordClicked, out _));
+                chips.AddRange(WordRow.Build(words, text, 46, 20, BoxWidth - TextInset - rightInset, onWordClicked, out _));
+                RevealUnits = words.childCount;
             }
             else
             {
                 // The protagonist's own thoughts are in the player's language.
                 thoughtText.text = text;
+                RevealUnits = text.Length;
             }
-            continueArrow.SetActive(line.choices == null || line.choices.Length == 0);
+            SetRevealed(0);
         }
+
+        public void SetRevealed(int count)
+        {
+            if (thaiLine)
+            {
+                for (int i = 0; i < words.childCount; i++)
+                    words.GetChild(i).gameObject.SetActive(i < count);
+            }
+            else
+            {
+                thoughtText.maxVisibleCharacters = count;
+            }
+            continueArrow.SetActive(false);
+        }
+
+        public void SetContinueVisible(bool visible) => continueArrow.SetActive(visible);
 
         public void ShowChoices(ChoiceData[] choices, Action<int> onChoose)
         {

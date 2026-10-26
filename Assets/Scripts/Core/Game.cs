@@ -11,6 +11,7 @@ namespace ThaiMystery
         public static DialogueRunner Dialogue;
         public static GameUI UI;
         public static PlayerController Player;
+        public static VoicePlayer Voice;
 
         private static int lockedFrame = -1;
 

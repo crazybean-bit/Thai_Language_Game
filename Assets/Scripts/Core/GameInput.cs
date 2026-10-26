@@ -22,10 +22,11 @@ namespace ThaiMystery
         public static bool Cancel() => Pressed(Btn.Cancel);
         public static bool Escape() => Pressed(Btn.Escape);
         public static bool Journal() => Pressed(Btn.Journal);
+        public static bool Replay() => Pressed(Btn.Replay);
         public static bool UpPressed() => Pressed(Btn.Up);
         public static bool DownPressed() => Pressed(Btn.Down);
 
-        private enum Btn { Up, Down, Left, Right, Confirm, Cancel, Escape, Journal }
+        private enum Btn { Up, Down, Left, Right, Confirm, Cancel, Escape, Journal, Replay }
 
 #if ENABLE_INPUT_SYSTEM
         private static bool Held(Btn k)
@@ -54,6 +55,7 @@ namespace ThaiMystery
                 case Btn.Cancel: return kb.escapeKey.wasPressedThisFrame || kb.xKey.wasPressedThisFrame;
                 case Btn.Escape: return kb.escapeKey.wasPressedThisFrame;
                 case Btn.Journal: return kb.jKey.wasPressedThisFrame || kb.tabKey.wasPressedThisFrame;
+                case Btn.Replay: return kb.rKey.wasPressedThisFrame;
             }
             return false;
         }
@@ -80,6 +82,7 @@ namespace ThaiMystery
                 case Btn.Cancel: return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.X);
                 case Btn.Escape: return Input.GetKeyDown(KeyCode.Escape);
                 case Btn.Journal: return Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Tab);
+                case Btn.Replay: return Input.GetKeyDown(KeyCode.R);
             }
             return false;
         }

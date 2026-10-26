@@ -36,7 +36,7 @@ namespace ThaiMystery
             gameObject.AddComponent<GraphicRaycaster>();
 
             var help = UIFactory.Text("Controls", transform,
-                "Move: WASD / Arrows   Inspect: Space / Z   Journal: J / Tab   Click a Thai word to guess it",
+                "Move: WASD / Arrows   Inspect: Space / Z   Journal: J / Tab   Replay voice: R   Click a Thai word to guess it",
                 16, new Color(1, 1, 1, 0.55f), TextAlignmentOptions.TopLeft);
             UIFactory.Place(help.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(16, -10), new Vector2(1000, 24));
 
