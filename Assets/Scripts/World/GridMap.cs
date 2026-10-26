@@ -28,8 +28,15 @@ namespace ThaiMystery
                     char c = col < line.Length ? line[col] : ' ';
                     var cell = FromRowCol(col, row);
                     tiles[cell.x, cell.y] = c;
+                }
+            }
 
-                    string spriteName = TileSprite(c);
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    var cell = new Vector2Int(x, y);
+                    string spriteName = TileSprite(cell);
                     if (spriteName == null) continue;
                     var go = new GameObject($"Tile {cell.x},{cell.y}");
                     go.transform.SetParent(transform, false);
@@ -41,17 +48,34 @@ namespace ThaiMystery
             }
         }
 
-        private static string TileSprite(char c)
+        // Picks a sprite for a cell. Floors and walls rotate through variants so the
+        // pattern doesn't visibly repeat; rugs pick a border piece from their neighbours.
+        private string TileSprite(Vector2Int cell)
         {
-            switch (c)
+            int hash = (cell.x * 73856093) ^ (cell.y * 19349663);
+            hash = hash < 0 ? -hash : hash;
+            switch (tiles[cell.x, cell.y])
             {
                 case '#': return "wall_top";
-                case '=': return "wall";
-                case '.': return "floor";
-                case ',': return "rug";
+                case '=': return "wall_" + hash % 2;
+                case '.': return "floor_" + hash % 4;
+                case ',': return "rug_" + RugEdges(cell);
                 default: return null;
             }
         }
+
+        // Bit mask of the rug's open edges: 1 top, 2 right, 4 bottom, 8 left.
+        private int RugEdges(Vector2Int cell)
+        {
+            int mask = 0;
+            if (!IsRug(cell + Vector2Int.up)) mask |= 1;
+            if (!IsRug(cell + Vector2Int.right)) mask |= 2;
+            if (!IsRug(cell + Vector2Int.down)) mask |= 4;
+            if (!IsRug(cell + Vector2Int.left)) mask |= 8;
+            return mask;
+        }
+
+        private bool IsRug(Vector2Int c) => InBounds(c) && tiles[c.x, c.y] == ',';
 
         public Vector2Int FromRowCol(int col, int row) => new Vector2Int(col, Height - 1 - row);
 

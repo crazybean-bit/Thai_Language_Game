@@ -4,12 +4,17 @@ using UnityEngine;
 
 namespace ThaiMystery
 {
-    // Steps through dialogue from dialogue.json: shows lines, handles choices,
-    // sets flags and records every Thai word the player sees in the journal.
+    // Steps through dialogue from dialogue.json: reveals each line gradually with voice
+    // blips (or plays its recorded clip), handles choices, sets flags and records every
+    // Thai word the player sees in the journal.
     public class DialogueRunner : MonoBehaviour
     {
+        private const float SecondsPerWord = 0.09f;
+        private const float SecondsPerLetter = 0.022f;
+
         private readonly Dictionary<string, DialogueData> dialogues = new Dictionary<string, DialogueData>();
         private DialogueUI ui;
+        private VoicePlayer voice;
 
         private DialogueData current;
         private int lineIndex;
@@ -17,11 +22,17 @@ namespace ThaiMystery
         private int choiceIndex;
         private Action onFinished;
 
+        private bool revealing;
+        private int revealed;
+        private float revealTimer;
+        private bool hasVoiceClip;
+
         public bool IsOpen { get; private set; }
 
-        public void Init(DialogueList list, DialogueUI dialogueUI)
+        public void Init(DialogueList list, DialogueUI dialogueUI, VoicePlayer voicePlayer)
         {
             ui = dialogueUI;
+            voice = voicePlayer;
             if (list?.dialogues == null) return;
             foreach (var d in list.dialogues) dialogues[d.id] = d;
         }
@@ -47,20 +58,50 @@ namespace ThaiMystery
             ShowLine();
         }
 
+        private LineData Line => current.lines[lineIndex];
+
         private void ShowLine()
         {
-            var line = current.lines[lineIndex];
+            var line = Line;
             Game.Flags.Set(line.setFlag);
             Discover(line.text);
-            ui.ShowLine(line);
+            awaitingChoice = false;
 
-            awaitingChoice = line.choices != null && line.choices.Length > 0;
-            if (awaitingChoice)
+            ui.ShowLine(line, PortraitFor(line));
+            voice.Stop();
+            voice.SetSpeaker(line.speaker);
+            hasVoiceClip = WordBook.IsThai(line.text ?? "") && voice.PlayLine(current.id, lineIndex);
+
+            revealing = true;
+            revealed = 0;
+            revealTimer = 0f;
+        }
+
+        private string PortraitFor(LineData line)
+        {
+            string p = !string.IsNullOrEmpty(line.portrait)
+                ? line.portrait
+                : (string.IsNullOrEmpty(line.speaker) ? null : current.portrait);
+            return p == "none" ? null : p;
+        }
+
+        private void FinishReveal()
+        {
+            revealing = false;
+            ui.SetRevealed(ui.RevealUnits);
+
+            var line = Line;
+            if (line.choices != null && line.choices.Length > 0)
             {
                 foreach (var c in line.choices) Discover(c.text);
+                awaitingChoice = true;
                 choiceIndex = 0;
                 ui.ShowChoices(line.choices, Choose);
                 ui.HighlightChoice(choiceIndex);
+            }
+            else
+            {
+                ui.SetContinueVisible(true);
             }
         }
 
@@ -73,11 +114,26 @@ namespace ThaiMystery
 
         private void Update()
         {
-            if (!IsOpen || Game.InputConsumed || Game.UI.ModalOpen) return;
+            if (!IsOpen) return;
+
+            if (revealing) TickReveal();
+            if (Game.InputConsumed || Game.UI.ModalOpen) return;
+
+            if (GameInput.Replay()) voice.Replay();
+
+            if (revealing)
+            {
+                if (GameInput.Confirm())
+                {
+                    Game.ConsumeInputThisFrame();
+                    FinishReveal();
+                }
+                return;
+            }
 
             if (awaitingChoice)
             {
-                int count = current.lines[lineIndex].choices.Length;
+                int count = Line.choices.Length;
                 if (GameInput.UpPressed()) choiceIndex = (choiceIndex + count - 1) % count;
                 else if (GameInput.DownPressed()) choiceIndex = (choiceIndex + 1) % count;
                 else if (GameInput.Confirm()) { Choose(choiceIndex); return; }
@@ -88,9 +144,26 @@ namespace ThaiMystery
             if (GameInput.Confirm()) Advance();
         }
 
+        private void TickReveal()
+        {
+            float step = ui.IsThaiLine ? SecondsPerWord : SecondsPerLetter;
+            revealTimer += Time.deltaTime;
+            while (revealTimer >= step && revealed < ui.RevealUnits)
+            {
+                revealTimer -= step;
+                revealed++;
+                ui.SetRevealed(revealed);
+                // Thai lines blip per word; thoughts blip softly every few letters.
+                if (!hasVoiceClip && (ui.IsThaiLine || revealed % 3 == 0)) voice.Blip(!ui.IsThaiLine);
+            }
+            if (revealed >= ui.RevealUnits) FinishReveal();
+        }
+
         public void OnBoxClicked()
         {
-            if (IsOpen && !awaitingChoice) Advance();
+            if (!IsOpen) return;
+            if (revealing) FinishReveal();
+            else if (!awaitingChoice) Advance();
         }
 
         private void Advance()
@@ -104,7 +177,7 @@ namespace ThaiMystery
         private void Choose(int index)
         {
             if (!awaitingChoice) return;
-            var choice = current.lines[lineIndex].choices[index];
+            var choice = Line.choices[index];
             awaitingChoice = false;
             ui.HideChoices();
             Game.Flags.Set(choice.setFlag);
@@ -123,6 +196,8 @@ namespace ThaiMystery
             }
 
             IsOpen = false;
+            revealing = false;
+            voice.Stop();
             ui.Hide();
             Game.ConsumeInputThisFrame();
             var callback = onFinished;

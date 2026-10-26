@@ -6,7 +6,7 @@
       { "speaker": "", "text": "I can't remember anything. Not even my own name." }
     ]},
 
-    { "id": "mali_first", "lines": [
+    { "id": "mali_first", "portrait": "portrait_mali", "lines": [
       { "speaker": "???", "text": "คุณ ตื่น แล้ว" },
       { "speaker": "???", "text": "ฉัน ชื่อ มะลิ" },
       { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร", "choices": [
@@ -14,31 +14,31 @@
         { "text": "ฉัน จำ ไม่ ได้", "next": "mali_name" }
       ]}
     ]},
-    { "id": "mali_name", "lines": [
+    { "id": "mali_name", "portrait": "portrait_mali", "lines": [
       { "speaker": "มะลิ", "text": "ไม่เป็นไร" },
       { "speaker": "มะลิ", "text": "คุณ หิว ไหม", "choices": [
         { "text": "ใช่", "next": "mali_hungry" },
         { "text": "ไม่", "next": "mali_not_hungry" }
       ]}
     ]},
-    { "id": "mali_hungry", "lines": [
+    { "id": "mali_hungry", "portrait": "portrait_mali", "lines": [
       { "speaker": "มะลิ", "text": "กิน ข้าว", "setFlag": "met_mali" },
       { "speaker": "", "text": "She hands me a bowl of rice. It's still warm." }
     ]},
-    { "id": "mali_not_hungry", "lines": [
+    { "id": "mali_not_hungry", "portrait": "portrait_mali", "lines": [
       { "speaker": "มะลิ", "text": "ไม่ หิว ไหม", "setFlag": "met_mali" },
       { "speaker": "มะลิ", "text": "ไม่เป็นไร" }
     ]},
-    { "id": "mali_door", "lines": [
+    { "id": "mali_door", "portrait": "portrait_mali", "lines": [
       { "speaker": "มะลิ", "text": "อย่า ไป ข้างนอก", "setFlag": "warned_door" },
       { "speaker": "", "text": "Her voice is quiet, but she means it." }
     ]},
-    { "id": "mali_letter", "lines": [
+    { "id": "mali_letter", "portrait": "portrait_mali", "lines": [
       { "speaker": "มะลิ", "text": "จดหมาย", "setFlag": "asked_letter" },
       { "speaker": "", "text": "She stares at the letter for a long time." },
       { "speaker": "มะลิ", "text": "ฉัน ไม่ รู้" }
     ]},
-    { "id": "mali_idle", "lines": [
+    { "id": "mali_idle", "portrait": "portrait_mali", "lines": [
       { "speaker": "มะลิ", "text": "คุณ จำ ได้ ไหม" }
     ]},
 
@@ -69,6 +69,12 @@
     { "id": "jar", "lines": [
       { "speaker": "", "text": "น้ำ" },
       { "speaker": "", "text": "A clay jar full of cool water." }
+    ]},
+    { "id": "shrine", "lines": [
+      { "speaker": "", "text": "A small shrine. Someone has left fresh white flowers on it." }
+    ]},
+    { "id": "lamp", "lines": [
+      { "speaker": "", "text": "An oil lamp. Someone keeps it burning, even in the daytime." }
     ]},
     { "id": "cat", "lines": [
       { "speaker": "", "text": "แมว" },

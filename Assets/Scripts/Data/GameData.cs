@@ -35,6 +35,7 @@ namespace ThaiMystery
     public class LineData
     {
         public string speaker;         // shown in the nameplate; empty hides it
+        public string portrait;        // overrides the dialogue's portrait; "none" hides it
         public string text;            // Thai words separated by spaces, or plain English for thoughts
         public string setFlag;         // set when the line is shown
         public ChoiceData[] choices;   // optional: shown after this line
@@ -44,6 +45,7 @@ namespace ThaiMystery
     public class DialogueData
     {
         public string id;
+        public string portrait;        // sprite shown beside the box for lines with a speaker
         public LineData[] lines;
         public string next;            // optional dialogue to continue into
     }
@@ -75,6 +77,25 @@ namespace ThaiMystery
     }
 
     [Serializable]
+    public class LightData
+    {
+        public int x;                  // column, like objects
+        public int y;                  // row
+        public float radius = 3f;      // in tiles
+        public float intensity = 1f;
+        public string color = "#FFB060";
+        public bool flicker;           // candle/lamp style flicker
+    }
+
+    [Serializable]
+    public class LightingData
+    {
+        public float darkness = 0.6f;  // 0 = no darkness, 1 = pitch black away from lights
+        public string darkColor = "#0B0814";
+        public LightData[] lights;
+    }
+
+    [Serializable]
     public class MapData
     {
         public string[] rows;          // '#' roof/void wall, '=' wall face, '.' floor, ',' rug
@@ -83,6 +104,7 @@ namespace ThaiMystery
         public string playerFacing;    // up, down, left, right
         public string introDialogue;
         public ObjectData[] objects;
+        public LightingData lighting;
     }
 
     public static class GameDataLoader

@@ -29,3 +29,6 @@ Thumbs.db
 *.apk
 *.aab
 *.unitypackage
+
+# Python
+__pycache__/
