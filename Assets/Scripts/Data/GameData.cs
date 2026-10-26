@@ -71,6 +71,7 @@ namespace ThaiMystery
         public string sprite;          // file name in Resources/Sprites (no extension)
         public int x;                  // column, counted from the left
         public int y;                  // row, counted from the top (same as the map rows)
+        public int height;             // rows it blocks, counting up from its tile (0 or 1 = just its tile)
         public bool character;         // uses a 3x4 RPG Maker style sheet and turns to face the player
         public bool passable;          // the player can walk over it
         public InteractionRule[] rules;
@@ -98,7 +99,7 @@ namespace ThaiMystery
     [Serializable]
     public class MapData
     {
-        public string[] rows;          // '#' roof/void wall, '=' wall face, '.' floor, ',' rug
+        public string[] rows;          // '#' outer wall, '-' upper wall, '=' lower wall, '.' floor, ',' rug
         public int playerX;
         public int playerY;
         public string playerFacing;    // up, down, left, right

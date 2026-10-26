@@ -36,6 +36,11 @@
     { "thai": "ไป", "answers": ["go", "goes", "going", "leave"], "romanization": "pai", "group": "outside", "note": "To go." },
     { "thai": "ข้างนอก", "answers": ["outside", "out", "outdoors"], "romanization": "khang nok", "group": "outside", "note": "Outside. ข้าง (side) + นอก (out)." },
 
+    { "thai": "หนังสือ", "answers": ["book", "books"], "romanization": "nang-sue", "group": "decor", "note": "Book. Also used for letters and documents in general." },
+    { "thai": "ปฏิทิน", "answers": ["calendar"], "romanization": "pa-ti-thin", "group": "decor", "note": "Calendar. ฏ and ฐ are rare letters you mostly see in words borrowed from Pali and Sanskrit." },
+    { "thai": "เสื้อ", "answers": ["shirt", "coat", "jacket", "clothes", "top"], "romanization": "suea", "group": "decor", "note": "Shirt or any top. เสื้อ is the start of many clothing words." },
+    { "thai": "รูป", "answers": ["picture", "painting", "photo", "image", "drawing", "portrait"], "romanization": "rup", "group": "decor", "note": "Picture, photo or painting." },
+
     { "thai": "จดหมาย", "answers": ["letter", "note", "mail", "message"], "romanization": "chot-mai", "group": "letter", "note": "Letter, as in mail." },
     { "thai": "เจ็ด", "answers": ["seven", "7"], "romanization": "chet", "group": "letter", "note": "Seven." },
     { "thai": "วัน", "answers": ["day", "days", "date"], "romanization": "wan", "group": "letter", "note": "Day. Nouns have no plural form: เจ็ด วัน = seven days." }

@@ -48,7 +48,7 @@
     ]},
     { "id": "window", "lines": [
       { "speaker": "", "text": "หน้าต่าง" },
-      { "speaker": "", "text": "Fog presses against the glass. I can't see anything beyond it." }
+      { "speaker": "", "text": "It's dark outside. I can't see anything beyond the glass." }
     ]},
     { "id": "mirror", "lines": [
       { "speaker": "", "text": "กระจก" },
@@ -75,6 +75,22 @@
     ]},
     { "id": "lamp", "lines": [
       { "speaker": "", "text": "An oil lamp. Someone keeps it burning, even in the daytime." }
+    ]},
+    { "id": "bookshelf", "lines": [
+      { "speaker": "", "text": "หนังสือ" },
+      { "speaker": "", "text": "Rows of old books. I can't read a single title." }
+    ]},
+    { "id": "calendar", "lines": [
+      { "speaker": "", "text": "ปฏิทิน" },
+      { "speaker": "", "text": "Someone has been crossing off the days. One of them is circled in red." }
+    ]},
+    { "id": "coat", "lines": [
+      { "speaker": "", "text": "เสื้อ" },
+      { "speaker": "", "text": "A white jacket. It looks like it would fit me." }
+    ]},
+    { "id": "painting", "lines": [
+      { "speaker": "", "text": "รูป" },
+      { "speaker": "", "text": "A painting of a temple on a hill, under a pale moon." }
     ]},
     { "id": "cat", "lines": [
       { "speaker": "", "text": "แมว" },

@@ -1,6 +1,7 @@
 {
   "rows": [
     "############",
+    "#----------#",
     "#==========#",
     "#..........#",
     "#..........#",
@@ -11,31 +12,41 @@
     "############"
   ],
   "playerX": 2,
-  "playerY": 2,
+  "playerY": 4,
   "playerFacing": "left",
   "introDialogue": "intro",
   "objects": [
-    {"id": "bed", "sprite": "bed", "x": 1, "y": 2, "rules": [{"dialogue": "bed"}]},
-    {"id": "window_left", "sprite": "window", "x": 3, "y": 1, "rules": [{"dialogue": "window"}]},
-    {"id": "mirror", "sprite": "mirror", "x": 5, "y": 1, "rules": [{"dialogue": "mirror"}]},
-    {"id": "window_right", "sprite": "window", "x": 8, "y": 1, "rules": [{"dialogue": "window"}]},
-    {"id": "door", "sprite": "door", "x": 10, "y": 1, "rules": [{"dialogue": "door"}]},
-    {"id": "shrine", "sprite": "shrine", "x": 1, "y": 1, "rules": [{"dialogue": "shrine"}]},
-    {"id": "lamp", "sprite": "lamp", "x": 1, "y": 4, "rules": [{"dialogue": "lamp"}]},
-    {"id": "plant", "sprite": "plant", "x": 1, "y": 7},
-    {"id": "table", "sprite": "table", "x": 8, "y": 6, "rules": [{"dialogue": "table"}]},
-    {"id": "water_jar", "sprite": "jar", "x": 10, "y": 7, "rules": [{"dialogue": "jar"}]},
-    {"id": "cat", "sprite": "cat", "x": 2, "y": 6, "rules": [{"dialogue": "cat"}]},
-    {"id": "mali", "sprite": "mali", "x": 6, "y": 3, "character": true, "rules": [{"dialogue": "mali_first", "blockFlag": "met_mali"}, {"dialogue": "mali_door", "requireFlag": "tried_door", "blockFlag": "warned_door"}, {"dialogue": "mali_letter", "requireFlag": "read_letter", "blockFlag": "asked_letter"}, {"dialogue": "mali_idle"}]}
+    {"id": "bed", "sprite": "bed", "x": 1, "y": 4, "height": 2, "rules": [{"dialogue": "bed"}]},
+    {"id": "shrine", "sprite": "shrine", "x": 2, "y": 2, "rules": [{"dialogue": "shrine"}]},
+    {"id": "window_left", "sprite": "window", "x": 3, "y": 2, "rules": [{"dialogue": "window"}]},
+    {"id": "coat", "sprite": "coat", "x": 4, "y": 2, "rules": [{"dialogue": "coat"}]},
+    {"id": "bookshelf", "sprite": "bookshelf", "x": 5, "y": 3, "rules": [{"dialogue": "bookshelf"}]},
+    {"id": "mirror", "sprite": "mirror", "x": 6, "y": 2, "rules": [{"dialogue": "mirror"}]},
+    {"id": "calendar", "sprite": "calendar", "x": 7, "y": 2, "rules": [{"dialogue": "calendar"}]},
+    {"id": "window_right", "sprite": "window", "x": 8, "y": 2, "rules": [{"dialogue": "window"}]},
+    {"id": "painting", "sprite": "painting", "x": 9, "y": 2, "rules": [{"dialogue": "painting"}]},
+    {"id": "door", "sprite": "door", "x": 10, "y": 2, "rules": [{"dialogue": "door"}]},
+    {"id": "lamp", "sprite": "lamp", "x": 1, "y": 6, "rules": [{"dialogue": "lamp"}]},
+    {"id": "plant", "sprite": "plant", "x": 1, "y": 8},
+    {"id": "cat", "sprite": "cat", "x": 2, "y": 7, "rules": [{"dialogue": "cat"}]},
+    {"id": "table", "sprite": "table", "x": 8, "y": 7, "rules": [{"dialogue": "table"}]},
+    {"id": "stool", "sprite": "stool", "x": 9, "y": 7},
+    {"id": "water_jar", "sprite": "jar", "x": 10, "y": 8, "rules": [{"dialogue": "jar"}]},
+    {"id": "mali", "sprite": "mali", "x": 7, "y": 4, "character": true, "rules": [
+      {"dialogue": "mali_first", "blockFlag": "met_mali"},
+      {"dialogue": "mali_door", "requireFlag": "tried_door", "blockFlag": "warned_door"},
+      {"dialogue": "mali_letter", "requireFlag": "read_letter", "blockFlag": "asked_letter"},
+      {"dialogue": "mali_idle"}
+    ]}
   ],
   "lighting": {
-    "darkness": 0.72,
-    "darkColor": "#0B0814",
+    "darkness": 0.74,
+    "darkColor": "#0A0712",
     "lights": [
-      {"x": 1, "y": 4, "radius": 4.5, "intensity": 1.1, "color": "#FFB060", "flicker": true},
-      {"x": 8, "y": 6, "radius": 2.6, "intensity": 0.8, "color": "#FFC27A", "flicker": true},
-      {"x": 3, "y": 2, "radius": 3.2, "intensity": 0.7, "color": "#A8C0D8", "flicker": false},
-      {"x": 8, "y": 2, "radius": 3.2, "intensity": 0.7, "color": "#A8C0D8", "flicker": false}
+      {"x": 1, "y": 6, "radius": 4.8, "intensity": 1.15, "color": "#FFB060", "flicker": true},
+      {"x": 8, "y": 7, "radius": 2.8, "intensity": 0.85, "color": "#FFC27A", "flicker": true},
+      {"x": 3, "y": 3, "radius": 2.8, "intensity": 0.55, "color": "#7890C0", "flicker": false},
+      {"x": 8, "y": 3, "radius": 2.8, "intensity": 0.55, "color": "#7890C0", "flicker": false}
     ]
   }
 }
