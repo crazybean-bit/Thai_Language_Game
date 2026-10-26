@@ -1,0 +1,78 @@
+{
+  "dialogues": [
+    { "id": "intro", "lines": [
+      { "speaker": "", "text": "..." },
+      { "speaker": "", "text": "My head is pounding. Where am I?" },
+      { "speaker": "", "text": "I can't remember anything. Not even my own name." }
+    ]},
+
+    { "id": "mali_first", "lines": [
+      { "speaker": "???", "text": "คุณ ตื่น แล้ว" },
+      { "speaker": "???", "text": "ฉัน ชื่อ มะลิ" },
+      { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร", "choices": [
+        { "text": "ฉัน ไม่ รู้", "next": "mali_name" },
+        { "text": "ฉัน จำ ไม่ ได้", "next": "mali_name" }
+      ]}
+    ]},
+    { "id": "mali_name", "lines": [
+      { "speaker": "มะลิ", "text": "ไม่เป็นไร" },
+      { "speaker": "มะลิ", "text": "คุณ หิว ไหม", "choices": [
+        { "text": "ใช่", "next": "mali_hungry" },
+        { "text": "ไม่", "next": "mali_not_hungry" }
+      ]}
+    ]},
+    { "id": "mali_hungry", "lines": [
+      { "speaker": "มะลิ", "text": "กิน ข้าว", "setFlag": "met_mali" },
+      { "speaker": "", "text": "She hands me a bowl of rice. It's still warm." }
+    ]},
+    { "id": "mali_not_hungry", "lines": [
+      { "speaker": "มะลิ", "text": "ไม่ หิว ไหม", "setFlag": "met_mali" },
+      { "speaker": "มะลิ", "text": "ไม่เป็นไร" }
+    ]},
+    { "id": "mali_door", "lines": [
+      { "speaker": "มะลิ", "text": "อย่า ไป ข้างนอก", "setFlag": "warned_door" },
+      { "speaker": "", "text": "Her voice is quiet, but she means it." }
+    ]},
+    { "id": "mali_letter", "lines": [
+      { "speaker": "มะลิ", "text": "จดหมาย", "setFlag": "asked_letter" },
+      { "speaker": "", "text": "She stares at the letter for a long time." },
+      { "speaker": "มะลิ", "text": "ฉัน ไม่ รู้" }
+    ]},
+    { "id": "mali_idle", "lines": [
+      { "speaker": "มะลิ", "text": "คุณ จำ ได้ ไหม" }
+    ]},
+
+    { "id": "bed", "lines": [
+      { "speaker": "", "text": "เตียง" },
+      { "speaker": "", "text": "The sheets are still warm. I must have slept here." }
+    ]},
+    { "id": "window", "lines": [
+      { "speaker": "", "text": "หน้าต่าง" },
+      { "speaker": "", "text": "Fog presses against the glass. I can't see anything beyond it." }
+    ]},
+    { "id": "mirror", "lines": [
+      { "speaker": "", "text": "กระจก" },
+      { "speaker": "", "text": "A stranger looks back at me." }
+    ]},
+    { "id": "door", "lines": [
+      { "speaker": "", "text": "ประตู" },
+      { "speaker": "", "text": "It won't open. Is it locked from the outside?", "setFlag": "tried_door" }
+    ]},
+    { "id": "table", "lines": [
+      { "speaker": "", "text": "โต๊ะ" },
+      { "speaker": "", "text": "There's a folded letter on the table." },
+      { "speaker": "", "text": "จดหมาย" },
+      { "speaker": "", "text": "Only a few words are written on it." },
+      { "speaker": "", "text": "เจ็ด วัน", "setFlag": "read_letter" },
+      { "speaker": "", "text": "What is that supposed to mean?" }
+    ]},
+    { "id": "jar", "lines": [
+      { "speaker": "", "text": "น้ำ" },
+      { "speaker": "", "text": "A clay jar full of cool water." }
+    ]},
+    { "id": "cat", "lines": [
+      { "speaker": "", "text": "แมว" },
+      { "speaker": "???", "text": "เหมียว" }
+    ]}
+  ]
+}

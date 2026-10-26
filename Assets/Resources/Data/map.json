@@ -1,0 +1,36 @@
+{
+  "rows": [
+    "############",
+    "#==========#",
+    "#..........#",
+    "#..........#",
+    "#...,,,,...#",
+    "#...,,,,...#",
+    "#..........#",
+    "#..........#",
+    "############"
+  ],
+  "playerX": 2,
+  "playerY": 2,
+  "playerFacing": "left",
+  "introDialogue": "intro",
+  "objects": [
+    { "id": "bed", "sprite": "bed", "x": 1, "y": 2, "rules": [ { "dialogue": "bed" } ] },
+    { "id": "window_left", "sprite": "window", "x": 3, "y": 1, "rules": [ { "dialogue": "window" } ] },
+    { "id": "mirror", "sprite": "mirror", "x": 5, "y": 1, "rules": [ { "dialogue": "mirror" } ] },
+    { "id": "window_right", "sprite": "window", "x": 8, "y": 1, "rules": [ { "dialogue": "window" } ] },
+    { "id": "door", "sprite": "door", "x": 10, "y": 1, "rules": [ { "dialogue": "door" } ] },
+    { "id": "table", "sprite": "table", "x": 8, "y": 6, "rules": [ { "dialogue": "table" } ] },
+    { "id": "water_jar", "sprite": "jar", "x": 10, "y": 7, "rules": [ { "dialogue": "jar" } ] },
+    { "id": "cat", "sprite": "cat", "x": 2, "y": 6, "rules": [ { "dialogue": "cat" } ] },
+    {
+      "id": "mali", "sprite": "mali", "x": 6, "y": 3, "character": true,
+      "rules": [
+        { "dialogue": "mali_first", "blockFlag": "met_mali" },
+        { "dialogue": "mali_door", "requireFlag": "tried_door", "blockFlag": "warned_door" },
+        { "dialogue": "mali_letter", "requireFlag": "read_letter", "blockFlag": "asked_letter" },
+        { "dialogue": "mali_idle" }
+      ]
+    }
+  ]
+}
