@@ -1,0 +1,43 @@
+{
+  "words": [
+    { "thai": "คุณ", "answers": ["you", "your"], "romanization": "khun", "group": "awake", "note": "Polite 'you'. Also goes before names, like Mr. or Ms." },
+    { "thai": "ตื่น", "answers": ["wake", "wake up", "awake", "woke", "woke up", "awaken"], "romanization": "tuen", "group": "awake", "note": "To wake up. Thai verbs never change form for tense." },
+    { "thai": "แล้ว", "answers": ["already", "now", "finally"], "romanization": "laeo", "group": "awake", "note": "Marks something as done: 'already'. Thai uses it instead of a past tense." },
+
+    { "thai": "ฉัน", "answers": ["i", "me", "my", "myself"], "romanization": "chan", "group": "names", "note": "'I' or 'me'. Used by women and in casual speech; men often say ผม (phom)." },
+    { "thai": "ชื่อ", "answers": ["name", "named", "called", "is called", "my name is", "name is"], "romanization": "chue", "group": "names", "note": "Name, or 'to be named'. ฉัน ชื่อ ... = My name is ..." },
+    { "thai": "มะลิ", "answers": ["mali", "jasmine"], "romanization": "ma-li", "group": "names", "note": "Jasmine, and a common Thai name." },
+    { "thai": "อะไร", "answers": ["what", "what?"], "romanization": "a-rai", "group": "names", "note": "'What'. Question words go at the end: ชื่อ อะไร = name what?" },
+
+    { "thai": "ไม่", "answers": ["no", "not", "don't", "dont", "do not"], "romanization": "mai (falling tone)", "group": "memory", "note": "'Not'. Goes before the verb it negates." },
+    { "thai": "รู้", "answers": ["know", "knows", "understand"], "romanization": "ru", "group": "memory", "note": "To know (a fact). ไม่ รู้ = I don't know." },
+    { "thai": "จำ", "answers": ["remember", "recall", "memory", "memorize"], "romanization": "cham", "group": "memory", "note": "To remember. จำ ไม่ ได้ = can't remember." },
+    { "thai": "ได้", "answers": ["can", "able", "could", "be able", "possible"], "romanization": "dai", "group": "memory", "note": "'Can' or 'able to'. It comes after the verb, not before." },
+
+    { "thai": "ไม่เป็นไร", "answers": ["it's okay", "its okay", "it's ok", "its ok", "okay", "ok", "never mind", "nevermind", "no problem", "no worries", "it's fine", "its fine", "it's alright", "its alright", "fine", "alright", "don't worry", "dont worry"], "romanization": "mai pen rai", "group": "hunger", "note": "Never mind / it's fine. One of the most used phrases in Thai." },
+    { "thai": "หิว", "answers": ["hungry", "hunger", "starving"], "romanization": "hio", "group": "hunger", "note": "Hungry. Thai has no separate word for 'to be': หิว alone means 'am hungry'." },
+    { "thai": "ไหม", "answers": ["?", "question", "question mark", "question particle", "right?", "or not", "huh", "eh", "yes or no", "do", "are"], "romanization": "mai (rising tone)", "group": "hunger", "note": "Turns a sentence into a yes/no question. Sounds like ไม่ but with a different tone!" },
+    { "thai": "ใช่", "answers": ["yes", "yeah", "yep", "correct", "right", "true", "that's right", "thats right"], "romanization": "chai", "group": "hunger", "note": "Yes, that's right." },
+
+    { "thai": "กิน", "answers": ["eat", "eats", "eating", "have"], "romanization": "kin", "group": "food", "note": "To eat." },
+    { "thai": "ข้าว", "answers": ["rice", "food", "meal", "dinner", "lunch", "breakfast"], "romanization": "khao", "group": "food", "note": "Rice. กิน ข้าว (eat rice) just means 'have a meal'." },
+
+    { "thai": "เตียง", "answers": ["bed"], "romanization": "tiang", "group": "room", "note": "Bed." },
+    { "thai": "หน้าต่าง", "answers": ["window", "windows"], "romanization": "na-tang", "group": "room", "note": "Window. Literally 'face' + 'different'." },
+    { "thai": "กระจก", "answers": ["mirror", "glass"], "romanization": "kra-chok", "group": "room", "note": "Mirror, or glass." },
+    { "thai": "ประตู", "answers": ["door", "gate", "doorway"], "romanization": "pra-tu", "group": "room", "note": "Door." },
+
+    { "thai": "โต๊ะ", "answers": ["table", "desk"], "romanization": "to", "group": "things", "note": "Table or desk." },
+    { "thai": "น้ำ", "answers": ["water", "drink", "liquid"], "romanization": "nam", "group": "things", "note": "Water. Also shows up in many words for liquids." },
+    { "thai": "แมว", "answers": ["cat", "kitty", "kitten"], "romanization": "maeo", "group": "things", "note": "Cat. Say it out loud: it sounds like a meow." },
+    { "thai": "เหมียว", "answers": ["meow", "miaow", "mew", "meow meow"], "romanization": "miao", "group": "things", "note": "Meow." },
+
+    { "thai": "อย่า", "answers": ["don't", "dont", "do not", "no", "never"], "romanization": "ya", "group": "outside", "note": "'Don't' for commands. อย่า ไป = don't go." },
+    { "thai": "ไป", "answers": ["go", "goes", "going", "leave"], "romanization": "pai", "group": "outside", "note": "To go." },
+    { "thai": "ข้างนอก", "answers": ["outside", "out", "outdoors"], "romanization": "khang nok", "group": "outside", "note": "Outside. ข้าง (side) + นอก (out)." },
+
+    { "thai": "จดหมาย", "answers": ["letter", "note", "mail", "message"], "romanization": "chot-mai", "group": "letter", "note": "Letter, as in mail." },
+    { "thai": "เจ็ด", "answers": ["seven", "7"], "romanization": "chet", "group": "letter", "note": "Seven." },
+    { "thai": "วัน", "answers": ["day", "days", "date"], "romanization": "wan", "group": "letter", "note": "Day. Nouns have no plural form: เจ็ด วัน = seven days." }
+  ]
+}
