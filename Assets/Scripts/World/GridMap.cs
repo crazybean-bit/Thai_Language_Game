@@ -44,9 +44,32 @@ namespace ThaiMystery
                     var sr = go.AddComponent<SpriteRenderer>();
                     sr.sprite = SpriteLibrary.Get(spriteName);
                     sr.sortingOrder = -1000;
+                    AddWallShadows(cell, go.transform);
                 }
             }
         }
+
+        // Soft shadows on floor tiles that touch a wall give the room depth.
+        private void AddWallShadows(Vector2Int cell, Transform tile)
+        {
+            if (!IsFloor(cell)) return;
+            if (IsWall(cell + Vector2Int.up)) AddOverlay("ao_top", tile);
+            if (IsWall(cell + Vector2Int.left)) AddOverlay("ao_left", tile);
+            if (IsWall(cell + Vector2Int.right)) AddOverlay("ao_right", tile);
+        }
+
+        private static void AddOverlay(string sprite, Transform tile)
+        {
+            var go = new GameObject(sprite);
+            go.transform.SetParent(tile, false);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = SpriteLibrary.Get(sprite);
+            sr.sortingOrder = -999;
+        }
+
+        private bool IsFloor(Vector2Int c) => InBounds(c) && (tiles[c.x, c.y] == '.' || tiles[c.x, c.y] == ',');
+
+        private bool IsWall(Vector2Int c) => !InBounds(c) || (tiles[c.x, c.y] != '.' && tiles[c.x, c.y] != ',');
 
         // Picks a sprite for a cell. Floors and walls rotate through variants so the
         // pattern doesn't visibly repeat; rugs pick a border piece from their neighbours.
@@ -57,7 +80,8 @@ namespace ThaiMystery
             switch (tiles[cell.x, cell.y])
             {
                 case '#': return "wall_top";
-                case '=': return "wall_" + hash % 2;
+                case '-': return "wall_upper_" + hash % 2;
+                case '=': return "wall_lower_" + hash % 2;
                 case '.': return "floor_" + hash % 4;
                 case ',': return "rug_" + RugEdges(cell);
                 default: return null;
@@ -89,8 +113,7 @@ namespace ThaiMystery
         public bool IsWalkable(Vector2Int c)
         {
             if (!InBounds(c)) return false;
-            char t = tiles[c.x, c.y];
-            if (t != '.' && t != ',') return false;
+            if (!IsFloor(c)) return false;
             return !(occupants.TryGetValue(c, out var o) && o.Solid);
         }
 

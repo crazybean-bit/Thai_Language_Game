@@ -30,7 +30,9 @@ namespace ThaiMystery
                 sr.sortingOrder = Mathf.RoundToInt(-transform.position.y * 10f) + 1;
             }
 
-            Game.Map.Register(this, cell);
+            // Tall furniture like the bed blocks every tile it covers.
+            for (int i = 0; i < Mathf.Max(1, data.height); i++)
+                Game.Map.Register(this, cell + Vector2Int.up * i);
         }
 
         public void Interact(PlayerController player)

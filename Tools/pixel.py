@@ -97,6 +97,27 @@ class Canvas:
         for x, y in add:
             self.px[y, x] = c
 
+    def soft_outline(self, darken=0.62, fallback=None):
+        """Outline in a dark version of whatever colour it borders, instead of flat
+        black. Muted, coloured outlines are a big part of the softer modern pixel look."""
+        mask = self.px[:, :, 3] > 200
+        add = []
+        for y in range(self.h):
+            for x in range(self.w):
+                if mask[y, x]:
+                    continue
+                cols = []
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < self.w and 0 <= ny < self.h and mask[ny, nx]:
+                        cols.append(self.px[ny, nx, :3].astype(int))
+                if cols:
+                    avg = sum(cols) // len(cols)
+                    c = shade((int(avg[0]), int(avg[1]), int(avg[2]), 255), -darken)
+                    add.append((x, y, fallback or c))
+        for x, y, c in add:
+            self.px[y, x] = c
+
     def recolor_edges(self, c):
         """Darken filled pixels that sit on the shape's border (an inner outline)."""
         mask = self.px[:, :, 3] > 0
