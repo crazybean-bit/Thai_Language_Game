@@ -48,14 +48,13 @@ namespace ThaiMystery
             sheet = new Sprite[4, 3];
             float fw = tex.width / 3f;
             float fh = tex.height / 4f;
-            float ppu = PixelsPerUnit * (fw / 32f);
             for (int row = 0; row < 4; row++)
             {
                 for (int col = 0; col < 3; col++)
                 {
                     // Texture rows start at the bottom, sheet rows at the top.
                     var rect = new Rect(col * fw, tex.height - (row + 1) * fh, fw, fh);
-                    var sp = Sprite.Create(tex, rect, new Vector2(0.5f, 0f), ppu);
+                    var sp = Sprite.Create(tex, rect, new Vector2(0.5f, 0f), PixelsPerUnit);
                     sp.name = $"{name}_{row}_{col}";
                     sheet[row, col] = sp;
                 }
@@ -64,12 +63,41 @@ namespace ThaiMystery
             return sheet;
         }
 
-        private static Texture2D LoadTexture(string name)
+        // Optional full walk cycle next to a character sheet: <name>_walk.png with the same
+        // rows (down, left, right, up) and one column per frame, frames the size of the sheet's.
+        // Returns null when there isn't one, and the three-frame cycle is used instead.
+        public static Sprite[,] GetWalkCycle(string name)
+        {
+            string key = name + "_walk";
+            if (sheets.TryGetValue(key, out var cycle)) return cycle;
+            var baseSheet = GetCharacterSheet(name);
+            var tex = LoadTexture(key, required: false);
+            if (baseSheet == null || tex == null) return null;
+
+            float fw = baseSheet[0, 0].rect.width;
+            float fh = tex.height / 4f;
+            int frames = Mathf.RoundToInt(tex.width / fw);
+            cycle = new Sprite[4, frames];
+            for (int row = 0; row < 4; row++)
+            {
+                for (int col = 0; col < frames; col++)
+                {
+                    var rect = new Rect(col * fw, tex.height - (row + 1) * fh, fw, fh);
+                    var sp = Sprite.Create(tex, rect, new Vector2(0.5f, 0f), PixelsPerUnit);
+                    sp.name = $"{key}_{row}_{col}";
+                    cycle[row, col] = sp;
+                }
+            }
+            sheets[key] = cycle;
+            return cycle;
+        }
+
+        private static Texture2D LoadTexture(string name, bool required = true)
         {
             var tex = Resources.Load<Texture2D>("Sprites/" + name);
             if (tex == null)
             {
-                Debug.LogError($"[ThaiMystery] Missing sprite Resources/Sprites/{name}.png");
+                if (required) Debug.LogError($"[ThaiMystery] Missing sprite Resources/Sprites/{name}.png");
                 return null;
             }
             tex.filterMode = FilterMode.Point;

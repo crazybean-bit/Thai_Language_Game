@@ -14,10 +14,10 @@ namespace ThaiMystery
 
         public Vector2Int Cell { get; private set; }
 
-        public void Init(Sprite[,] sheet, Vector2Int startCell, Vector2Int facing)
+        public void Init(Sprite[,] sheet, Vector2Int startCell, Vector2Int facing, Sprite[,] walkCycle = null)
         {
             character = gameObject.AddComponent<CharacterSprite>();
-            character.Init(sheet, facing);
+            character.Init(sheet, facing, walkCycle);
             Cell = startCell;
             transform.position = Game.Map.CellToWorld(startCell);
         }

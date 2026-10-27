@@ -725,6 +725,9 @@ if __name__ == "__main__":
                            bottom=rgb("232c28"), shoes=rgb("33262a"), eyes=rgb("c46a34"),
                            long_hair=True, skirt=True, blush=True))
     portrait_mali()
+    # Characters made in PixelLab (Tools/art/pixellab) replace the hand-drawn sheets above.
+    import import_pixellab
+    import_pixellab.build_all()
 
     ui_frame("ui_frame", rgb("e6dac2"))
     ui_frame("ui_card", rgb("d9cbb4"))

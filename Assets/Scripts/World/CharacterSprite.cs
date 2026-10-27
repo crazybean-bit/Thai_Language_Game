@@ -3,15 +3,18 @@ using UnityEngine;
 namespace ThaiMystery
 {
     // Animates an RPG Maker style 3x4 sheet: rows are down, left, right, up and the walk
-    // cycle plays columns 0,1,2,1 with column 1 as the standing pose.
+    // cycle plays columns 0,1,2,1 with column 1 as the standing pose. If the character has a
+    // full walk cycle (SpriteLibrary.GetWalkCycle) that plays instead, in the same total time.
     [RequireComponent(typeof(SpriteRenderer))]
     public class CharacterSprite : MonoBehaviour
     {
         private static readonly int[] WalkCycle = { 0, 1, 2, 1 };
         private const float FrameTime = 0.15f;
+        private const float CycleTime = FrameTime * 4;
 
         private SpriteRenderer sr;
         private Sprite[,] sheet;
+        private Sprite[,] walkCycle;
         private int row;
         private bool walking;
         private float timer;
@@ -19,10 +22,11 @@ namespace ThaiMystery
 
         public Vector2Int Facing { get; private set; } = Vector2Int.down;
 
-        public void Init(Sprite[,] characterSheet, Vector2Int facing)
+        public void Init(Sprite[,] characterSheet, Vector2Int facing, Sprite[,] fullWalkCycle = null)
         {
             sr = GetComponent<SpriteRenderer>();
             sheet = characterSheet;
+            walkCycle = fullWalkCycle;
             SetFacing(facing);
         }
 
@@ -42,17 +46,22 @@ namespace ThaiMystery
             if (walking == value) return;
             walking = value;
             if (!walking) step = 0;
+            // Start a walk on a stride frame rather than the standing pose.
+            else if (walkCycle != null) step = 1 % walkCycle.GetLength(1);
+            timer = 0f;
             Apply();
         }
 
         private void Update()
         {
             if (!walking) return;
+            int frames = walkCycle != null ? walkCycle.GetLength(1) : WalkCycle.Length;
+            float frameTime = CycleTime / frames;
             timer += Time.deltaTime;
-            if (timer >= FrameTime)
+            if (timer >= frameTime)
             {
-                timer -= FrameTime;
-                step = (step + 1) % WalkCycle.Length;
+                timer -= frameTime;
+                step = (step + 1) % frames;
                 Apply();
             }
         }
@@ -66,8 +75,8 @@ namespace ThaiMystery
         private void Apply()
         {
             if (sheet == null || sr == null) return;
-            int col = walking ? WalkCycle[step] : 1;
-            sr.sprite = sheet[row, col];
+            if (walking && walkCycle != null) sr.sprite = walkCycle[row, step];
+            else sr.sprite = sheet[row, walking ? WalkCycle[step] : 1];
         }
 
         public static Vector2Int ParseFacing(string s)
