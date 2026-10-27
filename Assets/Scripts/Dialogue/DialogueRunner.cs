@@ -5,8 +5,12 @@ using UnityEngine;
 namespace ThaiMystery
 {
     // Steps through dialogue from dialogue.json: reveals each line gradually with voice
-    // blips (or plays its recorded clip), handles choices, sets flags and records every
-    // Thai word the player sees in the journal.
+    // blips (or plays its recorded clip), handles choices and sets flags.
+    //
+    // Words are learned by ear. A speaker's line the protagonist can make out (see
+    // DialogueData.heard) plays its clip and teaches him its words; one he can't is noise.
+    // Thai lines without a speaker are things he reads or recalls: words he has heard
+    // play back as he remembers them, and each recall is practice.
     public class DialogueRunner : MonoBehaviour
     {
         private const float SecondsPerWord = 0.09f;
@@ -25,7 +29,7 @@ namespace ThaiMystery
         private bool revealing;
         private int revealed;
         private float revealTimer;
-        private bool hasVoiceClip;
+        private bool blipping;
 
         public bool IsOpen { get; private set; }
 
@@ -64,17 +68,40 @@ namespace ThaiMystery
         {
             var line = Line;
             Game.Flags.Set(line.setFlag);
-            Discover(line.text);
             awaitingChoice = false;
+
+            string text = line.text ?? "";
+            bool thai = WordBook.IsThai(text);
+            bool spoken = !string.IsNullOrEmpty(line.speaker);
+            bool clear = thai && spoken && CanMakeOut(line);
+            var words = ThaiWords(text);
+            // Before the line is drawn, so the words he just heard show clearly.
+            if (clear) foreach (var w in words) Game.Words.Hear(w);
 
             ui.ShowLine(line, PortraitFor(line));
             voice.Stop();
             voice.SetSpeaker(line.speaker);
-            hasVoiceClip = WordBook.IsThai(line.text ?? "") && voice.PlayLine(current.id, lineIndex);
+            if (!thai) blipping = true;
+            else if (clear) blipping = !voice.PlayLine(current.id, lineIndex);
+            else if (spoken) blipping = true;
+            else
+            {
+                // Reading or remembering: no blips, just the words he knows, as he knows them.
+                blipping = false;
+                voice.PlayRecall(words);
+                foreach (var w in words) Game.Words.Practice(w);
+            }
 
             revealing = true;
             revealed = 0;
             revealTimer = 0f;
+        }
+
+        private bool CanMakeOut(LineData line)
+        {
+            string heard = !string.IsNullOrEmpty(line.heard) ? line.heard : current.heard;
+            if (string.IsNullOrEmpty(heard)) return false;
+            return heard == "always" || Game.Flags.Has(heard);
         }
 
         private string PortraitFor(LineData line)
@@ -93,7 +120,6 @@ namespace ThaiMystery
             var line = Line;
             if (line.choices != null && line.choices.Length > 0)
             {
-                foreach (var c in line.choices) Discover(c.text);
                 awaitingChoice = true;
                 choiceIndex = 0;
                 ui.ShowChoices(line.choices, Choose);
@@ -105,11 +131,13 @@ namespace ThaiMystery
             }
         }
 
-        private static void Discover(string text)
+        private static List<string> ThaiWords(string text)
         {
-            if (string.IsNullOrEmpty(text)) return;
+            var words = new List<string>();
+            if (string.IsNullOrEmpty(text)) return words;
             foreach (var token in text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                if (WordBook.IsThai(token)) Game.Words.Discover(token);
+                if (WordBook.IsThai(token)) words.Add(token);
+            return words;
         }
 
         private void Update()
@@ -154,7 +182,7 @@ namespace ThaiMystery
                 revealed++;
                 ui.SetRevealed(revealed);
                 // Thai lines blip per word; thoughts blip softly every few letters.
-                if (!hasVoiceClip && (ui.IsThaiLine || revealed % 3 == 0)) voice.Blip(!ui.IsThaiLine);
+                if (blipping && (ui.IsThaiLine || revealed % 3 == 0)) voice.Blip(!ui.IsThaiLine);
             }
             if (revealed >= ui.RevealUnits) FinishReveal();
         }
@@ -180,6 +208,8 @@ namespace ThaiMystery
             var choice = Line.choices[index];
             awaitingChoice = false;
             ui.HideChoices();
+            // Saying a word out loud is practice too.
+            foreach (var w in ThaiWords(choice.text)) Game.Words.Practice(w);
             Game.Flags.Set(choice.setFlag);
             Game.ConsumeInputThisFrame();
 

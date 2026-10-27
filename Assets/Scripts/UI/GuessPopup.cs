@@ -32,13 +32,13 @@ namespace ThaiMystery
             thaiText = UIFactory.Text("Thai", box.transform, "", 64, Theme.Ink);
             UIFactory.Place(thaiText.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -66), new Vector2(500, 100));
 
-            // Shown only when a pronunciation clip exists for the word.
+            // Shown only when he can recall how the word sounds. Listening again is practice.
             var listen = UIFactory.Panel("Listen", box.transform, Theme.Ink);
             UIFactory.Place(listen.rectTransform, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-34, -96), new Vector2(40, 40));
             var icon = UIFactory.Panel("Icon", listen.transform, Theme.Paper, false);
             icon.sprite = SpriteLibrary.Get("ui_speaker");
             UIFactory.Stretch(icon.rectTransform, 6, 6, 6, 6);
-            UIFactory.MakeButton(listen.gameObject, () => Game.Voice.PlayWord(current));
+            UIFactory.MakeButton(listen.gameObject, Listen);
             listenButton = listen.gameObject;
 
             field = UIFactory.InputField("Input", box.transform, "type a meaning...", 28);
@@ -75,7 +75,7 @@ namespace ThaiMystery
             }
 
             root.SetActive(true);
-            bool hasAudio = VoicePlayer.HasWordClip(thai);
+            bool hasAudio = VoicePlayer.CanRecall(thai);
             listenButton.SetActive(hasAudio);
             if (hasAudio) Game.Voice.PlayWord(thai);
 
@@ -84,6 +84,12 @@ namespace ThaiMystery
                 if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(field.gameObject);
                 field.ActivateInputField();
             }
+        }
+
+        private void Listen()
+        {
+            // Play first: it should sound the way he knew it before this practice.
+            if (Game.Voice.PlayWord(current)) Game.Words.Practice(current);
         }
 
         private void Submit(string value)

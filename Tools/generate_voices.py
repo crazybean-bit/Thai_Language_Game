@@ -1,8 +1,10 @@
 """Generates Thai voice clips for the game with text-to-speech.
 
 Creates WAV files in Assets/Resources/Audio:
-  Lines/<dialogueId>_<lineIndex>.wav   for every Thai line in dialogue.json
-  Words/w_<hex codepoints>.wav         for every word in words.json (clicked in the game)
+  Lines/<dialogueId>_<lineIndex>.wav   for Thai lines a character says that the protagonist
+                                       can make out ("heard" in dialogue.json)
+  Words/w_<hex codepoints>.wav         every word in words.json, in the voice that teaches it
+  Words/Own/w_<hex codepoints>.wav     every word in the protagonist's own voice
 
 The game plays these automatically when they exist and falls back to voice blips
 when they don't, so you can generate them any time.
@@ -62,7 +64,9 @@ def collect():
     for d in dialogues:
         for i, line in enumerate(d["lines"]):
             text = line.get("text", "")
-            if is_thai(text):
+            # Narration is played back word by word, and lines nobody can make out are noise.
+            heard = line.get("heard") or d.get("heard")
+            if is_thai(text) and line.get("speaker") and heard:
                 jobs.append({
                     "path": os.path.join(AUDIO, "Lines", f"{d['id']}_{i}.wav"),
                     "text": spoken(text),
@@ -74,6 +78,12 @@ def collect():
             "path": os.path.join(AUDIO, "Words", word_key(w["thai"]) + ".wav"),
             "text": w["thai"],
             "speaker": "words",
+            "word": True,
+        })
+        jobs.append({
+            "path": os.path.join(AUDIO, "Words", "Own", word_key(w["thai"]) + ".wav"),
+            "text": w["thai"],
+            "speaker": "own",
             "word": True,
         })
     return jobs

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +40,10 @@ namespace ThaiMystery
     // Lays a line of space separated words out left to right, wrapping and centring rows.
     // Thai has no spaces between words in normal writing; the game's script adds them so
     // each word can be studied on its own.
+    //
+    // Words the protagonist has never heard pronounced are drawn as a jumble of letters he
+    // can't hold on to, and can't be clicked. Words he has heard are faint ink until he
+    // has learned them.
     public static class WordRow
     {
         public static List<WordChip> Build(RectTransform container, string text, float thaiSize, float guessSize,
@@ -54,14 +59,18 @@ namespace ThaiMystery
             foreach (var token in text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 bool thai = WordBook.IsThai(token);
+                var stage = thai ? Game.Words.StageOf(token) : WordStage.Learned;
+                bool jumbled = stage == WordStage.Unheard;
+                string shown = jumbled ? Jumble(token) : token;
                 var rt = UIFactory.Rect("Word " + token, container);
                 rt.anchorMin = rt.anchorMax = new Vector2(0, 1);
                 rt.pivot = new Vector2(0, 1);
 
-                var word = UIFactory.Text("Thai", rt, token, thaiSize, Theme.Ink);
-                float w = word.GetPreferredValues(token).x;
+                var color = jumbled ? Theme.Unknown : stage == WordStage.Foggy ? Theme.InkSoft : Theme.Ink;
+                var word = UIFactory.Text("Thai", rt, shown, thaiSize, color);
+                float w = word.GetPreferredValues(shown).x;
 
-                if (thai)
+                if (thai && !jumbled)
                 {
                     var chip = new WordChip { Thai = token };
                     chip.GuessText = UIFactory.Text("Guess", rt, "?", guessSize, Theme.Unknown);
@@ -130,6 +139,30 @@ namespace ThaiMystery
             totalHeight = y;
             return chips;
         }
+
+        private const string Consonants = "กขคงจฉชซญดตถทนบปผพฟมยรลวสหอฮ";
+        private const string Marks = "\u0e34\u0e35\u0e37\u0e48\u0e49";
+
+        // A stand-in for a word he can't make out yet: about as long, never the same letters,
+        // and the same every time so it doesn't flicker between lines.
+        public static string Jumble(string thai)
+        {
+            uint seed = 2166136261;
+            foreach (char c in thai) seed = (seed ^ c) * 16777619;
+            uint Next() { seed = seed * 1664525 + 1013904223; return seed >> 8; }
+
+            var sb = new StringBuilder();
+            foreach (char c in thai)
+            {
+                if (IsMark(c)) continue;
+                sb.Append(Consonants[(int)(Next() % (uint)Consonants.Length)]);
+                if (Next() % 4 == 0) sb.Append(Marks[(int)(Next() % (uint)Marks.Length)]);
+            }
+            return sb.ToString();
+        }
+
+        // Thai vowel and tone marks sit above or below the letter before them.
+        private static bool IsMark(char c) => c == '\u0e31' || (c >= '\u0e34' && c <= '\u0e3a') || (c >= '\u0e47' && c <= '\u0e4e');
 
         public static void Clear(RectTransform container)
         {

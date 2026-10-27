@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace ThaiMystery
 {
-    // The word journal: a grid of every Thai word seen so far. Each card's header shows the
+    // The word journal: a grid of every Thai word heard so far. Each card's header shows the
     // player's guess; click a card to change it. Confirmed words turn green and show how
     // the word is pronounced.
     public class JournalUI
@@ -96,7 +96,7 @@ namespace ThaiMystery
             var words = Game.Words;
             IReadOnlyList<string> found = words.Discovered;
             empty.gameObject.SetActive(found.Count == 0);
-            progress.text = $"Seen {found.Count}  ·  Confirmed {words.ConfirmedCount} / {words.TotalWords}";
+            progress.text = $"Heard {found.Count}  ·  Confirmed {words.ConfirmedCount} / {words.TotalWords}";
 
             foreach (var thai in found) BuildCard(thai);
         }
