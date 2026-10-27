@@ -110,6 +110,10 @@ namespace ThaiMystery
         public string requireFlag;     // rule only applies when this flag is set
         public string blockFlag;       // rule is skipped when this flag is set
         public string when;            // rule is skipped unless this condition holds
+        public string goTo;            // map to move to (after the dialogue, if any), e.g. through a door
+        public int goX;                // where the player arrives on that map: column
+        public int goY;                // row
+        public string goFacing;        // up, down, left, right
     }
 
     [Serializable]
@@ -120,6 +124,7 @@ namespace ThaiMystery
         public int x;                  // column, counted from the left
         public int y;                  // row, counted from the top (same as the map rows)
         public int height;             // rows it blocks, counting up from its tile (0 or 1 = just its tile)
+        public int width;              // columns it covers, counting right from its tile (0 or 1 = just its tile)
         public bool character;         // uses a 3x4 RPG Maker style sheet and turns to face the player
         public bool passable;          // the player can walk over it
         public string showWhen;        // only there while this condition holds, e.g. a visitor
@@ -148,11 +153,13 @@ namespace ThaiMystery
     [Serializable]
     public class MapData
     {
-        public string[] rows;          // '#' outer wall, '-' upper wall, '=' lower wall, '.' floor, ',' rug
+        // Indoors: '#' outer wall, '-' upper wall, '=' lower wall, '.' floor, ',' rug.
+        // Outdoors: ':' sand, ';' grass, '~' sea, '%' hedge, 'R' roof, 'H' house wall.
+        public string[] rows;
         public int playerX;
         public int playerY;
         public string playerFacing;    // up, down, left, right
-        public string introDialogue;
+        public string introDialogue;   // played when the game starts on this map
         public ObjectData[] objects;
         public LightingData lighting;
     }

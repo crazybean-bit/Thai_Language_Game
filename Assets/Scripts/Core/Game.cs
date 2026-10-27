@@ -9,6 +9,7 @@ namespace ThaiMystery
         public static GameFlags Flags;
         public static GameState State;
         public static GridMap Map;
+        public static WorldLoader World;
         public static DialogueRunner Dialogue;
         public static GameUI UI;
         public static PlayerController Player;

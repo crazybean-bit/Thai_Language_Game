@@ -9,7 +9,7 @@
       { "speaker": "", "text": "..." },
       { "speaker": "", "text": "Warm. Dry. A roof over me. My head is pounding." },
       { "speaker": "", "text": "I can't remember anything. Not even my own name." },
-      { "speaker": "", "text": "There's a scrap of paper in my pocket, soaked through. A ferry ticket. The ink has run so badly I can't read where it was going." }
+      { "speaker": "", "text": "Something in my pocket: a soggy scrap of card. The printing has run into blue smears. Only a few numbers survive." }
     ]},
 
     { "id": "mali_first", "portrait": "portrait_mali", "lines": [
@@ -64,7 +64,7 @@
       { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร" },
       { "speaker": "", "text": "I open my mouth and nothing comes. There's nothing there to say." },
       { "speaker": "มะลิ", "text": "คุณ จำ ไม่ ได้" },
-      { "speaker": "", "text": "She says it softly, like she's guessed something." },
+      { "speaker": "", "text": "She doesn't seem surprised." },
       { "speaker": "มะลิ", "text": "ไม่เป็นไร" },
       { "speaker": "มะลิ", "text": "คุณ ตื่น แล้ว" },
       { "speaker": "มะลิ", "text": "คุณ หิว ไหม" },
@@ -118,7 +118,7 @@
       { "speaker": "มะลิ", "text": "ไม่เป็นไร ค่ะ", "when": "warmth>=housemate", "setFlag": "thanked_mali" },
       { "speaker": "", "text": "She just nods and starts eating.", "when": "warmth<housemate" },
       { "speaker": "", "text": "She almost smiles before she catches herself.", "when": "warmth>=housemate" },
-      { "speaker": "", "text": "Someone bangs on the door. A man's voice, rough and cheerful, calling from the yard." }
+      { "speaker": "", "text": "Someone bangs on the door. A man's voice, rough and cheerful, calling from outside." }
     ]},
 
     { "id": "mali_money", "portrait": "portrait_mali", "heard": "always", "lines": [
@@ -171,18 +171,18 @@
     { "id": "mali_song", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "", "text": "I hum it under my breath. Across the room, Mali goes very still.", "setFlag": "hummed" },
       { "speaker": "มะลิ", "text": "เพลง นี้" },
-      { "speaker": "", "text": "She's staring at me like she's trying to place my face." },
+      { "speaker": "", "text": "She stops what she's doing. She doesn't turn around." },
       { "speaker": "มะลิ", "text": "ไป นอน" },
       { "speaker": "", "text": "She turns the lamp down without another word.", "recognition": 15 }
     ]},
     { "id": "mali_photo", "portrait": "portrait_mali", "heard": "always", "lines": [
-      { "speaker": "", "text": "I hold the school photo out to her and point at the scratched face.", "setFlag": "asked_photo" },
+      { "speaker": "", "text": "I hold the photo out to her.", "setFlag": "asked_photo" },
       { "speaker": "มะลิ", "text": "ใคร" },
-      { "speaker": "", "text": "Her voice is sharp, like I've done something wrong.", "when": "warmth<housemate", "warmth": -8 },
+      { "speaker": "", "text": "Her voice is sharp.", "when": "warmth<housemate", "warmth": -8 },
       { "speaker": "มะลิ", "text": "ฉัน ไม่ รู้" },
-      { "speaker": "", "text": "She says it too fast. Her thumb is resting on the scratched-out face." },
+      { "speaker": "", "text": "She barely looks at it." },
       { "speaker": "มะลิ", "text": "เอา มา" },
-      { "speaker": "", "text": "She takes it from me and puts it face down on the shelf.", "recognition": 20 }
+      { "speaker": "", "text": "She takes it from me and puts it back on the shelf, face down.", "recognition": 20 }
     ]},
     { "id": "mali_shutoff", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "", "text": "Something changes in her face. Like a door swinging shut.", "fogPast": true, "warmth": -15 },
@@ -197,7 +197,7 @@
     { "id": "job_intro", "lines": [
       { "speaker": "", "text": "An old man in a faded red cap, grease up to his elbows. He grins at me like we've met before." },
       { "speaker": "ลุงแดง", "text": "มา ช่วย หน่อย", "heard": "always" },
-      { "speaker": "", "text": "He jerks his thumb at the yard. A generator, half buried in wet sand.", "choices": [
+      { "speaker": "", "text": "He jerks his thumb at a generator, half buried in wet sand.", "choices": [
         { "text": "Go with him", "next": "job_1" },
         { "text": "Not now" }
       ]}
@@ -285,15 +285,44 @@
       { "speaker": "ลุงแดง", "text": "คุณ ทำงาน ดี", "confidence": 3 }
     ]},
     { "id": "lung_radio", "lines": [
-      { "speaker": "", "text": "Lung Daeng has a little radio on the step, turned up loud. A woman is reading the news, fast." },
+      { "speaker": "", "text": "Lung Daeng has a little radio on the generator, turned up loud. A woman is reading the news, fast." },
       { "speaker": "วิทยุ", "text": "เมื่อคืน เรือ โดยสาร ล่ม กลาง ทะเล มี คน หาย หลาย คน", "setFlag": "heard_radio",
         "catchWord": "เรือ", "catchOptions": ["เรือ", "น้ำ", "ข้าว"] },
       { "speaker": "", "text": "Lung Daeng switches it off. He doesn't look at me." },
-      { "speaker": "", "text": "My hand goes to the soaked ticket in my pocket." }
+      { "speaker": "", "text": "Without meaning to, I've put my hand in my pocket." }
     ]},
     { "id": "lung_idle", "heard": "always", "lines": [
       { "speaker": "ลุงแดง", "text": "ทำงาน ดี" },
-      { "speaker": "", "text": "He's sitting on the step, poking at the generator with a screwdriver." }
+      { "speaker": "", "text": "He's crouched by the generator, poking at it with a screwdriver." }
+    ]},
+
+    { "id": "door_unbar", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "Mali gets there first and lifts the plank off the door. She looks at me, then out at the yard.", "setFlag": "door_unbarred" },
+      { "speaker": "มะลิ", "text": "ไป" },
+      { "speaker": "", "text": "Just this once, then." }
+    ]},
+    { "id": "yard_window", "lines": [
+      { "speaker": "", "text": "Lamplight inside. From out here the house looks smaller than it feels." }
+    ]},
+    { "id": "generator", "lines": [
+      { "speaker": "", "text": "A generator, half buried in wet sand. Someone has already dug one side of it out by hand." }
+    ]},
+    { "id": "generator_running", "lines": [
+      { "speaker": "", "text": "It shudders and roars. The air around it smells of petrol." }
+    ]},
+    { "id": "spirit_house", "lines": [
+      { "speaker": "", "text": "A little house on a post, the size of a doll's house, knocked flat into the mud. Someone had left it garlands and a glass of red drink." },
+      { "speaker": "", "text": "It feels wrong to leave it lying there. It feels just as wrong to touch it." }
+    ]},
+    { "id": "boat", "lines": [
+      { "speaker": "", "text": "เรือ" },
+      { "speaker": "", "text": "A long wooden boat, upside down against the fence. Coloured ribbons are still tied to the prow." }
+    ]},
+    { "id": "palm", "lines": [
+      { "speaker": "", "text": "A palm tree has come down across the path. The path goes on beyond it, inland." }
+    ]},
+    { "id": "debris", "lines": [
+      { "speaker": "", "text": "Boards, a blue plastic chair, a single sandal. None of it came from this house." }
     ]},
 
     { "id": "bed", "lines": [
@@ -350,9 +379,9 @@
       { "speaker": "", "text": "Rows of old books, swollen with damp. I can't read a single title." }
     ]},
     { "id": "bookshelf_photo", "lines": [
-      { "speaker": "", "text": "Tucked between two books, a school photo. Rows of children in white shirts, squinting into the sun.", "setFlag": "found_photo" },
-      { "speaker": "", "text": "One face has been scratched out with something sharp." },
-      { "speaker": "", "text": "The girl next to it has Mali's eyes." }
+      { "speaker": "", "text": "Tucked between two books, an old class photo, curled from the damp. Rows of children in white shirts, squinting into the sun.", "setFlag": "found_photo" },
+      { "speaker": "", "text": "One face has been scratched away." },
+      { "speaker": "", "text": "Whoever did it pressed hard." }
     ]},
     { "id": "calendar", "lines": [
       { "speaker": "", "text": "ปฏิทิน" },

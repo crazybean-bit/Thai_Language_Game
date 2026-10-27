@@ -10,6 +10,10 @@ namespace ThaiMystery
     // press its number) to add it, Backspace or the Back button removes the last word, and
     // "Say it" (or Enter) says the sentence.
     //
+    // It's meant to be worked out by ear, not by reading: every tile plays the word as he
+    // remembers it when it's added, its speaker button plays it without adding it, and R
+    // replays the last line he heard clearly (DialogueRunner).
+    //
     // Only words he has heard become tiles. When he's nervous the tiles come out shuffled
     // and a couple of them fog over; when he's confident, bonus tiles for a more natural
     // reply can appear.
@@ -122,6 +126,8 @@ namespace ThaiMystery
                     Game.Words.IsConfirmed(word) ? Theme.Confirmed : Theme.InkSoft);
                 UIFactory.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8), new Vector2(w, 22));
 
+                if (VoicePlayer.CanRecall(word)) ListenButton(rt, word);
+
                 if (i < 9)
                 {
                     var key = UIFactory.Text("Key", rt, (i + 1).ToString(), 13, Theme.Unknown, TextAlignmentOptions.TopLeft);
@@ -139,10 +145,22 @@ namespace ThaiMystery
             }
         }
 
+        // A small speaker in the tile's corner: hear the word without adding it.
+        private static void ListenButton(RectTransform tile, string word)
+        {
+            var bg = UIFactory.Panel("Listen", tile, Theme.Ink);
+            UIFactory.Place(bg.rectTransform, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-4, -4), new Vector2(22, 22));
+            var icon = UIFactory.Panel("Icon", bg.transform, Theme.Paper, false);
+            icon.sprite = SpriteLibrary.Get("ui_speaker");
+            UIFactory.Stretch(icon.rectTransform, 3, 3, 3, 3);
+            UIFactory.MakeButton(bg.gameObject, () => Game.Voice.PlayWord(word));
+        }
+
         private void Add(int index)
         {
             if (index < 0 || index >= tiles.Count) return;
             sentence.Add(tiles[index]);
+            Game.Voice.PlayWord(tiles[index]);
             RefreshSentence();
         }
 
@@ -164,7 +182,7 @@ namespace ThaiMystery
             WordRow.Clear(sentenceRow);
             if (sentence.Count == 0)
             {
-                var empty = UIFactory.Text("Empty", sentenceRow, "Click the words to build a sentence", 20, Theme.Unknown);
+                var empty = UIFactory.Text("Empty", sentenceRow, "Click words to build a sentence.  Speaker: hear a word.  R: hear them again.", 18, Theme.Unknown);
                 UIFactory.Stretch(empty.rectTransform);
                 return;
             }

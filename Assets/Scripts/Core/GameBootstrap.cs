@@ -9,38 +9,25 @@ namespace ThaiMystery
     {
         [Tooltip("Clears saved word guesses on Play. Handy while testing the opening.")]
         [SerializeField] private bool resetSaveOnPlay = true;
+        [Tooltip("The map in Resources/Data/Maps the game starts on.")]
+        [SerializeField] private string startMap = "house";
 
         private IEnumerator Start()
         {
             if (resetSaveOnPlay) WordBook.ClearSave();
 
-            var map = GameDataLoader.Load<MapData>("Data/map");
             var words = GameDataLoader.Load<WordList>("Data/words");
             var dialogue = GameDataLoader.Load<DialogueList>("Data/dialogue");
-            if (map == null || words == null || dialogue == null) yield break;
+            if (words == null || dialogue == null) yield break;
 
             Game.Flags = new GameFlags();
             Game.State = new GameState();
             Game.Flags.Changed += Game.State.NotifyFlagsChanged;
             Game.Words = new WordBook(words);
 
-            var mapGo = new GameObject("Map");
-            Game.Map = mapGo.AddComponent<GridMap>();
-            Game.Map.Build(map);
-
-            if (map.objects != null)
-            {
-                foreach (var obj in map.objects)
-                {
-                    var go = new GameObject(obj.id);
-                    go.transform.SetParent(mapGo.transform, false);
-                    go.AddComponent<Interactable>().Init(obj, Game.Map.FromRowCol(obj.x, obj.y));
-                }
-            }
-
-            var lightGo = new GameObject("Lighting");
-            lightGo.AddComponent<SpriteRenderer>();
-            lightGo.AddComponent<LightingOverlay>().Build(map.lighting, Game.Map);
+            Game.World = gameObject.AddComponent<WorldLoader>();
+            var map = Game.World.Load(startMap);
+            if (map == null) yield break;
 
             var playerGo = new GameObject("Player");
             playerGo.AddComponent<SpriteRenderer>();
