@@ -42,8 +42,8 @@ namespace ThaiMystery
     // each word can be studied on its own.
     //
     // Words the protagonist has never heard pronounced are drawn as a blurred, shifting jumble
-    // of letters he can't focus on (BlurredWord), and can't be clicked. Words he has heard are faint ink until he
-    // has learned them.
+    // of letters he can't focus on (BlurredWord), and can't be clicked. The ink darkens as a
+    // word moves through its stages, and is solid once he owns it.
     public static class WordRow
     {
         public static List<WordChip> Build(RectTransform container, string text, float thaiSize, float guessSize,
@@ -59,14 +59,14 @@ namespace ThaiMystery
             foreach (var token in text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 bool thai = WordBook.IsThai(token);
-                var stage = thai ? Game.Words.StageOf(token) : WordStage.Learned;
-                bool jumbled = stage == WordStage.Unheard;
+                var stage = thai ? Game.Words.StageOf(token) : WordStage.Owned;
+                bool jumbled = stage == WordStage.Noise;
                 string shown = jumbled ? Jumble(token) : token;
                 var rt = UIFactory.Rect("Word " + token, container);
                 rt.anchorMin = rt.anchorMax = new Vector2(0, 1);
                 rt.pivot = new Vector2(0, 1);
 
-                var color = jumbled ? Theme.Unknown : stage == WordStage.Foggy ? Theme.InkSoft : Theme.Ink;
+                var color = jumbled ? Theme.Unknown : InkFor(stage);
                 var word = UIFactory.Text("Thai", rt, shown, thaiSize, color);
                 float w = word.GetPreferredValues(shown).x;
 
@@ -141,6 +141,18 @@ namespace ThaiMystery
             return chips;
         }
 
+        // Ink for a word he can make out: faint when just heard, solid once owned.
+        public static Color InkFor(WordStage stage)
+        {
+            switch (stage)
+            {
+                case WordStage.Heard: return Color.Lerp(Theme.Unknown, Theme.InkSoft, 0.5f);
+                case WordStage.Understood: return Theme.InkSoft;
+                case WordStage.Familiar: return Color.Lerp(Theme.InkSoft, Theme.Ink, 0.55f);
+                default: return Theme.Ink;
+            }
+        }
+
         private const string Consonants = "กขคงจฉชซญดตถทนบปผพฟมยรลวสหอฮ";
         private const string Marks = "\u0e34\u0e35\u0e37\u0e48\u0e49";
 
@@ -191,13 +203,17 @@ namespace ThaiMystery
         private readonly List<TextMeshProUGUI> layers = new List<TextMeshProUGUI>();
         private readonly List<Material> materials = new List<Material>();
         private string thai;
+        private bool scramble;
         private float timer;
         private int shift;
 
-        public static void Apply(TextMeshProUGUI word, string thai)
+        // scramble: false keeps the real letters, just out of focus (a word he knows but
+        // can't bring to mind right now).
+        public static void Apply(TextMeshProUGUI word, string thai, bool scramble = true)
         {
             var blur = word.gameObject.AddComponent<BlurredWord>();
             blur.thai = thai;
+            blur.scramble = scramble;
             blur.AddLayer(word, 0.5f, 0.45f);
             var source = word.rectTransform;
             for (int i = 0; i < Ghosts; i++)
@@ -247,7 +263,7 @@ namespace ThaiMystery
         private void Shift()
         {
             for (int i = 0; i < layers.Count; i++)
-                layers[i].text = WordRow.Jumble(thai, shift * (Ghosts + 1) + i);
+                layers[i].text = scramble ? WordRow.Jumble(thai, shift * (Ghosts + 1) + i) : thai;
         }
 
         private void OnDestroy()

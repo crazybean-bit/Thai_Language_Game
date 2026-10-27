@@ -115,7 +115,7 @@ namespace ThaiMystery
             var header = UIFactory.Panel("Header", card, confirmed ? Theme.Confirmed : Theme.Header, false);
             UIFactory.Place(header.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), Vector2.zero, new Vector2(230, 44));
             var guessText = UIFactory.Text("Guess", header.transform, string.IsNullOrEmpty(guess) ? "????" : guess, 24, Theme.Paper);
-            UIFactory.Stretch(guessText.rectTransform, 6, 6, 0, 0);
+            UIFactory.Stretch(guessText.rectTransform, 6, 46, 0, 0);
             guessText.overflowMode = TextOverflowModes.Ellipsis;
 
             var body = UIFactory.Frame("Body", card, "ui_card");
@@ -124,6 +124,14 @@ namespace ThaiMystery
 
             var thaiText = UIFactory.Text("Thai", body.transform, thai, 40, Theme.Ink);
             UIFactory.Stretch(thaiText.rectTransform, 4, 4, 4, confirmed ? 26 : 4);
+
+            // Four pips: Heard, Understood, Familiar and Owned, filled in as he gets there.
+            int stage = (int)words.StageOf(thai);
+            for (int i = 1; i <= 4; i++)
+            {
+                var pip = UIFactory.Panel("Stage " + i, header.transform, i <= stage ? Theme.Highlight : new Color(1, 1, 1, 0.18f), false);
+                UIFactory.Place(pip.rectTransform, new Vector2(1, 0.5f), new Vector2(1, 0.5f), new Vector2(-8 - (4 - i) * 10, 0), new Vector2(7, 7));
+            }
 
             if (confirmed)
             {

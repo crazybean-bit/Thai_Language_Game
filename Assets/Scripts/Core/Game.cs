@@ -7,6 +7,7 @@ namespace ThaiMystery
     {
         public static WordBook Words;
         public static GameFlags Flags;
+        public static GameState State;
         public static GridMap Map;
         public static DialogueRunner Dialogue;
         public static GameUI UI;

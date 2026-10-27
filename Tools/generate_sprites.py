@@ -725,6 +725,9 @@ if __name__ == "__main__":
     character("mali", Look(hair=rgb("a8383c"), skin=rgb("f0d8ca"), top=rgb("2e3c36"),
                            bottom=rgb("232c28"), shoes=rgb("33262a"), eyes=rgb("c46a34"),
                            long_hair=True, skirt=True, blush=True))
+    # Lung Daeng: placeholder until he has PixelLab art. Faded red cap, work shirt.
+    character("lung_daeng", Look(hair=rgb("8a3a32"), skin=rgb("c89a78"), top=rgb("5a6470"),
+                                 bottom=rgb("3c3a36"), shoes=rgb("2e2622"), eyes=rgb("3e3028")))
     portrait_mali()
     # Characters made in PixelLab (Tools/art/pixellab) replace the hand-drawn sheets above.
     import import_pixellab

@@ -18,12 +18,16 @@ namespace ThaiMystery.Editor
     //   Lines/<dialogue>_<index>   every Thai line a character says (muffled when he can't make it out)
     //   Words/<key>                every word, in the voice of whoever teaches the words (Mali)
     //   Words/Own/<key>            every word in the protagonist's own voice, for learned words
+    //   Words/Hesitant/<key>       every word in his voice, stumbling over it, for when he's nervous
     public class VoiceGeneratorWindow : EditorWindow
     {
         private const string Prefs = "ThaiMystery.Voices.";
         private const string AudioRoot = "Assets/Resources/Audio";
         private const string TestPath = "Temp/ThaiVoiceTest.wav";
         private const double MinSecondsBetweenRequests = 0.4;
+        private const string HesitantRate = "-25%";
+        // What he says before a word he's unsure of, unless the word has its own "stutter".
+        private const string Filler = "เอ่อ";
 
         [Serializable]
         private class SpeakerVoice
@@ -46,7 +50,8 @@ namespace ThaiMystery.Editor
             public string text;
             public SpeakerVoice voice;
             public string rate;    // overrides voice.rate when set
-            public string group;   // "line:<speaker>", "words" or "own"
+            public string group;   // "line:<speaker>", "words", "own" or "hesitant"
+            public bool ssml;      // text is already SSML (escaped, may hold <break/>)
         }
 
         private string apiKey = "";
@@ -92,6 +97,16 @@ namespace ThaiMystery.Editor
                 speakers.items.Add(new SpeakerVoice { speaker = "มะลิ", voice = "th-TH-AcharaNeural", pitch = "+6%", rate = "-5%" });
                 speakers.items.Add(new SpeakerVoice { speaker = "???", voice = "th-TH-PremwadeeNeural" });
             }
+            // Characters added to the story since the list was saved get a starting voice.
+            AddSpeakerIfMissing(new SpeakerVoice { speaker = "ลุงแดง", voice = "th-TH-NiwatNeural", pitch = "-10%", rate = "-5%" });
+            AddSpeakerIfMissing(new SpeakerVoice { speaker = "วิทยุ", voice = "th-TH-PremwadeeNeural", rate = "+15%" });
+        }
+
+        private void AddSpeakerIfMissing(SpeakerVoice voice)
+        {
+            foreach (var s in speakers.items)
+                if (s.speaker == voice.speaker) return;
+            speakers.items.Add(voice);
         }
 
         private static void LoadVoice(string key, ref SpeakerVoice voice)
@@ -126,8 +141,9 @@ namespace ThaiMystery.Editor
         {
             scroll = EditorGUILayout.BeginScrollView(scroll);
             EditorGUILayout.HelpBox(
-                "Creates Thai voice clips for the lines characters say, and for every word in words.json in two voices: " +
-                "the character who teaches them, and the protagonist's own voice for words he has learned. " +
+                "Creates Thai voice clips for the lines characters say, and for every word in words.json three ways: " +
+                "in the voice of the character who teaches them, in the protagonist's own voice for words he has learned, " +
+                "and in his voice stumbling over them for when he's nervous. " +
                 "Paste KEY 1 and the region from your Speech resource's 'Keys and Endpoint' page. " +
                 "The key is stored only on this computer.", MessageType.Info);
 
@@ -183,6 +199,13 @@ namespace ThaiMystery.Editor
                 EditorGUILayout.LabelField(new GUIContent("Own voice", "The protagonist, once he has learned a word"), GUILayout.Width(120));
                 VoiceRow(ownVoice, canCall, "Redo words", () => Generate(j => j.group == "own"));
                 GUILayout.Space(26);
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(new GUIContent("Hesitant", $"His own voice at {HesitantRate} speed, stumbling into each word (\"{Filler}...\" or the word's stutter in words.json)"));
+                using (new EditorGUI.DisabledScope(!canCall))
+                {
+                    if (GUILayout.Button("Redo words", GUILayout.Width(100))) Generate(j => j.group == "hesitant");
+                }
                 EditorGUILayout.EndHorizontal();
                 slowWords = EditorGUILayout.Toggle(new GUIContent("Slower single words", "Reads single words 20% slower, easier for learners"), slowWords);
 
@@ -284,8 +307,22 @@ namespace ThaiMystery.Editor
                 string key = VoicePlayer.WordKey(thai);
                 jobs.Add(new Job { path = $"{AudioRoot}/Words/{key}.wav", text = thai, voice = VoiceFor(wordSpeaker), rate = wordRate, group = "words" });
                 jobs.Add(new Job { path = $"{AudioRoot}/Words/Own/{key}.wav", text = thai, voice = ownVoice, rate = wordRate, group = "own" });
+                jobs.Add(new Job { path = $"{AudioRoot}/Words/Hesitant/{key}.wav", text = Stutter(w), voice = ownVoice, rate = HesitantRate, group = "hesitant", ssml = true });
             }
             return jobs;
+        }
+
+        // "ขอ... ขอบคุณ" in words.json becomes a pause where the dots are; without one he
+        // says "เอ่อ" first.
+        private static string Stutter(WordEntry w)
+        {
+            const string pause = "<break time=\"300ms\"/>";
+            string thai = w.thai.Trim();
+            if (string.IsNullOrWhiteSpace(w.stutter))
+                return SecurityElement.Escape(Filler) + pause + SecurityElement.Escape(thai);
+            var parts = w.stutter.Split(new[] { "..." }, StringSplitOptions.None);
+            for (int i = 0; i < parts.Length; i++) parts[i] = SecurityElement.Escape(parts[i].Replace(" ", "").Trim());
+            return string.Join(pause, parts);
         }
 
         private SpeakerVoice VoiceFor(string speaker)
@@ -316,15 +353,15 @@ namespace ThaiMystery.Editor
 
             if (EditorApplication.timeSinceStartup < nextRequestTime) return;
             running = queue.Dequeue();
-            request = BuildRequest(running.text, running.voice, running.rate);
+            request = BuildRequest(running.text, running.voice, running.rate, running.ssml);
             request.SendWebRequest();
         }
 
-        private UnityWebRequest BuildRequest(string text, SpeakerVoice voice, string rateOverride = null)
+        private UnityWebRequest BuildRequest(string text, SpeakerVoice voice, string rateOverride = null, bool isSsml = false)
         {
             string rate = !string.IsNullOrEmpty(rateOverride) ? rateOverride : voice.rate;
             string prosody = Percent("rate", rate) + Percent("pitch", voice.pitch);
-            string spoken = SecurityElement.Escape(text);
+            string spoken = isSsml ? text : SecurityElement.Escape(text);
             // Azure rejects a <prosody> with nothing in it, so leave it out when nothing is changed.
             if (prosody.Length > 0) spoken = $"<prosody{prosody}>{spoken}</prosody>";
             string ssml =

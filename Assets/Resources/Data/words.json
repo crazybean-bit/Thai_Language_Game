@@ -6,7 +6,7 @@
 
     { "thai": "ฉัน", "answers": ["i", "me", "my", "myself"], "romanization": "chan", "group": "names", "note": "'I' or 'me'. Used by women and in casual speech; men often say ผม (phom)." },
     { "thai": "ชื่อ", "answers": ["name", "named", "called", "is called", "my name is", "name is"], "romanization": "chue", "group": "names", "note": "Name, or 'to be named'. ฉัน ชื่อ ... = My name is ..." },
-    { "thai": "มะลิ", "answers": ["mali", "jasmine"], "romanization": "ma-li", "group": "names", "note": "Jasmine, and a common Thai name." },
+    { "thai": "มะลิ", "answers": ["mali", "jasmine"], "romanization": "ma-li", "group": "names", "note": "Jasmine, and a common Thai name.", "stutter": "มะ... มะลิ" },
     { "thai": "อะไร", "answers": ["what", "what?"], "romanization": "a-rai", "group": "names", "note": "'What'. Question words go at the end: ชื่อ อะไร = name what?" },
 
     { "thai": "ไม่", "answers": ["no", "not", "don't", "dont", "do not"], "romanization": "mai (falling tone)", "group": "memory", "note": "'Not'. Goes before the verb it negates." },
@@ -23,9 +23,9 @@
     { "thai": "ข้าว", "answers": ["rice", "food", "meal", "dinner", "lunch", "breakfast"], "romanization": "khao", "group": "food", "note": "Rice. กิน ข้าว (eat rice) just means 'have a meal'." },
 
     { "thai": "เตียง", "answers": ["bed"], "romanization": "tiang", "group": "room", "note": "Bed." },
-    { "thai": "หน้าต่าง", "answers": ["window", "windows"], "romanization": "na-tang", "group": "room", "note": "Window. Literally 'face' + 'different'." },
+    { "thai": "หน้าต่าง", "answers": ["window", "windows"], "romanization": "na-tang", "group": "room", "note": "Window. Literally 'face' + 'different'.", "stutter": "หน้า... หน้าต่าง" },
     { "thai": "กระจก", "answers": ["mirror", "glass"], "romanization": "kra-chok", "group": "room", "note": "Mirror, or glass." },
-    { "thai": "ประตู", "answers": ["door", "gate", "doorway"], "romanization": "pra-tu", "group": "room", "note": "Door." },
+    { "thai": "ประตู", "answers": ["door", "gate", "doorway"], "romanization": "pra-tu", "group": "room", "note": "Door.", "stutter": "ประ... ประตู" },
 
     { "thai": "โต๊ะ", "answers": ["table", "desk"], "romanization": "to", "group": "things", "note": "Table or desk." },
     { "thai": "น้ำ", "answers": ["water", "drink", "liquid"], "romanization": "nam", "group": "things", "note": "Water. Also shows up in many words for liquids." },
@@ -40,9 +40,40 @@
     { "thai": "ปฏิทิน", "answers": ["calendar"], "romanization": "pa-ti-thin", "group": "decor", "note": "Calendar. ฏ and ฐ are rare letters you mostly see in words borrowed from Pali and Sanskrit." },
     { "thai": "เสื้อ", "answers": ["shirt", "coat", "jacket", "clothes", "top"], "romanization": "suea", "group": "decor", "note": "Shirt or any top. เสื้อ is the start of many clothing words." },
     { "thai": "รูป", "answers": ["picture", "painting", "photo", "image", "drawing", "portrait"], "romanization": "rup", "group": "decor", "note": "Picture, photo or painting." },
+    { "thai": "ตะเกียง", "answers": ["lamp", "oil lamp", "lantern", "light"], "romanization": "ta-kiang", "group": "decor", "note": "Oil lamp or lantern. With the power out, every house on the island has one lit." },
+    { "thai": "เรือ", "answers": ["boat", "boats", "ship", "ferry"], "romanization": "ruea", "group": "sea", "note": "Boat, any size: a fishing boat, a ferry, a ship." },
 
-    { "thai": "จดหมาย", "answers": ["letter", "note", "mail", "message"], "romanization": "chot-mai", "group": "letter", "note": "Letter, as in mail." },
-    { "thai": "เจ็ด", "answers": ["seven", "7"], "romanization": "chet", "group": "letter", "note": "Seven." },
-    { "thai": "วัน", "answers": ["day", "days", "date"], "romanization": "wan", "group": "letter", "note": "Day. Nouns have no plural form: เจ็ด วัน = seven days." }
+    { "thai": "ขอบคุณ", "answers": ["thank you", "thanks", "thank", "thank u"], "romanization": "khop-khun", "group": "thanks", "note": "Thank you. Add ครับ or ค่ะ to be polite.", "stutter": "ขอบ... ขอบคุณ" },
+    { "thai": "ครับ", "answers": ["polite", "polite ending", "polite particle", "politeness", "sir", "male polite", "polite (men)", "yes"], "romanization": "khrap", "group": "thanks", "note": "The polite ending men put on sentences. On its own it also means 'yes'." },
+    { "thai": "ค่ะ", "answers": ["polite", "polite ending", "polite particle", "politeness", "maam", "ma'am", "female polite", "polite (women)", "yes"], "romanization": "kha (falling tone)", "group": "thanks", "note": "The polite ending women put on sentences. Mali leaves it off when she's cold with you." },
+
+    { "thai": "มา", "answers": ["come", "come here", "here", "coming"], "romanization": "ma", "group": "help", "note": "To come. After another verb it means 'towards me': เอา มา = bring it here." },
+    { "thai": "ช่วย", "answers": ["help", "assist", "give a hand", "helping"], "romanization": "chuai", "group": "help", "note": "To help. ช่วย ด้วย is a cry for help." },
+    { "thai": "หน่อย", "answers": ["a bit", "a little", "please", "little", "bit", "for a bit"], "romanization": "noi", "group": "help", "note": "'A little'. Softens a request: ช่วย หน่อย = give me a hand." },
+
+    { "thai": "เติม", "answers": ["fill", "refill", "top up", "fill up", "add", "pour"], "romanization": "toem", "group": "fuel", "note": "To fill up or top up." },
+    { "thai": "น้ำมัน", "answers": ["fuel", "oil", "petrol", "gas", "gasoline", "diesel"], "romanization": "nam-man", "group": "fuel", "note": "Fuel, or cooking oil. น้ำ (liquid) + มัน (oily)." },
+    { "thai": "ระวัง", "answers": ["careful", "be careful", "watch out", "look out", "caution", "beware"], "romanization": "ra-wang", "group": "fuel", "note": "Careful! Watch out!" },
+
+    { "thai": "ซ้าย", "answers": ["left"], "romanization": "sai", "group": "directions", "note": "Left." },
+    { "thai": "ขวา", "answers": ["right"], "romanization": "khwa", "group": "directions", "note": "Right (the direction, not 'correct')." },
+
+    { "thai": "หนึ่ง", "answers": ["one", "1"], "romanization": "nueng", "group": "numbers", "note": "One." },
+    { "thai": "สอง", "answers": ["two", "2"], "romanization": "song", "group": "numbers", "note": "Two." },
+    { "thai": "สาม", "answers": ["three", "3"], "romanization": "sam", "group": "numbers", "note": "Three." },
+    { "thai": "ร้อย", "answers": ["hundred", "one hundred", "a hundred", "100"], "romanization": "roi", "group": "numbers", "note": "Hundred. ร้อย บาท = 100 baht." },
+    { "thai": "บาท", "answers": ["baht", "thai baht", "money", "thb"], "romanization": "baht", "group": "numbers", "note": "Baht, Thai money." },
+
+    { "thai": "ผม", "answers": ["i", "me", "my", "myself"], "romanization": "phom", "group": "work", "note": "'I' for men. Women say ฉัน. Calling yourself ฉัน as a man is a classic beginner mistake." },
+    { "thai": "ทำงาน", "answers": ["work", "worked", "working", "job", "do work", "labor", "labour"], "romanization": "tham-ngan", "group": "work", "note": "To work. ทำ (do) + งาน (work).", "stutter": "ทำ... ทำงาน" },
+    { "thai": "ดี", "answers": ["good", "well", "nice", "great", "fine"], "romanization": "di", "group": "work", "note": "Good." },
+
+    { "thai": "เพลง", "answers": ["song", "music", "tune", "melody"], "romanization": "phleng", "group": "song", "past": true, "note": "Song." },
+    { "thai": "นี้", "answers": ["this", "these"], "romanization": "ni", "group": "song", "note": "'This'. It goes after the noun: เพลง นี้ = this song." },
+    { "thai": "นอน", "answers": ["sleep", "go to sleep", "go to bed", "lie down", "bed", "sleeping"], "romanization": "non", "group": "song", "note": "To sleep or lie down. ไป นอน = go to bed." },
+
+    { "thai": "ใคร", "answers": ["who", "who?", "whom", "someone"], "romanization": "khrai", "group": "photo", "note": "Who. Like อะไร, it goes at the end of a question." },
+    { "thai": "เอา", "answers": ["take", "give", "get", "bring", "want", "give it"], "romanization": "ao", "group": "photo", "note": "To take or get. เอา มา = give it here." },
+    { "thai": "เป็น", "answers": ["be", "is", "are", "am", "to be"], "romanization": "pen", "group": "be", "note": "To be, for saying what someone is: คุณ เป็น ใคร = who are you?" }
   ]
 }

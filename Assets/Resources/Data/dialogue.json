@@ -1,9 +1,15 @@
 {
   "dialogues": [
-    { "id": "intro", "lines": [
+    { "id": "intro", "portrait": "none", "lines": [
       { "speaker": "", "text": "..." },
-      { "speaker": "", "text": "My head is pounding. Where am I?" },
-      { "speaker": "", "text": "I can't remember anything. Not even my own name." }
+      { "speaker": "???", "text": "ช่วย ด้วย" },
+      { "speaker": "???", "text": "น้ำ มา" },
+      { "speaker": "", "text": "Cold. Something pulling at me. Someone is shouting, far away." },
+      { "speaker": "???", "text": "ปลา" },
+      { "speaker": "", "text": "..." },
+      { "speaker": "", "text": "Warm. Dry. A roof over me. My head is pounding." },
+      { "speaker": "", "text": "I can't remember anything. Not even my own name." },
+      { "speaker": "", "text": "There's a scrap of paper in my pocket, soaked through. A ferry ticket. The ink has run so badly I can't read where it was going." }
     ]},
 
     { "id": "mali_first", "portrait": "portrait_mali", "lines": [
@@ -11,53 +17,283 @@
       { "speaker": "", "text": "Her words slide right past me. I can't hold on to a single sound." },
       { "speaker": "???", "text": "ฉัน ชื่อ มะลิ" },
       { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร", "choices": [
-        { "text": "ฉัน ไม่ รู้", "next": "mali_name" },
-        { "text": "ฉัน จำ ไม่ ได้", "next": "mali_name" }
+        { "text": "Point at myself and shrug", "next": "mali_rice" },
+        { "text": "Try to copy her sounds", "next": "mali_rice", "warmth": 5 },
+        { "text": "Say nothing", "next": "mali_rice", "warmth": -3 }
       ]}
     ]},
-    { "id": "mali_name", "portrait": "portrait_mali", "lines": [
-      { "speaker": "มะลิ", "text": "ไม่เป็นไร" },
-      { "speaker": "มะลิ", "text": "คุณ หิว ไหม", "choices": [
-        { "text": "ใช่", "next": "mali_hungry" },
-        { "text": "ไม่", "next": "mali_not_hungry" }
+    { "id": "mali_rice", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "She mimes putting food in her mouth, then points at me. Slowly this time." },
+      { "speaker": "มะลิ", "text": "หิว ไหม", "choices": [
+        { "text": "Nod", "next": "mali_hungry" },
+        { "text": "Shake my head", "next": "mali_not_hungry" }
       ]}
     ]},
-    { "id": "mali_hungry", "portrait": "portrait_mali", "lines": [
+    { "id": "mali_hungry", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "กิน ข้าว", "setFlag": "met_mali" },
       { "speaker": "", "text": "She hands me a bowl of rice. It's still warm." }
     ]},
-    { "id": "mali_not_hungry", "portrait": "portrait_mali", "lines": [
+    { "id": "mali_not_hungry", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "ไม่ หิว ไหม", "setFlag": "met_mali" },
-      { "speaker": "มะลิ", "text": "ไม่เป็นไร" }
+      { "speaker": "มะลิ", "text": "ไม่เป็นไร" },
+      { "speaker": "", "text": "She leaves a bowl of rice beside me anyway." }
     ]},
+
     { "id": "mali_teach", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "", "text": "She sits down across from me and points at herself." },
       { "speaker": "มะลิ", "text": "ฉัน ชื่อ มะลิ" },
-      { "speaker": "", "text": "Slowly this time. One sound at a time." },
+      { "speaker": "", "text": "One sound at a time." },
       { "speaker": "มะลิ", "text": "มะลิ" },
-      { "speaker": "", "text": "Mali. That's her name." },
-      { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร" },
-      { "speaker": "", "text": "I try to copy the sounds. It comes out wrong, but she nods." },
+      { "speaker": "", "text": "She points at herself again, and waits for me.", "tiles": {
+        "prompt": "Say her name",
+        "answer": "มะลิ",
+        "words": ["ฉัน", "ชื่อ"],
+        "reactions": [{ "text": "ฉัน ชื่อ มะลิ", "next": "mali_teach_mixup" }],
+        "correct": "mali_teach_2",
+        "retry": true,
+        "warmth": 5
+      }}
+    ]},
+    { "id": "mali_teach_mixup", "portrait": "portrait_mali", "heard": "always", "next": "mali_teach_2", "lines": [
+      { "speaker": "", "text": "Her mouth twitches. She shakes her head, taps her own chest, then mine." },
+      { "speaker": "มะลิ", "text": "มะลิ" },
+      { "speaker": "", "text": "Just her name, then. I say it back and she nods." }
+    ]},
+    { "id": "mali_teach_2", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "ใช่" },
+      { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร" },
+      { "speaker": "", "text": "I open my mouth and nothing comes. There's nothing there to say." },
+      { "speaker": "มะลิ", "text": "คุณ จำ ไม่ ได้" },
+      { "speaker": "", "text": "She says it softly, like she's guessed something." },
+      { "speaker": "มะลิ", "text": "ไม่เป็นไร" },
       { "speaker": "มะลิ", "text": "คุณ ตื่น แล้ว" },
       { "speaker": "มะลิ", "text": "คุณ หิว ไหม" },
-      { "speaker": "มะลิ", "text": "กิน ข้าว" },
-      { "speaker": "มะลิ", "text": "ไม่เป็นไร", "setFlag": "mali_speaks" },
+      { "speaker": "มะลิ", "text": "กิน ข้าว", "setFlag": "mali_speaks" },
       { "speaker": "", "text": "The noise is starting to come apart into words. Maybe she'll tell me what other things are called." }
     ]},
+
     { "id": "mali_door", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "อย่า ไป ข้างนอก", "setFlag": "warned_door" },
       { "speaker": "", "text": "Her voice is quiet, but she means it." }
     ]},
-    { "id": "mali_letter", "portrait": "portrait_mali", "heard": "always", "lines": [
-      { "speaker": "มะลิ", "text": "จดหมาย", "setFlag": "asked_letter" },
-      { "speaker": "", "text": "She stares at the letter for a long time." },
-      { "speaker": "มะลิ", "text": "ฉัน ไม่ รู้" },
-      { "speaker": "", "text": "She reads the last two words out loud anyway, very quietly." },
-      { "speaker": "มะลิ", "text": "เจ็ด วัน" }
-    ]},
     { "id": "mali_idle", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "คุณ จำ ได้ ไหม" }
+    ]},
+
+    { "id": "mali_thanks", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "Mali puts a plate of rice and fish in front of me. Lunch." },
+      { "speaker": "มะลิ", "text": "กิน ข้าว" },
+      { "speaker": "", "text": "Before I can start, she presses her palms together and bows her head a little. She says it slowly, like it matters." },
+      { "speaker": "มะลิ", "text": "ขอบคุณ ค่ะ" },
+      { "speaker": "", "text": "Then she points at me and says it again, but it ends differently." },
+      { "speaker": "มะลิ", "text": "ขอบคุณ ครับ" },
+      { "speaker": "", "text": "She waits.", "tiles": {
+        "prompt": "Thank her for the food",
+        "answer": "ขอบคุณ ครับ",
+        "words": ["ค่ะ", "กิน", "ข้าว"],
+        "reactions": [{ "text": "ขอบคุณ ค่ะ", "next": "mali_thanks_kha" }],
+        "correct": "mali_thanks_done",
+        "retry": true,
+        "warmth": 5
+      }}
+    ]},
+    { "id": "mali_thanks_kha", "portrait": "portrait_mali", "heard": "always", "next": "mali_thanks_try", "lines": [
+      { "speaker": "", "text": "Mali covers her mouth with her hand, but I can see she's laughing.", "warmth": 2 },
+      { "speaker": "", "text": "She taps her own chest." },
+      { "speaker": "มะลิ", "text": "ค่ะ" },
+      { "speaker": "", "text": "Then mine." },
+      { "speaker": "มะลิ", "text": "ครับ" }
+    ]},
+    { "id": "mali_thanks_try", "portrait": "portrait_mali", "lines": [
+      { "speaker": "", "text": "One more time, then.", "tiles": {
+        "prompt": "Thank her for the food",
+        "answer": "ขอบคุณ ครับ",
+        "words": ["ค่ะ", "กิน", "ข้าว"],
+        "correct": "mali_thanks_done",
+        "retry": true
+      }}
+    ]},
+    { "id": "mali_thanks_done", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "มะลิ", "text": "ไม่เป็นไร", "when": "warmth<housemate", "setFlag": "thanked_mali" },
+      { "speaker": "มะลิ", "text": "ไม่เป็นไร ค่ะ", "when": "warmth>=housemate", "setFlag": "thanked_mali" },
+      { "speaker": "", "text": "She just nods and starts eating.", "when": "warmth<housemate" },
+      { "speaker": "", "text": "She almost smiles before she catches herself.", "when": "warmth>=housemate" },
+      { "speaker": "", "text": "Someone bangs on the door. A man's voice, rough and cheerful, calling from the yard." }
+    ]},
+
+    { "id": "mali_money", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "I hold out Lung Daeng's hundred baht note to Mali.", "setFlag": "money_talk" },
+      { "speaker": "มะลิ", "text": "อะไร" },
+      { "speaker": "", "text": "She wants to know where I got it.", "tiles": {
+        "prompt": "Tell her you worked for it",
+        "answer": "ผม ทำงาน",
+        "accept": ["ผม ทำงาน ครับ"],
+        "words": ["ฉัน", "ดี", "กิน"],
+        "bonus": ["ครับ"],
+        "reactions": [{ "text": "ฉัน ทำงาน", "next": "mali_money_phom" }],
+        "correct": "mali_money_give",
+        "retry": true,
+        "warmth": 3
+      }}
+    ]},
+    { "id": "mali_money_phom", "portrait": "portrait_mali", "heard": "always", "next": "mali_money_try", "lines": [
+      { "speaker": "", "text": "Her eyebrows go up. She taps my chest, the way Lung Daeng did." },
+      { "speaker": "มะลิ", "text": "ผม" }
+    ]},
+    { "id": "mali_money_try", "portrait": "portrait_mali", "lines": [
+      { "speaker": "", "text": "Right. Again.", "tiles": {
+        "prompt": "Tell her you worked for it",
+        "answer": "ผม ทำงาน",
+        "accept": ["ผม ทำงาน ครับ"],
+        "words": ["ฉัน", "ดี", "กิน"],
+        "bonus": ["ครับ"],
+        "correct": "mali_money_give",
+        "retry": true
+      }}
+    ]},
+    { "id": "mali_money_give", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "มะลิ", "text": "ทำงาน ดี" },
+      { "speaker": "", "text": "She's fed me for two days. She's the reason I'm not in the sea.", "choices": [
+        { "text": "Give her the money", "next": "mali_money_thanks", "setFlag": "gave_money", "warmth": 10, "money": -100 },
+        { "text": "Keep it", "next": "mali_money_keep" }
+      ]}
+    ]},
+    { "id": "mali_money_thanks", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "มะลิ", "text": "ขอบคุณ ค่ะ", "when": "warmth>=housemate" },
+      { "speaker": "", "text": "The first time she's said it to me.", "when": "warmth>=housemate" },
+      { "speaker": "มะลิ", "text": "ขอบคุณ", "when": "warmth<housemate" },
+      { "speaker": "", "text": "She says it short and flat, and tucks the note away quickly.", "when": "warmth<housemate" }
+    ]},
+    { "id": "mali_money_keep", "lines": [
+      { "speaker": "", "text": "I put it back in my pocket. She doesn't say anything. She doesn't need to." }
+    ]},
+
+    { "id": "mali_song", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "I hum it under my breath. Across the room, Mali goes very still.", "setFlag": "hummed" },
+      { "speaker": "มะลิ", "text": "เพลง นี้" },
+      { "speaker": "", "text": "She's staring at me like she's trying to place my face." },
+      { "speaker": "มะลิ", "text": "ไป นอน" },
+      { "speaker": "", "text": "She turns the lamp down without another word.", "recognition": 15 }
+    ]},
+    { "id": "mali_photo", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "I hold the school photo out to her and point at the scratched face.", "setFlag": "asked_photo" },
+      { "speaker": "มะลิ", "text": "ใคร" },
+      { "speaker": "", "text": "Her voice is sharp, like I've done something wrong.", "when": "warmth<housemate", "warmth": -8 },
+      { "speaker": "มะลิ", "text": "ฉัน ไม่ รู้" },
+      { "speaker": "", "text": "She says it too fast. Her thumb is resting on the scratched-out face." },
+      { "speaker": "มะลิ", "text": "เอา มา" },
+      { "speaker": "", "text": "She takes it from me and puts it face down on the shelf.", "recognition": 20 }
+    ]},
+    { "id": "mali_shutoff", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "Something changes in her face. Like a door swinging shut.", "fogPast": true, "warmth": -15 },
+      { "speaker": "มะลิ", "text": "คุณ เป็น ใคร" },
+      { "speaker": "", "text": "She looks at me like I'm a stranger again. Like she's never seen me before.", "setFlag": "shutoff_once" }
+    ]},
+    { "id": "kind_moment", "lines": [
+      { "speaker": "", "text": "Mali sets a cup of water down beside me without a word.", "confidence": 12 },
+      { "speaker": "", "text": "When I look up she's already turned away. But she left it there." }
+    ]},
+
+    { "id": "job_intro", "lines": [
+      { "speaker": "", "text": "An old man in a faded red cap, grease up to his elbows. He grins at me like we've met before." },
+      { "speaker": "ลุงแดง", "text": "มา ช่วย หน่อย", "heard": "always" },
+      { "speaker": "", "text": "He jerks his thumb at the yard. A generator, half buried in wet sand.", "choices": [
+        { "text": "Go with him", "next": "job_1" },
+        { "text": "Not now" }
+      ]}
+    ]},
+    { "id": "job_1", "heard": "always", "lines": [
+      { "speaker": "ลุงแดง", "text": "เติม น้ำมัน" },
+      { "speaker": "", "text": "He unscrews a cap on the generator and nods at the red can by my feet.", "choices": [
+        { "text": "Pour the can into the generator", "next": "job_2", "confidence": 3 },
+        { "text": "Fetch the water jar", "next": "job_1_oops", "confidence": -3 }
+      ]}
+    ]},
+    { "id": "job_1_oops", "heard": "always", "next": "job_2", "lines": [
+      { "speaker": "ลุงแดง", "text": "ไม่ ไม่" },
+      { "speaker": "", "text": "He laughs and taps the red can." },
+      { "speaker": "ลุงแดง", "text": "น้ำมัน" },
+      { "speaker": "", "text": "The can, then. It smells like petrol." }
+    ]},
+    { "id": "job_2", "heard": "always", "lines": [
+      { "speaker": "", "text": "We lift the generator onto a cart. He takes the front and waits for me to steer." },
+      { "speaker": "ลุงแดง", "text": "ซ้าย", "choices": [
+        { "text": "Push the cart right", "next": "job_2_oops", "confidence": -3 },
+        { "text": "Push the cart left", "next": "job_3", "confidence": 3 }
+      ]}
+    ]},
+    { "id": "job_2_oops", "heard": "always", "next": "job_3", "lines": [
+      { "speaker": "", "text": "The wheel sinks into the sand. He grabs my left hand and waggles it." },
+      { "speaker": "ลุงแดง", "text": "ซ้าย" }
+    ]},
+    { "id": "job_3", "heard": "always", "lines": [
+      { "speaker": "", "text": "A fallen palm blocks the path to the house." },
+      { "speaker": "ลุงแดง", "text": "ขวา", "choices": [
+        { "text": "Push the cart left", "next": "job_3_oops", "confidence": -3 },
+        { "text": "Push the cart right", "next": "job_4", "confidence": 3 }
+      ]}
+    ]},
+    { "id": "job_3_oops", "heard": "always", "next": "job_4", "lines": [
+      { "speaker": "", "text": "We bump straight into the palm. He slaps my right arm, not too hard." },
+      { "speaker": "ลุงแดง", "text": "ขวา" }
+    ]},
+    { "id": "job_4", "heard": "always", "lines": [
+      { "speaker": "", "text": "He puts the starter cord in my hand and holds up his fingers, one at a time." },
+      { "speaker": "ลุงแดง", "text": "หนึ่ง สอง สาม", "choices": [
+        { "text": "Pull right away", "next": "job_4_oops", "confidence": -3 },
+        { "text": "Pull on the last finger", "next": "job_5", "confidence": 3 }
+      ]}
+    ]},
+    { "id": "job_4_oops", "heard": "always", "next": "job_5", "lines": [
+      { "speaker": "", "text": "The cord snaps back and nearly takes my fingers with it. He shakes his head and counts again." },
+      { "speaker": "ลุงแดง", "text": "หนึ่ง สอง สาม" },
+      { "speaker": "", "text": "On the last one this time." }
+    ]},
+    { "id": "job_5", "heard": "always", "lines": [
+      { "speaker": "", "text": "The engine coughs, catches and roars. Sparks spit from a loose wire right next to my hand." },
+      { "speaker": "ลุงแดง", "text": "ระวัง", "choices": [
+        { "text": "Reach for the wire", "next": "job_5_oops", "confidence": -3 },
+        { "text": "Pull my hand back", "next": "job_done", "confidence": 3 }
+      ]}
+    ]},
+    { "id": "job_5_oops", "heard": "always", "next": "job_done", "lines": [
+      { "speaker": "", "text": "A jolt of pain runs up my arm. He yanks me back by the collar." },
+      { "speaker": "ลุงแดง", "text": "ระวัง" },
+      { "speaker": "", "text": "I won't forget that word." }
+    ]},
+    { "id": "job_done", "heard": "always", "lines": [
+      { "speaker": "", "text": "Inside, the lights flicker on. I hear Mali laugh in surprise." },
+      { "speaker": "ลุงแดง", "text": "ทำงาน ดี" },
+      { "speaker": "", "text": "He pulls a crumpled note from his pocket and presses it into my hand." },
+      { "speaker": "ลุงแดง", "text": "ร้อย บาท", "money": 100, "setFlag": "job_done" },
+      { "speaker": "ลุงแดง", "text": "คุณ ชื่อ อะไร", "choices": [
+        { "text": "ฉัน จำ ไม่ ได้", "next": "job_phom" },
+        { "text": "Shrug", "next": "job_shrug" }
+      ]}
+    ]},
+    { "id": "job_phom", "heard": "always", "lines": [
+      { "speaker": "", "text": "He bursts out laughing and slaps his knee." },
+      { "speaker": "ลุงแดง", "text": "ผม" },
+      { "speaker": "", "text": "He thumps his own chest, then mine, and says it again with my words." },
+      { "speaker": "ลุงแดง", "text": "ผม จำ ไม่ ได้", "confidence": 6 },
+      { "speaker": "", "text": "So I've been talking like Mali this whole time. Of course I have. She's the only one who's taught me anything." }
+    ]},
+    { "id": "job_shrug", "heard": "always", "lines": [
+      { "speaker": "", "text": "He shrugs back, twice as big, then thumps his chest and points at the generator." },
+      { "speaker": "ลุงแดง", "text": "ผม ทำงาน" },
+      { "speaker": "", "text": "Then he points at me." },
+      { "speaker": "ลุงแดง", "text": "คุณ ทำงาน ดี", "confidence": 3 }
+    ]},
+    { "id": "lung_radio", "lines": [
+      { "speaker": "", "text": "Lung Daeng has a little radio on the step, turned up loud. A woman is reading the news, fast." },
+      { "speaker": "วิทยุ", "text": "เมื่อคืน เรือ โดยสาร ล่ม กลาง ทะเล มี คน หาย หลาย คน", "setFlag": "heard_radio",
+        "catchWord": "เรือ", "catchOptions": ["เรือ", "น้ำ", "ข้าว"] },
+      { "speaker": "", "text": "Lung Daeng switches it off. He doesn't look at me." },
+      { "speaker": "", "text": "My hand goes to the soaked ticket in my pocket." }
+    ]},
+    { "id": "lung_idle", "heard": "always", "lines": [
+      { "speaker": "ลุงแดง", "text": "ทำงาน ดี" },
+      { "speaker": "", "text": "He's sitting on the step, poking at the generator with a screwdriver." }
     ]},
 
     { "id": "bed", "lines": [
@@ -66,53 +302,80 @@
     ]},
     { "id": "window", "lines": [
       { "speaker": "", "text": "หน้าต่าง" },
-      { "speaker": "", "text": "It's dark outside. I can't see anything beyond the glass." }
+      { "speaker": "", "text": "The yard outside is a mess of broken boards and seaweed. A little spirit house lies on its side in the mud." }
+    ]},
+    { "id": "window_boat", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "Mali comes to stand beside me and points at an upturned hull, wedged against the fence." },
+      { "speaker": "มะลิ", "text": "เรือ", "setFlag": "named_boat" },
+      { "speaker": "", "text": "She looks at it for a long time before she turns away." }
     ]},
     { "id": "mirror", "lines": [
       { "speaker": "", "text": "กระจก" },
-      { "speaker": "", "text": "A stranger looks back at me." }
+      { "speaker": "", "text": "A stranger looks back at me. Someone has cleaned the cut over my eye and taped it shut." }
     ]},
     { "id": "door", "lines": [
       { "speaker": "", "text": "ประตู" },
-      { "speaker": "", "text": "It won't open. Is it locked from the outside?", "setFlag": "tried_door" }
+      { "speaker": "", "text": "It's barred from the inside with a plank. Through the gap I can hear the sea, much too close.", "setFlag": "tried_door" }
+    ]},
+    { "id": "door_again", "lines": [
+      { "speaker": "", "text": "My hand is on the plank when I feel Mali watching me.", "choices": [
+        { "text": "Lift the plank anyway", "next": "door_again_cold", "warmth": -4 },
+        { "text": "Leave it" }
+      ]}
+    ]},
+    { "id": "door_again_cold", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "มะลิ", "text": "อย่า" },
+      { "speaker": "", "text": "Just that one word, cold enough that I let go." }
     ]},
     { "id": "table", "lines": [
       { "speaker": "", "text": "โต๊ะ" },
-      { "speaker": "", "text": "There's a folded letter on the table." },
-      { "speaker": "", "text": "จดหมาย" },
-      { "speaker": "", "text": "Only a few words are written on it." },
-      { "speaker": "", "text": "เจ็ด วัน", "setFlag": "read_letter" },
-      { "speaker": "", "text": "What is that supposed to mean?" }
+      { "speaker": "", "text": "A low table. Two bowls, two spoons. She was expecting me to wake up." }
     ]},
     { "id": "jar", "lines": [
       { "speaker": "", "text": "น้ำ" },
-      { "speaker": "", "text": "A clay jar full of cool water." }
-    ]},
-    { "id": "shrine", "lines": [
-      { "speaker": "", "text": "A small shrine. Someone has left fresh white flowers on it." }
+      { "speaker": "", "text": "A clay jar full of rainwater. The tap water must be gone." }
     ]},
     { "id": "lamp", "lines": [
-      { "speaker": "", "text": "An oil lamp. Someone keeps it burning, even in the daytime." }
+      { "speaker": "", "text": "ตะเกียง" },
+      { "speaker": "", "text": "An oil lamp. With the power out, it's all the light there is." }
+    ]},
+    { "id": "lamp_song", "lines": [
+      { "speaker": "", "text": "The flame gutters. A tune comes into my head from nowhere. Something slow, for falling asleep to.", "choices": [
+        { "text": "Hum it", "next": "mali_song" },
+        { "text": "Let it go" }
+      ]}
     ]},
     { "id": "bookshelf", "lines": [
       { "speaker": "", "text": "หนังสือ" },
-      { "speaker": "", "text": "Rows of old books. I can't read a single title." }
+      { "speaker": "", "text": "Rows of old books, swollen with damp. I can't read a single title." }
+    ]},
+    { "id": "bookshelf_photo", "lines": [
+      { "speaker": "", "text": "Tucked between two books, a school photo. Rows of children in white shirts, squinting into the sun.", "setFlag": "found_photo" },
+      { "speaker": "", "text": "One face has been scratched out with something sharp." },
+      { "speaker": "", "text": "The girl next to it has Mali's eyes." }
     ]},
     { "id": "calendar", "lines": [
       { "speaker": "", "text": "ปฏิทิน" },
-      { "speaker": "", "text": "Someone has been crossing off the days. One of them is circled in red." }
+      { "speaker": "", "text": "Someone has been crossing off the days. Further on, one date is circled in red, with a full moon and a little lotus-shaped float drawn beside it." }
     ]},
     { "id": "coat", "lines": [
       { "speaker": "", "text": "เสื้อ" },
-      { "speaker": "", "text": "A white jacket. It looks like it would fit me." }
+      { "speaker": "", "text": "My own clothes, hung up to dry, still stiff with salt. The ones I'm wearing are borrowed. They're a man's, and they almost fit." }
     ]},
     { "id": "painting", "lines": [
       { "speaker": "", "text": "รูป" },
-      { "speaker": "", "text": "A painting of a temple on a hill, under a pale moon." }
+      { "speaker": "", "text": "A little shrine on a cliff over the sea, under a full moon. It's the only thing in the room the water didn't touch." }
     ]},
     { "id": "cat", "heard": "always", "lines": [
       { "speaker": "", "text": "แมว" },
-      { "speaker": "???", "text": "เหมียว" }
+      { "speaker": "???", "text": "เหมียว" },
+      { "speaker": "", "text": "It pads straight over and leans against my leg, like it always does." }
+    ]},
+    { "id": "mali_cat", "portrait": "portrait_mali", "lines": [
+      { "speaker": "", "text": "Mali crouches by the table with a saucer of rice and calls across the room, quick and sing-song." },
+      { "speaker": "มะลิ", "text": "มา นี่ แมว น้อย มา กิน ข้าว", "setFlag": "cat_called",
+        "catchWord": "แมว", "catchOptions": ["แมว", "ประตู", "โต๊ะ"] },
+      { "speaker": "", "text": "The cat ignores her completely and stays with me. Mali gives it a betrayed look." }
     ]},
 
     { "id": "bed_named", "portrait": "portrait_mali", "heard": "always", "next": "bed", "lines": [
@@ -132,6 +395,9 @@
     ]},
     { "id": "jar_named", "portrait": "portrait_mali", "heard": "always", "next": "jar", "lines": [
       { "speaker": "มะลิ", "text": "น้ำ", "setFlag": "named_jar" }
+    ]},
+    { "id": "lamp_named", "portrait": "portrait_mali", "heard": "always", "next": "lamp", "lines": [
+      { "speaker": "มะลิ", "text": "ตะเกียง", "setFlag": "named_lamp" }
     ]},
     { "id": "bookshelf_named", "portrait": "portrait_mali", "heard": "always", "next": "bookshelf", "lines": [
       { "speaker": "มะลิ", "text": "หนังสือ", "setFlag": "named_bookshelf" }

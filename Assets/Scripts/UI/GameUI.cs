@@ -19,6 +19,8 @@ namespace ThaiMystery
         public bool IsFading { get; private set; }
 
         private TextMeshProUGUI toast;
+        private TextMeshProUGUI money;
+        private TextMeshProUGUI debug;
         private CanvasGroup toastGroup;
         private Image fade;
         private Coroutine toastRoutine;
@@ -36,11 +38,20 @@ namespace ThaiMystery
             gameObject.AddComponent<GraphicRaycaster>();
 
             var help = UIFactory.Text("Controls", transform,
-                "Move: WASD / Arrows   Inspect: Space / Z   Journal: J / Tab   Replay voice: R   Click a Thai word to guess it",
+                "Move: WASD / Arrows   Inspect: Space / Z   Journal: J / Tab   Replay voice: R   Click a Thai word to guess it   F1: story values",
                 16, new Color(1, 1, 1, 0.55f), TextAlignmentOptions.TopLeft);
             UIFactory.Place(help.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(16, -10), new Vector2(1000, 24));
 
             DialogueBox = new DialogueUI(transform, () => Game.Dialogue.OnBoxClicked(), OpenGuess);
+
+            // Baht earned from jobs, shown once he has any.
+            money = UIFactory.Text("Money", transform, "", 26, Theme.Paper, TextAlignmentOptions.MidlineRight);
+            UIFactory.Place(money.rectTransform, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-20, -8), new Vector2(300, 36));
+
+            // F1: the hidden story values, for testing scenes.
+            debug = UIFactory.Text("Debug", transform, "", 18, new Color(1, 0.9f, 0.6f, 0.9f), TextAlignmentOptions.TopLeft);
+            UIFactory.Place(debug.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(16, -36), new Vector2(1100, 30));
+            debug.gameObject.SetActive(false);
 
             toast = UIFactory.Text("Toast", transform, "", 26, Theme.Paper);
             toast.textWrappingMode = TextWrappingModes.Normal;
@@ -56,7 +67,10 @@ namespace ThaiMystery
 
             Game.Words.Changed += OnWordsChanged;
             Game.Words.GroupConfirmed += OnGroupConfirmed;
-            Game.Words.WordLearned += OnWordLearned;
+            Game.Words.StageRaised += OnStageRaised;
+            Game.State.Changed += OnStateChanged;
+            Game.State.MoneyChanged += OnMoneyChanged;
+            OnStateChanged();
         }
 
         private void OnDestroy()
@@ -64,7 +78,10 @@ namespace ThaiMystery
             if (Game.Words == null) return;
             Game.Words.Changed -= OnWordsChanged;
             Game.Words.GroupConfirmed -= OnGroupConfirmed;
-            Game.Words.WordLearned -= OnWordLearned;
+            Game.Words.StageRaised -= OnStageRaised;
+            if (Game.State == null) return;
+            Game.State.Changed -= OnStateChanged;
+            Game.State.MoneyChanged -= OnMoneyChanged;
         }
 
         private void Update()
@@ -73,6 +90,11 @@ namespace ThaiMystery
             {
                 if (GameInput.Escape()) Popup.Close();
                 return;
+            }
+            if (GameInput.DebugToggle())
+            {
+                debug.gameObject.SetActive(!debug.gameObject.activeSelf);
+                OnStateChanged();
             }
             if (Game.InputConsumed || IsFading) return;
 
@@ -98,8 +120,20 @@ namespace ThaiMystery
             ShowToast("<color=#9BE3A8>Something clicks.</color>  " + string.Join("   ", parts));
         }
 
-        private void OnWordLearned(string thai) =>
-            ShowToast($"{thai}  <color=#C9B79C>sounds like my own voice now.</color>");
+        private void OnStageRaised(string thai, WordStage stage) =>
+            ShowToast(stage == WordStage.Owned
+                ? $"{thai}  <color=#C9B79C>sounds like my own voice now.</color>"
+                : $"{thai}  <color=#C9B79C>is starting to sound like my own voice.</color>");
+
+        private void OnStateChanged()
+        {
+            var state = Game.State;
+            money.text = state.Money > 0 ? $"{state.Money} บาท" : "";
+            if (debug.gameObject.activeSelf) debug.text = state.Describe();
+        }
+
+        private void OnMoneyChanged(int change) =>
+            ShowToast(change > 0 ? $"<color=#9BE3A8>+{change} บาท</color>" : $"<color=#C9B79C>{change} บาท</color>");
 
         public void ShowToast(string message)
         {

@@ -3,13 +3,15 @@ using UnityEngine;
 namespace ThaiMystery
 {
     // Anything the player can inspect or talk to. The first rule in map.json whose
-    // flags match decides which dialogue plays.
+    // flags and condition match decides which dialogue plays. Objects with showWhen
+    // (a visitor, say) appear and disappear as the condition changes.
     public class Interactable : MonoBehaviour
     {
         private ObjectData data;
         private CharacterSprite character;
 
-        public bool Solid => !data.passable;
+        public bool Solid => !data.passable && Visible;
+        public bool Visible { get; private set; } = true;
 
         public void Init(ObjectData objectData, Vector2Int cell)
         {
@@ -34,6 +36,24 @@ namespace ThaiMystery
             // Tall furniture like the bed blocks every tile it covers.
             for (int i = 0; i < Mathf.Max(1, data.height); i++)
                 Game.Map.Register(this, cell + Vector2Int.up * i);
+
+            if (!string.IsNullOrEmpty(data.showWhen))
+            {
+                Game.State.Changed += UpdateVisibility;
+                UpdateVisibility();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (Game.State != null) Game.State.Changed -= UpdateVisibility;
+        }
+
+        private void UpdateVisibility()
+        {
+            Visible = Game.State.Check(data.showWhen);
+            var sr = GetComponent<SpriteRenderer>();
+            if (sr != null) sr.enabled = Visible;
         }
 
         public void Interact(PlayerController player)
@@ -52,6 +72,7 @@ namespace ThaiMystery
             {
                 if (!string.IsNullOrEmpty(rule.requireFlag) && !Game.Flags.Has(rule.requireFlag)) continue;
                 if (Game.Flags.Has(rule.blockFlag)) continue;
+                if (!Game.State.Check(rule.when)) continue;
                 return rule.dialogue;
             }
             return null;

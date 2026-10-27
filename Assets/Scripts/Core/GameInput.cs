@@ -25,8 +25,19 @@ namespace ThaiMystery
         public static bool Replay() => Pressed(Btn.Replay);
         public static bool UpPressed() => Pressed(Btn.Up);
         public static bool DownPressed() => Pressed(Btn.Down);
+        public static bool Backspace() => Pressed(Btn.Backspace);
+        public static bool Submit() => Pressed(Btn.Submit);
+        public static bool DebugToggle() => Pressed(Btn.Debug);
 
-        private enum Btn { Up, Down, Left, Right, Confirm, Cancel, Escape, Journal, Replay }
+        // 1 to 9 for the number keys along the top, 0 when none was pressed this frame.
+        public static int DigitPressed()
+        {
+            for (int d = 1; d <= 9; d++)
+                if (DigitDown(d)) return d;
+            return 0;
+        }
+
+        private enum Btn { Up, Down, Left, Right, Confirm, Cancel, Escape, Journal, Replay, Backspace, Submit, Debug }
 
 #if ENABLE_INPUT_SYSTEM
         private static bool Held(Btn k)
@@ -56,8 +67,17 @@ namespace ThaiMystery
                 case Btn.Escape: return kb.escapeKey.wasPressedThisFrame;
                 case Btn.Journal: return kb.jKey.wasPressedThisFrame || kb.tabKey.wasPressedThisFrame;
                 case Btn.Replay: return kb.rKey.wasPressedThisFrame;
+                case Btn.Backspace: return kb.backspaceKey.wasPressedThisFrame;
+                case Btn.Submit: return kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame;
+                case Btn.Debug: return kb.f1Key.wasPressedThisFrame;
             }
             return false;
+        }
+
+        private static bool DigitDown(int d)
+        {
+            var kb = Keyboard.current;
+            return kb != null && kb[Key.Digit1 + (d - 1)].wasPressedThisFrame;
         }
 #else
         private static bool Held(Btn k)
@@ -83,9 +103,14 @@ namespace ThaiMystery
                 case Btn.Escape: return Input.GetKeyDown(KeyCode.Escape);
                 case Btn.Journal: return Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Tab);
                 case Btn.Replay: return Input.GetKeyDown(KeyCode.R);
+                case Btn.Backspace: return Input.GetKeyDown(KeyCode.Backspace);
+                case Btn.Submit: return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
+                case Btn.Debug: return Input.GetKeyDown(KeyCode.F1);
             }
             return false;
         }
+
+        private static bool DigitDown(int d) => Input.GetKeyDown(KeyCode.Alpha1 + (d - 1));
 #endif
     }
 }

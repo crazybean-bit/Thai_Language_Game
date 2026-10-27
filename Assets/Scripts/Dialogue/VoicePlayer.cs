@@ -12,11 +12,13 @@ namespace ThaiMystery
     //   Lines/<dialogueId>_<lineIndex>   one clip per Thai line (index counts from 0)
     //   Words/<WordKey(thai)>            one clip per word in Mali's voice
     //   Words/Own/<WordKey(thai)>        the same word in the protagonist's own voice
+    //   Words/Hesitant/<WordKey(thai)>   his voice stumbling over it, for when he's nervous
     // Thai Mystery > Generate Voices creates them with text-to-speech.
     //
     // When the protagonist recalls a word (reading a label, clicking a word) it plays as he
-    // remembers it: Mali's voice through a muffled, echoing "memory" filter while it is new,
-    // clearing as he practises, and his own voice once the word is learned.
+    // remembers it, by its WordStage: Mali's voice through a muffled, echoing "memory" filter
+    // while it is new, clearer once he understands it, blending into his own voice once
+    // he's caught it in the wild, and only his own once he owns it.
     public class VoicePlayer : MonoBehaviour
     {
         private AudioSource voice;
@@ -61,8 +63,7 @@ namespace ThaiMystery
             Stop();
             var clip = Resources.Load<AudioClip>($"Audio/Lines/{dialogueId}_{lineIndex}");
             if (clip == null) return false;
-            voice.clip = clip;
-            voice.Play();
+            PlayOn(voice, clip, 1f, 1f);
             return true;
         }
 
@@ -83,19 +84,13 @@ namespace ThaiMystery
 
         // Plays a word the way the protagonist remembers it. Returns false if he can't
         // (he has never heard it, or there is no clip for it).
-        public bool PlayWord(string thai)
-        {
-            if (!CanRecall(thai)) return false;
-            Stop();
-            lastRecall = new List<string> { thai };
-            PlayRecalled(thai, Game.Words.StageOf(thai), Game.Words.Fog(thai));
-            return true;
-        }
+        public bool PlayWord(string thai) => PlayRecall(new List<string> { thai });
 
         public static bool CanRecall(string thai) =>
             Game.Words.IsHeard(thai) && (MaliClip(thai) != null || OwnClip(thai) != null);
 
         // Reads words out one after another as remembered, e.g. a label on an object.
+        // When he's low on confidence the words take a moment to come back.
         // Returns false when none of them can be recalled.
         public bool PlayRecall(List<string> words)
         {
@@ -103,37 +98,79 @@ namespace ThaiMystery
             var playable = words.FindAll(CanRecall);
             if (playable.Count == 0) return false;
             lastRecall = playable;
-            // Read the stages now: the caller counts this recall as practice straight after.
+            // Read the stages now, before anything this recall leads to can change them.
             var stages = playable.ConvertAll(Game.Words.StageOf);
-            var fogs = playable.ConvertAll(Game.Words.Fog);
-            recall = StartCoroutine(RecallRoutine(playable, stages, fogs));
+            float delay = Game.State != null && Game.State.LowOnConfidence ? 0.6f : 0f;
+            recall = StartCoroutine(RecallRoutine(playable, stages, delay));
             return true;
         }
 
-        private IEnumerator RecallRoutine(List<string> words, List<WordStage> stages, List<float> fogs)
+        private IEnumerator RecallRoutine(List<string> words, List<WordStage> stages, float delay)
         {
+            if (delay > 0) yield return new WaitForSeconds(delay);
             for (int i = 0; i < words.Count; i++)
             {
-                var clip = PlayRecalled(words[i], stages[i], fogs[i]);
-                yield return new WaitForSeconds(clip.length + 0.15f);
+                float length = PlayRecalled(words[i], stages[i]);
+                yield return new WaitForSeconds(length + 0.15f);
             }
             recall = null;
         }
 
-        private AudioClip PlayRecalled(string thai, WordStage stage, float fog)
+        // Returns how long it plays for.
+        private float PlayRecalled(string thai, WordStage stage)
         {
             var own = OwnClip(thai);
-            if (stage == WordStage.Learned && own != null)
+            var teacher = MaliClip(thai);
+            if (own != null && (stage == WordStage.Owned || teacher == null))
+                return PlayOn(voice, own, 1f, 1f);
+            if (own != null && stage == WordStage.Familiar)
             {
-                voice.clip = own;
-                voice.Play();
-                return own;
+                // Halfway his: both voices at once, hers fading under his.
+                SetFog(0.15f);
+                float mine = PlayOn(voice, own, 0.75f, 1f);
+                return Mathf.Max(mine, PlayOn(memory, teacher, 0.45f, 1f));
             }
-            var clip = MaliClip(thai) ?? own;
-            SetFog(fog);
-            memory.clip = clip;
-            memory.Play();
-            return clip;
+            SetFog(stage == WordStage.Understood ? 0.45f : 1f);
+            return PlayOn(memory, teacher, memory.volume, memory.pitch);
+        }
+
+        private static float PlayOn(AudioSource source, AudioClip clip, float volume, float pitch)
+        {
+            source.volume = volume;
+            source.pitch = pitch;
+            source.clip = clip;
+            source.Play();
+            return clip.length / Mathf.Max(0.1f, pitch);
+        }
+
+        // He says a sentence himself, word by word in his own voice. Nervous, he stumbles
+        // (Words/Hesitant clips); confident, he talks a little faster.
+        public float PlaySentence(List<string> words, bool hesitant, bool confident)
+        {
+            Stop();
+            var clips = new List<AudioClip>();
+            foreach (var w in words)
+            {
+                var clip = (hesitant ? HesitantClip(w) : null) ?? OwnClip(w) ?? MaliClip(w);
+                if (clip != null) clips.Add(clip);
+            }
+            if (clips.Count == 0) return 0f;
+            float pitch = confident ? 1.06f : 1f;
+            float gap = hesitant ? 0.35f : 0.06f;
+            float total = 0f;
+            foreach (var c in clips) total += c.length / pitch + gap;
+            recall = StartCoroutine(SentenceRoutine(clips, pitch, gap));
+            return total;
+        }
+
+        private IEnumerator SentenceRoutine(List<AudioClip> clips, float pitch, float gap)
+        {
+            foreach (var clip in clips)
+            {
+                float length = PlayOn(voice, clip, 1f, pitch);
+                yield return new WaitForSeconds(length + gap);
+            }
+            recall = null;
         }
 
         // 1 = barely there: dull, far away and echoing. 0 = clear.
@@ -156,6 +193,8 @@ namespace ThaiMystery
         private static AudioClip MaliClip(string thai) => Resources.Load<AudioClip>("Audio/Words/" + WordKey(thai));
 
         private static AudioClip OwnClip(string thai) => Resources.Load<AudioClip>("Audio/Words/Own/" + WordKey(thai));
+
+        private static AudioClip HesitantClip(string thai) => Resources.Load<AudioClip>("Audio/Words/Hesitant/" + WordKey(thai));
 
         public void Replay()
         {
