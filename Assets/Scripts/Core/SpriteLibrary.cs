@@ -48,14 +48,13 @@ namespace ThaiMystery
             sheet = new Sprite[4, 3];
             float fw = tex.width / 3f;
             float fh = tex.height / 4f;
-            float ppu = PixelsPerUnit * (fw / 32f);
             for (int row = 0; row < 4; row++)
             {
                 for (int col = 0; col < 3; col++)
                 {
                     // Texture rows start at the bottom, sheet rows at the top.
                     var rect = new Rect(col * fw, tex.height - (row + 1) * fh, fw, fh);
-                    var sp = Sprite.Create(tex, rect, new Vector2(0.5f, 0f), ppu);
+                    var sp = Sprite.Create(tex, rect, new Vector2(0.5f, 0f), PixelsPerUnit);
                     sp.name = $"{name}_{row}_{col}";
                     sheet[row, col] = sp;
                 }
