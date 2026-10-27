@@ -37,7 +37,7 @@ The yellow "Input Manager is marked for deprecation" warning is harmless: `GameI
 All content lives in `Assets/Resources/Data`:
 
 - `words.json`: every Thai word with accepted answers, romanization, group and note.
-- `dialogue.json`: dialogue lines. Thai text is space separated; lines with no Thai are the protagonist's thoughts and show in italics. Lines can set flags and offer choices. `"heard"` on a dialogue (or a line) says whether the protagonist can make out what a character says: `"always"`, a flag name, or left out for noise. Clear lines play their voice clip and teach every word in them; noise shows only the words he already knows, with voice blips. Lines with no speaker are what he reads or remembers.
+- `dialogue.json`: dialogue lines. Thai text is space separated; lines with no Thai are the protagonist's thoughts and show in italics. Lines can set flags and offer choices. `"heard"` on a dialogue (or a line) says whether the protagonist can make out what a character says: `"always"`, a flag name, or left out for noise. Clear lines play their voice clip and teach every word in them; noise shows only the words he already knows, and plays the voice muffled and a little too fast to follow. Lines with no speaker are what he reads or remembers.
 - `map.json`: the room layout as text rows (`#` outer wall, `-` upper wall, `=` lower wall, `.` floor, `,` rug), the player start, and objects (`height` makes tall furniture like the bed block more than one tile). Each object has rules that pick a dialogue based on flags, so Mali says different things after you try the door or read the letter.
 
 ## Art

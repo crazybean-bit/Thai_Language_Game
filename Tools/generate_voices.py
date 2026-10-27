@@ -1,8 +1,8 @@
 """Generates Thai voice clips for the game with text-to-speech.
 
 Creates WAV files in Assets/Resources/Audio:
-  Lines/<dialogueId>_<lineIndex>.wav   for Thai lines a character says that the protagonist
-                                       can make out ("heard" in dialogue.json)
+  Lines/<dialogueId>_<lineIndex>.wav   for every Thai line a character says (lines he can't
+                                       make out play muffled)
   Words/w_<hex codepoints>.wav         every word in words.json, in the voice that teaches it
   Words/Own/w_<hex codepoints>.wav     every word in the protagonist's own voice
 
@@ -64,9 +64,8 @@ def collect():
     for d in dialogues:
         for i, line in enumerate(d["lines"]):
             text = line.get("text", "")
-            # Narration is played back word by word, and lines nobody can make out are noise.
-            heard = line.get("heard") or d.get("heard")
-            if is_thai(text) and line.get("speaker") and heard:
+            # Narration is played back word by word from the word clips.
+            if is_thai(text) and line.get("speaker"):
                 jobs.append({
                     "path": os.path.join(AUDIO, "Lines", f"{d['id']}_{i}.wav"),
                     "text": spoken(text),
