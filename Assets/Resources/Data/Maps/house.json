@@ -36,7 +36,13 @@
       {"dialogue": "window"}
     ]},
     {"id": "painting", "sprite": "painting", "x": 9, "y": 2, "rules": [{"dialogue": "painting_named", "requireFlag": "mali_speaks", "blockFlag": "named_painting"}, {"dialogue": "painting"}]},
-    {"id": "door", "sprite": "door", "x": 10, "y": 2, "rules": [{"dialogue": "door_named", "requireFlag": "mali_speaks", "blockFlag": "named_door"}, {"dialogue": "door_again", "requireFlag": "warned_door"}, {"dialogue": "door"}]},
+    {"id": "door", "sprite": "door", "x": 10, "y": 2, "rules": [
+      {"dialogue": "door_named", "requireFlag": "mali_speaks", "blockFlag": "named_door"},
+      {"dialogue": "door_unbar", "requireFlag": "thanked_mali", "blockFlag": "door_unbarred", "goTo": "yard", "goX": 10, "goY": 3, "goFacing": "down"},
+      {"requireFlag": "door_unbarred", "goTo": "yard", "goX": 10, "goY": 3, "goFacing": "down"},
+      {"dialogue": "door_again", "requireFlag": "warned_door"},
+      {"dialogue": "door"}
+    ]},
     {"id": "lamp", "sprite": "lamp", "x": 1, "y": 6, "rules": [
       {"dialogue": "lamp_named", "requireFlag": "mali_speaks", "blockFlag": "named_lamp"},
       {"dialogue": "lamp_song", "requireFlag": "named_lamp", "blockFlag": "hummed"},
@@ -59,12 +65,8 @@
       {"dialogue": "mali_thanks", "requireFlag": "mali_speaks", "blockFlag": "thanked_mali"},
       {"dialogue": "mali_money", "requireFlag": "job_done", "blockFlag": "money_talk"},
       {"dialogue": "mali_idle"}
-    ]},
-    {"id": "lung_daeng", "sprite": "lung_daeng", "x": 10, "y": 4, "character": true, "showWhen": "thanked_mali", "rules": [
-      {"dialogue": "job_intro", "blockFlag": "job_done"},
-      {"dialogue": "lung_radio", "requireFlag": "job_done", "when": "named_boat & !heard_radio"},
-      {"dialogue": "lung_idle"}
     ]}
+
   ],
   "lighting": {
     "darkness": 0.74,

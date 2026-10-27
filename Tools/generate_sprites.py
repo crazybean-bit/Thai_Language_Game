@@ -447,6 +447,190 @@ def coat():
     save(c, "coat")
 
 
+# ============================================================== outdoors (the yard)
+
+def sand(variant):
+    c = Canvas(32, 32)
+    base = rgb("8a7a5e")
+    for y in range(32):
+        for x in range(32):
+            n = noise(x // 2, y // 2, 40 + variant)
+            col = shade(base, (n - 0.5) * 0.16)
+            if noise(x, y, 50 + variant) > 0.93:
+                col = shade(base, 0.18)                       # shell grit
+            c.put(x, y, col)
+    for i in range(3):                                        # wet streaks left by the wave
+        y = int(noise(i, variant, 61) * 28) + 2
+        x0 = int(noise(i, variant, 62) * 16)
+        c.hline(x0, x0 + 10, y, shade(base, -0.18))
+    save(c, f"sand_{variant}")
+
+
+def grass(variant):
+    c = Canvas(32, 32)
+    base = rgb("4a5a3a")
+    for y in range(32):
+        for x in range(32):
+            n = noise(x // 2, y // 3, 70 + variant)
+            col = shade(base, (n - 0.5) * 0.2)
+            if noise(x, y, 80 + variant) > 0.9:
+                col = shade(base, 0.16)
+            elif noise(x, y, 81 + variant) > 0.92:
+                col = rgb("6a5e48")                           # mud showing through
+            c.put(x, y, col)
+    save(c, f"grass_{variant}")
+
+
+def sea(variant):
+    c = Canvas(32, 32)
+    base = rgb("2c4256")
+    for y in range(32):
+        for x in range(32):
+            n = noise((x + variant * 5) // 3, y // 2, 90)
+            c.put(x, y, shade(base, (n - 0.5) * 0.18))
+    for i in range(4):
+        y = 4 + i * 8 + (variant * 3) % 5
+        x0 = int(noise(i, variant, 91) * 20)
+        c.hline(x0, x0 + 6, y, shade(base, 0.22))
+        c.hline(x0 + 2, x0 + 4, y - 1, shade(base, 0.32))
+    save(c, f"sea_{variant}")
+
+
+def fence():
+    """Hedge and posts around the yard."""
+    c = Canvas(32, 32)
+    leaf = rgb("33452c")
+    for y in range(32):
+        for x in range(32):
+            c.put(x, y, shade(leaf, (noise(x // 2, y // 2, 95) - 0.5) * 0.3))
+    for (x, y) in [(5, 6), (20, 4), (12, 18), (26, 22), (3, 26)]:
+        c.ellipse(x, y, 3, 2, shade(leaf, 0.15))
+    save(c, "fence")
+
+
+def roof(variant):
+    """Rusty corrugated iron."""
+    c = Canvas(32, 32)
+    base = rgb("6a4a3c") if variant == 0 else rgb("634538")
+    for y in range(32):
+        for x in range(32):
+            col = shade(base, 0.12) if x % 4 in (0, 1) else shade(base, -0.12)
+            if noise(x // 3, y // 3, 100 + variant) > 0.78:
+                col = shade(rgb("8a5530"), (noise(x, y, 101) - 0.5) * 0.2)   # rust
+            c.put(x, y, col)
+    save(c, f"roof_{variant}")
+
+
+def house_wall(variant):
+    """The cabin's outside: weathered horizontal planks on stilts."""
+    c = Canvas(32, 32)
+    for plank in range(4):
+        y0 = plank * 8
+        base = [rgb("6e5a48"), rgb("665342"), rgb("72604c"), rgb("6a5644")][(plank + variant) % 4]
+        grain(c, 0, y0, 31, y0 + 7, base, plank + variant * 7 + 30, 0.14, 6)
+        c.hline(0, 31, y0, shade(base, -0.4))
+    c.rect(0, 0, 31, 3, (10, 8, 10, 120))                     # eave shadow
+    for x in range(0, 32):                                    # tide line from the wave
+        c.put(x, 22 + int(noise(x // 4, 0, 33) * 2), shade(rgb("4a4034"), -0.1))
+    save(c, f"house_wall_{variant}")
+
+
+def generator():
+    c = Canvas(32, 32)
+    body, dark = rgb("8a3a2a"), rgb("5a2418")
+    c.rect(4, 12, 27, 27, rgb("3a3634"))                      # frame
+    c.rect(6, 10, 25, 24, body)
+    c.hline(6, 25, 10, shade(body, 0.25))
+    c.rect(8, 14, 15, 21, rgb("2a2624"))                      # engine
+    for y in range(15, 21, 2):
+        c.hline(9, 14, y, rgb("4a4440"))
+    c.rect(18, 13, 23, 16, rgb("c8b060"))                     # fuel cap and label
+    c.ellipse(21, 12, 2, 1, rgb("3a3634"))
+    c.rect(5, 26, 8, 29, rgb("1e1a1a")); c.rect(23, 26, 26, 29, rgb("1e1a1a"))
+    c.rect(26, 18, 29, 25, rgb("b03a2a"))                     # red fuel can
+    c.hline(26, 29, 18, rgb("d05a40"))
+    for x in range(2, 30):                                    # wet sand piled on one side
+        h = int(3 + noise(x // 3, 1, 34) * 3)
+        for y in range(29 - h, 30):
+            if x < 14:
+                c.put(x, y, shade(rgb("7a6a50"), (noise(x, y, 35) - 0.5) * 0.2))
+    c.soft_outline()
+    drop_shadow(c, 16, 30, 12)
+    save(c, "generator")
+
+
+def spirit_house_fallen():
+    """A san phra phum knocked off its post, lying in the mud."""
+    c = Canvas(32, 32)
+    c.rect(2, 24, 22, 26, rgb("8a7a6a"))                      # the post, on its side
+    c.hline(2, 22, 24, rgb("a89a88"))
+    c.poly([(14, 8), (28, 12), (26, 26), (12, 22)], rgb("c8a85a"))   # tilted little house
+    c.poly([(12, 8), (22, 2), (30, 10)], rgb("a83a2a"))       # roof
+    c.poly([(18, 4), (22, 2), (21, 0)], rgb("d8b860"))        # roof finial
+    c.rect(17, 13, 22, 19, rgb("3a2a20"))                     # doorway
+    for (x, y) in [(6, 20), (9, 22), (25, 27)]:               # scattered garlands
+        c.ellipse(x, y, 1.5, 1.5, rgb("e8e0c8"))
+    c.put(28, 28, rgb("d88040"))
+    c.soft_outline()
+    drop_shadow(c, 16, 29, 13)
+    save(c, "spirit_house_fallen")
+
+
+def boat():
+    """An upturned longtail hull, two tiles wide."""
+    c = Canvas(64, 32)
+    hull, hull_d = rgb("4e6a78"), rgb("344a56")
+    c.poly([(4, 24), (10, 12), (54, 10), (62, 22), (56, 28), (8, 28)], hull)
+    for y in range(13, 27, 3):
+        c.hline(9, 56, y, hull_d)
+    c.poly([(54, 10), (62, 4), (63, 8), (60, 20)], rgb("6a8a96"))     # raised prow
+    for (x, y) in [(56, 6), (58, 9)]:                         # ribbon on the prow
+        c.put(x, y, rgb("d84a6a")); c.put(x + 1, y, rgb("e8c048"))
+    c.rect(20, 18, 30, 20, rgb("8a6a4a"))                     # a patch of planking
+    c.soft_outline()
+    drop_shadow(c, 32, 30, 28)
+    save(c, "boat")
+
+
+def palm_fallen():
+    c = Canvas(32, 48)
+    trunk = rgb("7a6248")
+    for i in range(30):                                       # trunk lying across the path
+        y = 30 + int(i * 0.25)
+        c.rect(1 + i, y, 1 + i, y + 4, shade(trunk, (i % 4 == 0) * -0.2))
+    for (cx, cy, rx, ry) in [(6, 22, 6, 9), (12, 18, 8, 6), (3, 30, 4, 8)]:
+        c.ellipse(cx, cy, rx, ry, rgb("4a6a34"))
+    for x in range(2, 18, 3):
+        c.vline(x, 14, 30, rgb("355024"))
+    c.soft_outline()
+    drop_shadow(c, 16, 44, 14)
+    save(c, "palm_fallen")
+
+
+def outdoors():
+    for v in range(4):
+        sand(v)
+        grass(v)
+    for v in range(2):
+        sea(v)
+        roof(v)
+        house_wall(v)
+    for f in (fence, generator, spirit_house_fallen, boat, palm_fallen, debris):
+        f()
+
+
+def debris():
+    c = Canvas(32, 32)
+    c.poly([(2, 22), (20, 16), (22, 19), (4, 25)], rgb("7a6a58"))   # boards
+    c.poly([(10, 26), (28, 22), (29, 25), (11, 29)], rgb("6a5a48"))
+    c.rect(18, 10, 26, 18, rgb("2e5a8a"))                     # a blue plastic chair
+    c.rect(18, 18, 19, 23, rgb("244a72")); c.rect(25, 18, 26, 23, rgb("244a72"))
+    c.ellipse(7, 27, 3, 1.5, rgb("c84a3a"))                   # one sandal
+    c.soft_outline()
+    drop_shadow(c, 16, 29, 13)
+    save(c, "debris")
+
+
 # ============================================================== characters
 
 class Look:
@@ -717,6 +901,7 @@ if __name__ == "__main__":
     for f in (bed, bookshelf, table, stool, jar, lamp, plant, cat,
               window, mirror, door, shrine, calendar, painting, coat):
         f()
+    outdoors()
 
     # The amnesiac protagonist: messy dark hair, plain off-white shirt.
     character("player", Look(hair=rgb("2a2224"), skin=rgb("e2c0a0"), top=rgb("cfc9bc"),

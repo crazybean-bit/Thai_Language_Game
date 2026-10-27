@@ -22,6 +22,17 @@ namespace ThaiMystery
             transform.position = Game.Map.CellToWorld(startCell);
         }
 
+        // Puts him somewhere new, e.g. on the other side of a door.
+        public void PlaceAt(Vector2Int cell, Vector2Int facing)
+        {
+            StopAllCoroutines();
+            moving = false;
+            Cell = cell;
+            transform.position = Game.Map.CellToWorld(cell);
+            character.SetFacing(facing);
+            character.SetWalking(false);
+        }
+
         private void Update()
         {
             if (moving) return;

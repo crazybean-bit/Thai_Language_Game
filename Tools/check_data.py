@@ -3,6 +3,7 @@
 Run with: python3 Tools/check_data.py
 
   - every dialogue a map rule, choice, tile or "next" points to exists
+  - every door leads to a map that exists, onto a tile you can stand on
   - every Thai word someone says clearly is in words.json
   - every word in words.json is said clearly somewhere, so every group can be confirmed
   - tile answers, tile words and listening-moment options are real words
@@ -30,7 +31,8 @@ def thai_words(text):
 def main():
     words = {w["thai"].strip(): w for w in load("words.json")["words"]}
     dialogues = {d["id"]: d for d in load("dialogue.json")["dialogues"]}
-    world = load("map.json")
+    maps_dir = os.path.join(DATA, "Maps")
+    worlds = {f[:-5]: load(os.path.join("Maps", f)) for f in sorted(os.listdir(maps_dir)) if f.endswith(".json")}
     problems = []
     heard = set()
 
@@ -42,10 +44,19 @@ def main():
         if word not in words:
             problems.append(f"{where}: '{word}' is not in words.json")
 
-    ref(world.get("introDialogue"), "map.json introDialogue")
-    for o in world["objects"]:
-        for r in o.get("rules") or []:
-            ref(r.get("dialogue"), f"map.json {o['id']}")
+    for name, world in worlds.items():
+        ref(world.get("introDialogue"), f"Maps/{name} introDialogue")
+        rows = world["rows"]
+        for o in world["objects"]:
+            for r in o.get("rules") or []:
+                ref(r.get("dialogue"), f"Maps/{name} {o['id']}")
+                if r.get("goTo"):
+                    target = worlds.get(r["goTo"])
+                    if target is None:
+                        problems.append(f"Maps/{name} {o['id']}: no map '{r['goTo']}'")
+                    elif not (0 <= r.get("goY", 0) < len(target["rows"]) and
+                              target["rows"][r.get("goY", 0)][r.get("goX", 0):r.get("goX", 0) + 1] in (".", ",", ":", ";")):
+                        problems.append(f"Maps/{name} {o['id']}: arrives on a tile you can't stand on in '{r['goTo']}'")
 
     for d in dialogues.values():
         ref(d.get("next"), f"{d['id']} next")

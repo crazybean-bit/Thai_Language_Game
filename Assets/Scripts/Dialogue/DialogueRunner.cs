@@ -43,6 +43,10 @@ namespace ThaiMystery
         // While his own sentence is on screen, what happens when the player continues.
         private Action afterSaying;
 
+        // The last line he made out clearly, so R can replay it while he builds a reply.
+        private string lastHeardDialogue;
+        private int lastHeardLine;
+
         private int revealed;
         private float revealTimer;
         private bool blipping;
@@ -128,7 +132,12 @@ namespace ThaiMystery
             voice.Stop();
             voice.SetSpeaker(line.speaker);
             if (!thai) blipping = true;
-            else if (clear) blipping = !voice.PlayLine(current.id, lineIndex);
+            else if (clear)
+            {
+                blipping = !voice.PlayLine(current.id, lineIndex);
+                lastHeardDialogue = current.id;
+                lastHeardLine = lineIndex;
+            }
             else if (spoken) blipping = !voice.PlayGarbled(current.id, lineIndex);
             else
             {
@@ -354,7 +363,11 @@ namespace ThaiMystery
             if (mode == Mode.Revealing) TickReveal();
             if (Game.InputConsumed || Game.UI.ModalOpen) return;
 
-            if (GameInput.Replay()) voice.Replay();
+            if (GameInput.Replay())
+            {
+                if (mode == Mode.Tiles && lastHeardDialogue != null) voice.PlayLine(lastHeardDialogue, lastHeardLine);
+                else voice.Replay();
+            }
 
             switch (mode)
             {

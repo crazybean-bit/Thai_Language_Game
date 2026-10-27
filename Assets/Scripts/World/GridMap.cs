@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ThaiMystery
 {
-    // Tile grid built from the text rows in map.json. Cell (0,0) is the bottom-left tile;
+    // Tile grid built from the text rows of a map in Data/Maps. Cell (0,0) is the bottom-left tile;
     // map.json is authored top-down, so rows are flipped when building.
     public class GridMap : MonoBehaviour
     {
@@ -67,9 +67,13 @@ namespace ThaiMystery
             sr.sortingOrder = -999;
         }
 
-        private bool IsFloor(Vector2Int c) => InBounds(c) && (tiles[c.x, c.y] == '.' || tiles[c.x, c.y] == ',');
+        private const string Walkable = ".,:;";
+        // What casts a soft shadow on the ground next to it (the sea doesn't).
+        private const string Walls = "#-=HR%";
 
-        private bool IsWall(Vector2Int c) => !InBounds(c) || (tiles[c.x, c.y] != '.' && tiles[c.x, c.y] != ',');
+        private bool IsFloor(Vector2Int c) => InBounds(c) && Walkable.IndexOf(tiles[c.x, c.y]) >= 0;
+
+        private bool IsWall(Vector2Int c) => !InBounds(c) || Walls.IndexOf(tiles[c.x, c.y]) >= 0;
 
         // Picks a sprite for a cell. Floors and walls rotate through variants so the
         // pattern doesn't visibly repeat; rugs pick a border piece from their neighbours.
@@ -84,6 +88,12 @@ namespace ThaiMystery
                 case '=': return "wall_lower_" + hash % 2;
                 case '.': return "floor_" + hash % 4;
                 case ',': return "rug_" + RugEdges(cell);
+                case ':': return "sand_" + hash % 4;
+                case ';': return "grass_" + hash % 4;
+                case '~': return "sea_" + hash % 2;
+                case '%': return "fence";
+                case 'R': return "roof_" + hash % 2;
+                case 'H': return "house_wall_" + hash % 2;
                 default: return null;
             }
         }

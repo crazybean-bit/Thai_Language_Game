@@ -151,6 +151,19 @@ namespace ThaiMystery
             toastGroup.alpha = 0;
         }
 
+        // Fades to black and stays there until the next FadeIn.
+        public IEnumerator FadeOut(float seconds)
+        {
+            IsFading = true;
+            fade.gameObject.SetActive(true);
+            for (float t = 0; t < seconds; t += Time.deltaTime)
+            {
+                fade.color = new Color(0, 0, 0, t / seconds);
+                yield return null;
+            }
+            fade.color = Color.black;
+        }
+
         public IEnumerator FadeIn(float seconds)
         {
             IsFading = true;
