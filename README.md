@@ -26,7 +26,7 @@ The yellow "Input Manager is marked for deprecation" warning is harmless: `GameI
 
 ## How the language mechanic works
 
-- **Words are learned by ear.** At first the protagonist can't make out anything: Thai speech and labels show as a jumble of letters, with no voice. Once Mali starts teaching him, every word she pronounces clearly unlocks: it appears properly, goes into the journal, and your guess appears under it in every message from then on.
+- **Words are learned by ear.** At first the protagonist can't make out anything: Thai speech and labels show as a blurred, shifting jumble of letters he can't focus on, with no voice. Once Mali starts teaching him, every word she pronounces clearly unlocks: it appears properly, goes into the journal, and your guess appears under it in every message from then on.
 - **Remembering a word** (inspecting a labelled thing, clicking a word, or picking it as a choice) plays it the way he remembers it: at first Mali's voice, muffled and echoing, clearing a little with each recall, until after a few times (`WordBook.ExposuresToLearn`) he hears it in his own voice. Words he's still unsure of are drawn in fainter ink.
 - Words belong to **groups** (e.g. *bed, window, mirror, door*). A group confirms only when every word in it has been heard and guessed right, so you can't brute-force one word at a time. Confirmed words turn green and reveal a romanization and a short learning note.
 - Guesses are matched loosely: case, punctuation and leading "to/a/the" are ignored, and each word lists several accepted answers.
