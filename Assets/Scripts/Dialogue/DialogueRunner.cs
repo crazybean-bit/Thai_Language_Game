@@ -8,7 +8,8 @@ namespace ThaiMystery
     // blips (or plays its recorded clip), handles choices and sets flags.
     //
     // Words are learned by ear. A speaker's line the protagonist can make out (see
-    // DialogueData.heard) plays its clip and teaches him its words; one he can't is noise.
+    // DialogueData.heard) plays its clip and teaches him its words; one he can't plays
+    // muffled and too fast to follow, and teaches nothing.
     // Thai lines without a speaker are things he reads or recalls: words he has heard
     // play back as he remembers them, and each recall is practice.
     public class DialogueRunner : MonoBehaviour
@@ -83,7 +84,7 @@ namespace ThaiMystery
             voice.SetSpeaker(line.speaker);
             if (!thai) blipping = true;
             else if (clear) blipping = !voice.PlayLine(current.id, lineIndex);
-            else if (spoken) blipping = true;
+            else if (spoken) blipping = !voice.PlayGarbled(current.id, lineIndex);
             else
             {
                 // Reading or remembering: no blips, just the words he knows, as he knows them.

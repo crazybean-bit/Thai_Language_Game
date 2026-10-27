@@ -66,6 +66,21 @@ namespace ThaiMystery
             return true;
         }
 
+        // A line he can't make out: her real voice, but quick and muffled, as if heard through
+        // a wall. Returns false when there is no clip (the caller falls back to blips).
+        public bool PlayGarbled(string dialogueId, int lineIndex)
+        {
+            Stop();
+            var clip = Resources.Load<AudioClip>($"Audio/Lines/{dialogueId}_{lineIndex}");
+            if (clip == null) return false;
+            SetFog(0.7f);
+            memory.pitch = 1.12f;
+            memory.volume = 0.8f;
+            memory.clip = clip;
+            memory.Play();
+            return true;
+        }
+
         // Plays a word the way the protagonist remembers it. Returns false if he can't
         // (he has never heard it, or there is no clip for it).
         public bool PlayWord(string thai)

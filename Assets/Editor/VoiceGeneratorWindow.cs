@@ -15,7 +15,7 @@ namespace ThaiMystery.Editor
     // The key is kept in this machine's EditorPrefs, never in the project files.
     //
     // Clips made:
-    //   Lines/<dialogue>_<index>   lines a character says that the protagonist can make out
+    //   Lines/<dialogue>_<index>   every Thai line a character says (muffled when he can't make it out)
     //   Words/<key>                every word, in the voice of whoever teaches the words (Mali)
     //   Words/Own/<key>            every word in the protagonist's own voice, for learned words
     public class VoiceGeneratorWindow : EditorWindow
@@ -265,10 +265,8 @@ namespace ThaiMystery.Editor
                 {
                     var line = d.lines[i];
                     if (string.IsNullOrEmpty(line.text) || !WordBook.IsThai(line.text)) continue;
-                    // The protagonist's reading and recall play word clips, and lines he can't
-                    // make out are only noise, so neither needs a clip of its own.
+                    // The protagonist's reading and recall play word clips instead.
                     if (string.IsNullOrEmpty(line.speaker)) continue;
-                    if (string.IsNullOrEmpty(line.heard) && string.IsNullOrEmpty(d.heard)) continue;
                     jobs.Add(new Job
                     {
                         path = $"{AudioRoot}/Lines/{d.id}_{i}.wav",
