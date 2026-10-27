@@ -6,11 +6,14 @@ and builds Assets/Resources/Sprites/<name>.png from them:
 
     python Tools/import_pixellab.py player path/to/export.zip
     python Tools/import_pixellab.py mali path/to/Idle_rotations_8dir.gif
+    python Tools/import_pixellab.py player path/to/folder   # south.png etc. plus *walking_south.gif etc.
     python Tools/import_pixellab.py --build          # rebuild every sheet from Tools/art/pixellab
 
 Sheet layout matches CharacterSprite: rows down, left, right, up; columns step, stand, step.
 With a walk animation the step columns use two of its frames; without one they use the
-standing pose raised by a pixel, which reads as a small bob while walking.
+standing pose raised by a pixel, which reads as a small bob while walking. The full walk
+cycle is also written to <name>_walk.png (same rows, one column per frame), which the game
+plays instead of the three-frame cycle when it exists.
 """
 import io
 import json
@@ -55,6 +58,26 @@ def import_gif(path):
     return {d: {"stand": frames[i]} for i, d in enumerate(GIF_ORDER)}
 
 
+def import_folder(path):
+    """Loose files as downloaded one by one: <direction>.png plus a walking GIF per direction."""
+    frames = {}
+    for d in GIF_ORDER:
+        f = os.path.join(path, d + ".png")
+        if os.path.exists(f):
+            frames[d] = {"stand": Image.open(f).convert("RGBA")}
+    if not frames:
+        sys.exit("No south.png / west.png / ... rotations in that folder")
+    for f in sorted(os.listdir(path)):
+        low = f.lower()
+        if not (low.endswith(".gif") and "walk" in low):
+            continue
+        d = low[:-4].rsplit("_", 1)[-1]
+        if d in frames:
+            gif = Image.open(os.path.join(path, f))
+            frames[d]["walk"] = [g.convert("RGBA") for g in ImageSequence.Iterator(gif)]
+    return frames
+
+
 def import_zip(path):
     z = zipfile.ZipFile(path)
     names = z.namelist()
@@ -86,42 +109,58 @@ def shadow(size, cx, cy, rx, ry):
     return layer.filter(ImageFilter.GaussianBlur(0.8))
 
 
-def grounded(frame, lift=0):
-    """Frame with a soft floor shadow, feet moved to the bottom row, optionally lifted."""
+def grounded(frame, lift=0, size=None, feet=None):
+    """Frame on a canvas of `size` (default: its own) with a soft floor shadow and the feet on
+    the bottom row, optionally lifted. `feet` is the row the feet stand on in the source;
+    passing one baseline for a whole walk cycle keeps its natural up-and-down bob."""
+    w, h = size or frame.size
     bbox = frame.getbbox()
-    w, h = frame.size
+    if feet is None:
+        feet = bbox[3] if bbox else frame.height
     out = Image.new("RGBA", (w, h))
-    feet = bbox[3] if bbox else h
-    out.alpha_composite(shadow((w, h), w // 2, h - 2, max(6, (bbox[2] - bbox[0]) // 2 - 2) if bbox else 8, 2))
-    moved = Image.new("RGBA", (w, h))
-    moved.alpha_composite(frame, (0, h - feet - lift))
-    out.alpha_composite(moved)
+    width = (bbox[2] - bbox[0]) if bbox else 16
+    out.alpha_composite(shadow((w, h), w // 2, h - 2, max(6, width // 2 - 2), 2))
+    # Animation canvases can be bigger than the rotation ones; keep the figure centred.
+    out.alpha_composite(frame, ((w - frame.width) // 2, h - feet - lift))
     return out
 
 
 def build(name):
     src = os.path.join(ART, name)
-    columns = []
+    rows, walk_rows = [], []
     for facing in DIRECTIONS:
         d = PIXELLAB_DIR[facing]
         stand = Image.open(os.path.join(src, d + ".png")).convert("RGBA")
+        size = stand.size
         walk_dir = os.path.join(src, "walk", d)
-        walk = sorted(os.listdir(walk_dir)) if os.path.isdir(walk_dir) else []
+        names = sorted(os.listdir(walk_dir)) if os.path.isdir(walk_dir) else []
+        walk = [Image.open(os.path.join(walk_dir, n)).convert("RGBA") for n in names]
         if len(walk) >= 2:
-            # Two frames half a cycle apart give the left- and right-foot steps.
-            a = Image.open(os.path.join(walk_dir, walk[0])).convert("RGBA")
-            b = Image.open(os.path.join(walk_dir, walk[len(walk) // 2])).convert("RGBA")
-            row = [grounded(a), grounded(stand), grounded(b)]
+            feet = max(f.getbbox()[3] for f in walk if f.getbbox())
+            cycle = [grounded(f, size=size, feet=feet) for f in walk]
+            # Frames a quarter cycle in are mid-stride; half a cycle apart is the other foot.
+            a, b = len(cycle) // 8, len(cycle) // 8 + len(cycle) // 2
+            rows.append([cycle[a], grounded(stand), cycle[b]])
+            walk_rows.append(cycle)
         else:
-            row = [grounded(stand, 1), grounded(stand), grounded(stand, 1)]
-        columns.append(row)
-    fw, fh = columns[0][1].size
-    sheet = Image.new("RGBA", (fw * 3, fh * 4))
-    for r, row in enumerate(columns):
+            rows.append([grounded(stand, 1), grounded(stand), grounded(stand, 1)])
+    fw, fh = rows[0][1].size
+    write_sheet(rows, fw, fh, name + ".png")
+
+    walk_path = os.path.join(OUT, name + "_walk.png")
+    if len(walk_rows) == 4 and len({len(r) for r in walk_rows}) == 1:
+        write_sheet(walk_rows, fw, fh, name + "_walk.png")
+    elif os.path.exists(walk_path):
+        os.remove(walk_path)
+    print(f"{name}: {fw}x{fh} frames, walk cycle: {len(walk_rows[0]) if len(walk_rows) == 4 else 'none'}")
+
+
+def write_sheet(rows, fw, fh, filename):
+    sheet = Image.new("RGBA", (fw * len(rows[0]), fh * len(rows)))
+    for r, row in enumerate(rows):
         for c, frame in enumerate(row):
             sheet.alpha_composite(frame, (c * fw, r * fh))
-    sheet.save(os.path.join(OUT, name + ".png"))
-    print(f"{name}: {fw}x{fh} frames -> Assets/Resources/Sprites/{name}.png")
+    sheet.save(os.path.join(OUT, filename))
 
 
 def build_all():
@@ -137,7 +176,12 @@ if __name__ == "__main__":
         build_all()
     elif len(sys.argv) == 3:
         name, path = sys.argv[1], sys.argv[2]
-        frames = import_gif(path) if path.lower().endswith(".gif") else import_zip(path)
+        if os.path.isdir(path):
+            frames = import_folder(path)
+        elif path.lower().endswith(".gif"):
+            frames = import_gif(path)
+        else:
+            frames = import_zip(path)
         save_frames(name, frames)
         build(name)
     else:

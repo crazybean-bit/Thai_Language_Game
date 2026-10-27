@@ -20,7 +20,8 @@ namespace ThaiMystery
             {
                 gameObject.AddComponent<SpriteRenderer>();
                 character = gameObject.AddComponent<CharacterSprite>();
-                character.Init(SpriteLibrary.GetCharacterSheet(data.sprite), Vector2Int.down);
+                character.Init(SpriteLibrary.GetCharacterSheet(data.sprite), Vector2Int.down,
+                    SpriteLibrary.GetWalkCycle(data.sprite));
             }
             else
             {
