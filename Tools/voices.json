@@ -5,14 +5,19 @@
     "???": "th-TH-PremwadeeNeural",
     "": "th-TH-PremwadeeNeural",
     "words": "th-TH-AcharaNeural",
-    "own": "th-TH-NiwatNeural"
+    "own": "th-TH-NiwatNeural",
+    "ลุงแดง": "th-TH-NiwatNeural",
+    "วิทยุ": "th-TH-PremwadeeNeural"
   },
   "google": {
     "มะลิ": "th-TH-Neural2-C",
     "???": "th-TH-Neural2-C",
     "": "th-TH-Neural2-C",
     "words": "th-TH-Neural2-C",
-    "own": "th-TH-Standard-A"
+    "own": "th-TH-Standard-A",
+    "ลุงแดง": "th-TH-Standard-A",
+    "วิทยุ": "th-TH-Neural2-C"
   },
-  "wordRate": "-20%"
+  "wordRate": "-20%",
+  "hesitantRate": "-25%"
 }

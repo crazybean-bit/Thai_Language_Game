@@ -6,20 +6,22 @@ using UnityEngine;
 
 namespace ThaiMystery
 {
-    // How well the protagonist knows a word by ear.
-    //   Unheard  nobody has pronounced it to him yet: it shows as a jumble and has no voice
-    //   Foggy    he has heard Mali say it; recalling it plays her voice, muffled and distant
-    //   Learned  heard and practised enough that he recalls it in his own voice
-    public enum WordStage { Unheard, Foggy, Learned }
+    // How well the protagonist knows a word. Each step needs a different kind of evidence,
+    // so no single action (like replaying a word) can carry a word all the way:
+    //   Noise       nobody has said it clearly to him: blurred, shifting letters, no voice
+    //   Heard       someone said it slowly to him: it shows, and replays in their voice, muffled
+    //   Understood  its group is confirmed in the journal: the voice is less foggy
+    //   Familiar    he caught it in fast speech (a listening moment): the voice blends into his
+    //   Owned       he used it himself, in a choice or a sentence: his own voice, solid ink
+    public enum WordStage { Noise, Heard, Understood, Familiar, Owned }
 
-    // Tracks every Thai word the player has heard, what they think it means,
-    // and which words are confirmed. Guesses are saved with PlayerPrefs.
+    // Tracks every Thai word the player has heard, what they think it means, and how far
+    // each word has come. Everything is saved with PlayerPrefs.
     public class WordBook
     {
         private const string SaveKey = "ThaiMystery.WordBook";
 
-        // Hearing Mali say a word or recalling it yourself each count once.
-        public const int ExposuresToLearn = 4;
+        public enum CatchResult { NotHeard, NotUnderstood, Caught, AlreadyCaught }
 
         [Serializable]
         private class SaveData
@@ -28,19 +30,21 @@ namespace ThaiMystery
             public List<string> guessKeys = new List<string>();
             public List<string> guessValues = new List<string>();
             public List<string> confirmed = new List<string>();
-            public List<string> exposureKeys = new List<string>();
-            public List<int> exposureValues = new List<int>();
+            public List<string> caught = new List<string>();
+            public List<string> used = new List<string>();
         }
 
         private readonly Dictionary<string, WordEntry> entries = new Dictionary<string, WordEntry>();
         private readonly List<string> discovered = new List<string>();
         private readonly Dictionary<string, string> guesses = new Dictionary<string, string>();
         private readonly HashSet<string> confirmed = new HashSet<string>();
-        private readonly Dictionary<string, int> exposures = new Dictionary<string, int>();
+        private readonly HashSet<string> caught = new HashSet<string>();
+        private readonly HashSet<string> used = new HashSet<string>();
 
         public event Action Changed;
         public event Action<List<string>> GroupConfirmed;
-        public event Action<string> WordLearned;
+        // A word reached Familiar or Owned.
+        public event Action<string, WordStage> StageRaised;
 
         public IReadOnlyList<string> Discovered => discovered;
         public int TotalWords => entries.Count;
@@ -72,52 +76,31 @@ namespace ThaiMystery
 
         public bool IsConfirmed(string thai) => confirmed.Contains(thai);
 
-        public int Exposures(string thai) => exposures.TryGetValue(thai, out var n) ? n : 0;
+        public bool IsHeard(string thai) => discovered.Contains(thai);
 
         public WordStage StageOf(string thai)
         {
-            int n = Exposures(thai);
-            return n <= 0 ? WordStage.Unheard : n < ExposuresToLearn ? WordStage.Foggy : WordStage.Learned;
+            if (!discovered.Contains(thai)) return WordStage.Noise;
+            if (!confirmed.Contains(thai)) return WordStage.Heard;
+            if (!caught.Contains(thai)) return WordStage.Understood;
+            if (!used.Contains(thai)) return WordStage.Familiar;
+            return WordStage.Owned;
         }
 
-        public bool IsHeard(string thai) => Exposures(thai) > 0;
-
-        // 1 the first time he recalls a word, fading towards 0 as it becomes his own.
+        // How muffled the teacher's voice is when he recalls the word: 1 = barely there.
         public float Fog(string thai)
         {
-            int n = Exposures(thai);
-            if (n <= 0) return 1f;
-            if (n >= ExposuresToLearn) return 0f;
-            return 1f - (float)(n - 1) / (ExposuresToLearn - 1);
-        }
-
-        // Someone pronounced the word to him.
-        public void Hear(string thai) => AddExposure(thai);
-
-        // He recalled or said the word himself. Only counts once he knows how it sounds.
-        public void Practice(string thai)
-        {
-            if (IsHeard(thai)) AddExposure(thai);
-        }
-
-        private void AddExposure(string thai)
-        {
-            if (string.IsNullOrEmpty(thai)) return;
-            var before = StageOf(thai);
-            exposures[thai] = Math.Min(Exposures(thai) + 1, 99);
-            var after = StageOf(thai);
-            if (!discovered.Contains(thai))
+            switch (StageOf(thai))
             {
-                Discover(thai);
-                return;
+                case WordStage.Understood: return 0.45f;
+                case WordStage.Familiar: return 0.15f;
+                case WordStage.Owned: return 0f;
+                default: return 1f;
             }
-            Save();
-            if (after == before) return;
-            Changed?.Invoke();
-            if (after == WordStage.Learned) WordLearned?.Invoke(thai);
         }
 
-        private void Discover(string thai)
+        // Someone said the word slowly and clearly to him.
+        public void Hear(string thai)
         {
             if (string.IsNullOrEmpty(thai) || discovered.Contains(thai)) return;
             if (!entries.ContainsKey(thai))
@@ -125,6 +108,51 @@ namespace ThaiMystery
             discovered.Add(thai);
             Save();
             Changed?.Invoke();
+        }
+
+        // He picked the word out of fast speech. Only counts once he knows what it means.
+        public CatchResult Catch(string thai)
+        {
+            if (!discovered.Contains(thai)) return CatchResult.NotHeard;
+            if (!confirmed.Contains(thai)) return CatchResult.NotUnderstood;
+            if (!caught.Add(thai)) return CatchResult.AlreadyCaught;
+            Raised(thai);
+            return CatchResult.Caught;
+        }
+
+        // He said the word himself. Only counts once he knows what it means.
+        public void Use(string thai)
+        {
+            if (!confirmed.Contains(thai) || !used.Add(thai)) return;
+            Raised(thai);
+        }
+
+        private void Raised(string thai)
+        {
+            Save();
+            Changed?.Invoke();
+            var stage = StageOf(thai);
+            if (stage >= WordStage.Familiar) StageRaised?.Invoke(thai, stage);
+        }
+
+        // A shut-off: words tied to their past slip back to Heard, unless he owns them.
+        public List<string> FogPast()
+        {
+            var slipped = new List<string>();
+            foreach (var w in discovered)
+            {
+                var entry = GetEntry(w);
+                if (entry == null || !entry.past || StageOf(w) == WordStage.Owned) continue;
+                bool lost = confirmed.Remove(w);
+                lost |= caught.Remove(w);
+                if (lost) slipped.Add(w);
+            }
+            if (slipped.Count > 0)
+            {
+                Save();
+                Changed?.Invoke();
+            }
+            return slipped;
         }
 
         public void SetGuess(string thai, string guess)
@@ -188,8 +216,8 @@ namespace ThaiMystery
                 guessKeys = guesses.Keys.ToList(),
                 guessValues = guesses.Values.ToList(),
                 confirmed = confirmed.ToList(),
-                exposureKeys = exposures.Keys.ToList(),
-                exposureValues = exposures.Values.ToList()
+                caught = caught.ToList(),
+                used = used.ToList()
             };
             PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data));
             PlayerPrefs.Save();
@@ -204,11 +232,8 @@ namespace ThaiMystery
             for (int i = 0; i < data.guessKeys.Count && i < data.guessValues.Count; i++)
                 guesses[data.guessKeys[i]] = data.guessValues[i];
             foreach (var c in data.confirmed) confirmed.Add(c);
-            for (int i = 0; i < data.exposureKeys.Count && i < data.exposureValues.Count; i++)
-                exposures[data.exposureKeys[i]] = data.exposureValues[i];
-            // Saves from before words had to be heard: count what was seen as heard once.
-            foreach (var d in discovered)
-                if (!exposures.ContainsKey(d)) exposures[d] = 1;
+            if (data.caught != null) foreach (var c in data.caught) caught.Add(c);
+            if (data.used != null) foreach (var u in data.used) used.Add(u);
         }
 
         public static void ClearSave()

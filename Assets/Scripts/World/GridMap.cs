@@ -120,6 +120,6 @@ namespace ThaiMystery
         public void Register(Interactable obj, Vector2Int cell) => occupants[cell] = obj;
 
         public Interactable GetInteractable(Vector2Int cell) =>
-            occupants.TryGetValue(cell, out var o) ? o : null;
+            occupants.TryGetValue(cell, out var o) && o.Visible ? o : null;
     }
 }

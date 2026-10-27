@@ -17,18 +17,37 @@
   "introDialogue": "intro",
   "objects": [
     {"id": "bed", "sprite": "bed", "x": 1, "y": 4, "height": 2, "rules": [{"dialogue": "bed_named", "requireFlag": "mali_speaks", "blockFlag": "named_bed"}, {"dialogue": "bed"}]},
-    {"id": "shrine", "sprite": "shrine", "x": 2, "y": 2, "rules": [{"dialogue": "shrine"}]},
-    {"id": "window_left", "sprite": "window", "x": 3, "y": 2, "rules": [{"dialogue": "window_named", "requireFlag": "mali_speaks", "blockFlag": "named_window"}, {"dialogue": "window"}]},
+    {"id": "window_left", "sprite": "window", "x": 3, "y": 2, "rules": [
+      {"dialogue": "window_named", "requireFlag": "mali_speaks", "blockFlag": "named_window"},
+      {"dialogue": "window_boat", "requireFlag": "named_window", "blockFlag": "named_boat"},
+      {"dialogue": "window"}
+    ]},
     {"id": "coat", "sprite": "coat", "x": 4, "y": 2, "rules": [{"dialogue": "coat_named", "requireFlag": "mali_speaks", "blockFlag": "named_coat"}, {"dialogue": "coat"}]},
-    {"id": "bookshelf", "sprite": "bookshelf", "x": 5, "y": 3, "rules": [{"dialogue": "bookshelf_named", "requireFlag": "mali_speaks", "blockFlag": "named_bookshelf"}, {"dialogue": "bookshelf"}]},
+    {"id": "bookshelf", "sprite": "bookshelf", "x": 5, "y": 3, "rules": [
+      {"dialogue": "bookshelf_named", "requireFlag": "mali_speaks", "blockFlag": "named_bookshelf"},
+      {"dialogue": "bookshelf_photo", "requireFlag": "named_bookshelf", "blockFlag": "found_photo"},
+      {"dialogue": "bookshelf"}
+    ]},
     {"id": "mirror", "sprite": "mirror", "x": 6, "y": 2, "rules": [{"dialogue": "mirror_named", "requireFlag": "mali_speaks", "blockFlag": "named_mirror"}, {"dialogue": "mirror"}]},
     {"id": "calendar", "sprite": "calendar", "x": 7, "y": 2, "rules": [{"dialogue": "calendar_named", "requireFlag": "mali_speaks", "blockFlag": "named_calendar"}, {"dialogue": "calendar"}]},
-    {"id": "window_right", "sprite": "window", "x": 8, "y": 2, "rules": [{"dialogue": "window_named", "requireFlag": "mali_speaks", "blockFlag": "named_window"}, {"dialogue": "window"}]},
+    {"id": "window_right", "sprite": "window", "x": 8, "y": 2, "rules": [
+      {"dialogue": "window_named", "requireFlag": "mali_speaks", "blockFlag": "named_window"},
+      {"dialogue": "window_boat", "requireFlag": "named_window", "blockFlag": "named_boat"},
+      {"dialogue": "window"}
+    ]},
     {"id": "painting", "sprite": "painting", "x": 9, "y": 2, "rules": [{"dialogue": "painting_named", "requireFlag": "mali_speaks", "blockFlag": "named_painting"}, {"dialogue": "painting"}]},
-    {"id": "door", "sprite": "door", "x": 10, "y": 2, "rules": [{"dialogue": "door_named", "requireFlag": "mali_speaks", "blockFlag": "named_door"}, {"dialogue": "door"}]},
-    {"id": "lamp", "sprite": "lamp", "x": 1, "y": 6, "rules": [{"dialogue": "lamp"}]},
+    {"id": "door", "sprite": "door", "x": 10, "y": 2, "rules": [{"dialogue": "door_named", "requireFlag": "mali_speaks", "blockFlag": "named_door"}, {"dialogue": "door_again", "requireFlag": "warned_door"}, {"dialogue": "door"}]},
+    {"id": "lamp", "sprite": "lamp", "x": 1, "y": 6, "rules": [
+      {"dialogue": "lamp_named", "requireFlag": "mali_speaks", "blockFlag": "named_lamp"},
+      {"dialogue": "lamp_song", "requireFlag": "named_lamp", "blockFlag": "hummed"},
+      {"dialogue": "lamp"}
+    ]},
     {"id": "plant", "sprite": "plant", "x": 1, "y": 8},
-    {"id": "cat", "sprite": "cat", "x": 2, "y": 7, "rules": [{"dialogue": "cat_named", "requireFlag": "mali_speaks", "blockFlag": "named_cat"}, {"dialogue": "cat"}]},
+    {"id": "cat", "sprite": "cat", "x": 2, "y": 7, "rules": [
+      {"dialogue": "cat_named", "requireFlag": "mali_speaks", "blockFlag": "named_cat"},
+      {"dialogue": "mali_cat", "requireFlag": "named_cat", "blockFlag": "cat_called"},
+      {"dialogue": "cat"}
+    ]},
     {"id": "table", "sprite": "table", "x": 8, "y": 7, "rules": [{"dialogue": "table_named", "requireFlag": "mali_speaks", "blockFlag": "named_table"}, {"dialogue": "table"}]},
     {"id": "stool", "sprite": "stool", "x": 9, "y": 7},
     {"id": "water_jar", "sprite": "jar", "x": 10, "y": 8, "rules": [{"dialogue": "jar_named", "requireFlag": "mali_speaks", "blockFlag": "named_jar"}, {"dialogue": "jar"}]},
@@ -36,8 +55,15 @@
       {"dialogue": "mali_first", "blockFlag": "met_mali"},
       {"dialogue": "mali_teach", "requireFlag": "met_mali", "blockFlag": "mali_speaks"},
       {"dialogue": "mali_door", "requireFlag": "tried_door", "blockFlag": "warned_door"},
-      {"dialogue": "mali_letter", "requireFlag": "read_letter", "blockFlag": "asked_letter"},
+      {"dialogue": "mali_photo", "requireFlag": "found_photo", "blockFlag": "asked_photo"},
+      {"dialogue": "mali_thanks", "requireFlag": "mali_speaks", "blockFlag": "thanked_mali"},
+      {"dialogue": "mali_money", "requireFlag": "job_done", "blockFlag": "money_talk"},
       {"dialogue": "mali_idle"}
+    ]},
+    {"id": "lung_daeng", "sprite": "lung_daeng", "x": 10, "y": 4, "character": true, "showWhen": "thanked_mali", "rules": [
+      {"dialogue": "job_intro", "blockFlag": "job_done"},
+      {"dialogue": "lung_radio", "requireFlag": "job_done", "when": "named_boat & !heard_radio"},
+      {"dialogue": "lung_idle"}
     ]}
   ],
   "lighting": {

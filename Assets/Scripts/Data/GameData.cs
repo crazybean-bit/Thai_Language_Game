@@ -15,6 +15,8 @@ namespace ThaiMystery
         public string romanization;    // revealed once the word is confirmed
         public string group;           // all words in a group must be right before they confirm
         public string note;            // short learning note shown once confirmed
+        public bool past;              // tied to his and Mali's past: fogs over when she shuts off
+        public string stutter;         // how he stumbles into it when nervous, e.g. "ขอ... ขอบคุณ"
     }
 
     [Serializable]
@@ -26,9 +28,37 @@ namespace ThaiMystery
     [Serializable]
     public class ChoiceData
     {
-        public string text;            // space separated Thai words, like a line
+        public string text;            // space separated Thai words he says, or an action in English
         public string next;            // dialogue id to jump to
         public string setFlag;
+        public string when;            // only offered when this condition holds (see GameState.Check)
+        public int warmth;             // effects when chosen
+        public int recognition;
+        public int confidence;
+        public int money;
+    }
+
+    // He answers by building a sentence from word tiles: words he has heard, plus a few wrong ones.
+    [Serializable]
+    public class TileData
+    {
+        public string prompt;          // what he's trying to say, in English, e.g. "Thank her"
+        public string answer;          // the sentence that counts as right, space separated
+        public string[] accept;        // other sentences that also count as right
+        public string[] words;         // extra tiles to choose from (the answer's words are always there)
+        public string[] bonus;         // extra tiles offered only when he's confident
+        public string correct;         // dialogue to play when he gets it right (else the dialogue continues)
+        public string wrong;           // dialogue to play when he gets it wrong and no reaction matches
+        public TileReaction[] reactions; // specific wrong sentences that get their own reaction
+        public bool retry;             // after a wrong answer with no reaction, try again
+        public int warmth;             // Mali's reaction to getting it right
+    }
+
+    [Serializable]
+    public class TileReaction
+    {
+        public string text;            // the sentence he said
+        public string next;            // dialogue to play
     }
 
     [Serializable]
@@ -39,7 +69,18 @@ namespace ThaiMystery
         public string text;            // Thai words separated by spaces, or plain English for thoughts
         public string setFlag;         // set when the line is shown
         public string heard;           // overrides the dialogue's "heard" for this line
+        public string when;            // the line is skipped unless this condition holds
+        public int warmth;             // effects when the line is shown
+        public int recognition;
+        public int confidence;
+        public int money;
+        public bool fogPast;           // words tied to the past fall back to Heard (a shut-off)
         public ChoiceData[] choices;   // optional: shown after this line
+        // A listening moment: after the line, he's asked which word he caught. Catching a word
+        // he understands makes it Familiar.
+        public string catchWord;
+        public string[] catchOptions;  // what he can answer, including catchWord
+        public TileData tiles;         // optional: he answers by building a sentence
     }
 
     [Serializable]
@@ -68,6 +109,7 @@ namespace ThaiMystery
         public string dialogue;
         public string requireFlag;     // rule only applies when this flag is set
         public string blockFlag;       // rule is skipped when this flag is set
+        public string when;            // rule is skipped unless this condition holds
     }
 
     [Serializable]
@@ -80,6 +122,7 @@ namespace ThaiMystery
         public int height;             // rows it blocks, counting up from its tile (0 or 1 = just its tile)
         public bool character;         // uses a 3x4 RPG Maker style sheet and turns to face the player
         public bool passable;          // the player can walk over it
+        public string showWhen;        // only there while this condition holds, e.g. a visitor
         public InteractionRule[] rules;
     }
 
@@ -132,11 +175,13 @@ namespace ThaiMystery
     {
         private readonly HashSet<string> flags = new HashSet<string>();
 
+        public event Action Changed;
+
         public bool Has(string flag) => !string.IsNullOrEmpty(flag) && flags.Contains(flag);
 
         public void Set(string flag)
         {
-            if (!string.IsNullOrEmpty(flag)) flags.Add(flag);
+            if (!string.IsNullOrEmpty(flag) && flags.Add(flag)) Changed?.Invoke();
         }
     }
 }

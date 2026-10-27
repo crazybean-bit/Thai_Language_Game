@@ -20,6 +20,8 @@ namespace ThaiMystery
             if (map == null || words == null || dialogue == null) yield break;
 
             Game.Flags = new GameFlags();
+            Game.State = new GameState();
+            Game.Flags.Changed += Game.State.NotifyFlagsChanged;
             Game.Words = new WordBook(words);
 
             var mapGo = new GameObject("Map");

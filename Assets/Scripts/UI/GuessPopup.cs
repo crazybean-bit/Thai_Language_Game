@@ -32,7 +32,7 @@ namespace ThaiMystery
             thaiText = UIFactory.Text("Thai", box.transform, "", 64, Theme.Ink);
             UIFactory.Place(thaiText.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -66), new Vector2(500, 100));
 
-            // Shown only when he can recall how the word sounds. Listening again is practice.
+            // Shown only when he can recall how the word sounds.
             var listen = UIFactory.Panel("Listen", box.transform, Theme.Ink);
             UIFactory.Place(listen.rectTransform, new Vector2(1, 1), new Vector2(1, 1), new Vector2(-34, -96), new Vector2(40, 40));
             var icon = UIFactory.Panel("Icon", listen.transform, Theme.Paper, false);
@@ -65,7 +65,7 @@ namespace ThaiMystery
                 field.interactable = false;
                 string rom = entry?.romanization ?? "";
                 string note = entry?.note ?? "";
-                infoText.text = $"<color=#2F7A45>Confirmed</color>  ·  {rom}  ·  Esc to close\n{note}";
+                infoText.text = $"<color=#2F7A45>{StageHint(words.StageOf(thai))}</color>  ·  {rom}  ·  Esc to close\n{note}";
             }
             else
             {
@@ -86,10 +86,17 @@ namespace ThaiMystery
             }
         }
 
-        private void Listen()
+        private void Listen() => Game.Voice.PlayWord(current);
+
+        private static string StageHint(WordStage stage)
         {
-            // Play first: it should sound the way he knew it before this practice.
-            if (Game.Voice.PlayWord(current)) Game.Words.Practice(current);
+            switch (stage)
+            {
+                case WordStage.Understood: return "Understood. Catch it in fast speech next";
+                case WordStage.Familiar: return "Familiar. Say it yourself to make it yours";
+                case WordStage.Owned: return "Owned";
+                default: return "Confirmed";
+            }
         }
 
         private void Submit(string value)

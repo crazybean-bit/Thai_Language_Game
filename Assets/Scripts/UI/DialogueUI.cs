@@ -25,6 +25,7 @@ namespace ThaiMystery
         private readonly GameObject continueArrow;
         private readonly Image portrait;
         private readonly RectTransform choicesRoot;
+        private readonly TilePanel tilePanel;
         private readonly Action<string> onWordClicked;
 
         private readonly List<WordChip> chips = new List<WordChip>();
@@ -77,6 +78,8 @@ namespace ThaiMystery
             choicesRoot = UIFactory.Rect("Choices", rootRt);
             UIFactory.Place(choicesRoot, new Vector2(0.5f, 0), new Vector2(0.5f, 0),
                 new Vector2(-120, 24 + BoxHeight + 60), new Vector2(460, 10));
+
+            tilePanel = new TilePanel(rootRt, 24 + BoxHeight + 16);
 
             root.SetActive(false);
         }
@@ -178,9 +181,20 @@ namespace ThaiMystery
             choiceBackgrounds.Clear();
         }
 
+        public void ShowTiles(TileData tiles, bool nervous, bool confident, Action<List<string>> say)
+        {
+            continueArrow.SetActive(false);
+            tilePanel.Show(tiles, nervous, confident, say);
+        }
+
+        public void HideTiles() => tilePanel.Hide();
+
+        public void HandleTileKeys() => tilePanel.HandleKeys();
+
         public void Hide()
         {
             HideChoices();
+            HideTiles();
             root.SetActive(false);
         }
 
