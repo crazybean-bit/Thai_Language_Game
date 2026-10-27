@@ -41,8 +41,8 @@ namespace ThaiMystery
     // Thai has no spaces between words in normal writing; the game's script adds them so
     // each word can be studied on its own.
     //
-    // Words the protagonist has never heard pronounced are drawn as a jumble of letters he
-    // can't hold on to, and can't be clicked. Words he has heard are faint ink until he
+    // Words the protagonist has never heard pronounced are drawn as a blurred, shifting jumble
+    // of letters he can't focus on (BlurredWord), and can't be clicked. Words he has heard are faint ink until he
     // has learned them.
     public static class WordRow
     {
@@ -110,6 +110,7 @@ namespace ThaiMystery
                 wordRt.pivot = new Vector2(0.5f, 1);
                 wordRt.anchoredPosition = Vector2.zero;
                 wordRt.sizeDelta = new Vector2(0, thaiSize * 1.55f);
+                if (jumbled) BlurredWord.Apply(word, token);
 
                 w += 16f;
                 rt.sizeDelta = new Vector2(w, chipH);
@@ -143,11 +144,11 @@ namespace ThaiMystery
         private const string Consonants = "กขคงจฉชซญดตถทนบปผพฟมยรลวสหอฮ";
         private const string Marks = "\u0e34\u0e35\u0e37\u0e48\u0e49";
 
-        // A stand-in for a word he can't make out yet: about as long, never the same letters,
-        // and the same every time so it doesn't flicker between lines.
-        public static string Jumble(string thai)
+        // A stand-in for a word he can't make out yet: about as long, never the same letters.
+        // Each variant is a different jumble of the same length.
+        public static string Jumble(string thai, int variant = 0)
         {
-            uint seed = 2166136261;
+            uint seed = 2166136261 ^ (uint)variant * 2654435761;
             foreach (char c in thai) seed = (seed ^ c) * 16777619;
             uint Next() { seed = seed * 1664525 + 1013904223; return seed >> 8; }
 
@@ -174,6 +175,84 @@ namespace ThaiMystery
                 child.SetParent(null, false);
                 UnityEngine.Object.Destroy(child.gameObject);
             }
+        }
+    }
+}
+
+namespace ThaiMystery
+{
+    // An unheard word: faint, soft-edged copies of a jumble that drift apart and keep
+    // changing letters, so it reads as something he can't focus on rather than a real word.
+    public class BlurredWord : MonoBehaviour
+    {
+        private const int Ghosts = 2;
+        private const float SecondsPerShift = 0.22f;
+
+        private readonly List<TextMeshProUGUI> layers = new List<TextMeshProUGUI>();
+        private readonly List<Material> materials = new List<Material>();
+        private string thai;
+        private float timer;
+        private int shift;
+
+        public static void Apply(TextMeshProUGUI word, string thai)
+        {
+            var blur = word.gameObject.AddComponent<BlurredWord>();
+            blur.thai = thai;
+            blur.AddLayer(word, 0.5f, 0.45f);
+            var source = word.rectTransform;
+            for (int i = 0; i < Ghosts; i++)
+            {
+                var ghost = UIFactory.Text("Ghost", source.parent, word.text, word.fontSize, word.color);
+                var rt = ghost.rectTransform;
+                rt.anchorMin = source.anchorMin;
+                rt.anchorMax = source.anchorMax;
+                rt.pivot = source.pivot;
+                rt.sizeDelta = source.sizeDelta;
+                blur.AddLayer(ghost, 0.22f, 0.75f);
+            }
+            blur.Shift();
+        }
+
+        private void AddLayer(TextMeshProUGUI text, float alpha, float softness)
+        {
+            var c = text.color;
+            c.a = alpha;
+            text.color = c;
+            // Soft edges on the signed distance field read as out of focus. fontMaterial gives
+            // this text its own copy of the material, so other text stays sharp.
+            var material = text.fontMaterial;
+            material.SetFloat("_OutlineSoftness", softness);
+            text.extraPadding = true;
+            materials.Add(material);
+            layers.Add(text);
+        }
+
+        private void Update()
+        {
+            timer += Time.deltaTime;
+            if (timer >= SecondsPerShift)
+            {
+                timer = 0f;
+                shift++;
+                Shift();
+            }
+            float t = Time.time;
+            for (int i = 1; i < layers.Count; i++)
+            {
+                float phase = t * (1.3f + 0.4f * i) + i * 2.1f;
+                layers[i].rectTransform.anchoredPosition = new Vector2(Mathf.Sin(phase) * 4f, Mathf.Cos(phase * 0.7f) * 2f);
+            }
+        }
+
+        private void Shift()
+        {
+            for (int i = 0; i < layers.Count; i++)
+                layers[i].text = WordRow.Jumble(thai, shift * (Ghosts + 1) + i);
+        }
+
+        private void OnDestroy()
+        {
+            foreach (var m in materials) Destroy(m);
         }
     }
 }
