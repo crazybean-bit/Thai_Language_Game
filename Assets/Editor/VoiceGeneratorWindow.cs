@@ -325,13 +325,13 @@ namespace ThaiMystery.Editor
         private UnityWebRequest BuildRequest(string text, SpeakerVoice voice, string rateOverride = null)
         {
             string rate = !string.IsNullOrEmpty(rateOverride) ? rateOverride : voice.rate;
-            string prosody = "";
-            if (!string.IsNullOrWhiteSpace(rate)) prosody += $" rate=\"{SecurityElement.Escape(rate.Trim())}\"";
-            if (!string.IsNullOrWhiteSpace(voice.pitch)) prosody += $" pitch=\"{SecurityElement.Escape(voice.pitch.Trim())}\"";
+            string prosody = Percent("rate", rate) + Percent("pitch", voice.pitch);
+            string spoken = SecurityElement.Escape(text);
+            // Azure rejects a <prosody> with nothing in it, so leave it out when nothing is changed.
+            if (prosody.Length > 0) spoken = $"<prosody{prosody}>{spoken}</prosody>";
             string ssml =
                 "<speak version=\"1.0\" xml:lang=\"th-TH\" xmlns=\"http://www.w3.org/2001/10/synthesis\">" +
-                $"<voice name=\"{SecurityElement.Escape(voice.voice.Trim())}\"><prosody{prosody}>" +
-                SecurityElement.Escape(text) + "</prosody></voice></speak>";
+                $"<voice name=\"{SecurityElement.Escape(voice.voice.Trim())}\">{spoken}</voice></speak>";
 
             var req = new UnityWebRequest($"https://{region.Trim()}.tts.speech.microsoft.com/cognitiveservices/v1", "POST")
             {
@@ -343,6 +343,15 @@ namespace ThaiMystery.Editor
             req.SetRequestHeader("Content-Type", "application/ssml+xml");
             req.SetRequestHeader("X-Microsoft-OutputFormat", "riff-24khz-16bit-mono-pcm");
             return req;
+        }
+
+        // " pitch=\"+6%\"" from "+6%", "6%" or "6"; empty for blank or zero.
+        private static string Percent(string attribute, string value)
+        {
+            value = (value ?? "").Trim().TrimEnd('%').Trim();
+            if (!float.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float n) || n == 0)
+                return "";
+            return $" {attribute}=\"{(n > 0 ? "+" : "")}{n.ToString(System.Globalization.CultureInfo.InvariantCulture)}%\"";
         }
 
         private static string Hint(long code) =>
