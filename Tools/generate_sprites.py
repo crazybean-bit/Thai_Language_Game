@@ -13,6 +13,7 @@ same name and the game picks it up. Sizes:
   - portraits: any size, shown beside the dialogue box
 """
 import os
+import shutil
 from pixel import Canvas, rgb, shade, noise
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Assets", "Resources", "Sprites")
@@ -728,6 +729,12 @@ if __name__ == "__main__":
     # Characters made in PixelLab (Tools/art/pixellab) replace the hand-drawn sheets above.
     import import_pixellab
     import_pixellab.build_all()
+    # Finished portraits (Tools/art/portraits) replace the hand-drawn ones.
+    portraits = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "portraits")
+    if os.path.isdir(portraits):
+        for f in sorted(os.listdir(portraits)):
+            if f.endswith(".png"):
+                shutil.copy(os.path.join(portraits, f), os.path.join(OUT, f))
 
     ui_frame("ui_frame", rgb("e6dac2"))
     ui_frame("ui_card", rgb("d9cbb4"))

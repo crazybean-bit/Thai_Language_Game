@@ -13,6 +13,7 @@ namespace ThaiMystery
     {
         private const float BoxWidth = 1100f;
         private const float BoxHeight = 210f;
+        private const float PortraitHeight = 340f;
         private const float TextInset = 40f;
         private const float PortraitInset = 200f;
 
@@ -70,7 +71,7 @@ namespace ThaiMystery
             // The portrait stands at the right edge, in front of the box, like a visual novel.
             portrait = UIFactory.Panel("Portrait", rootRt, Color.white, false);
             portrait.preserveAspect = true;
-            UIFactory.Place(portrait.rectTransform, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-20, 0), new Vector2(272, 340));
+            UIFactory.Place(portrait.rectTransform, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-20, 0), new Vector2(272, PortraitHeight));
             portrait.gameObject.SetActive(false);
 
             choicesRoot = UIFactory.Rect("Choices", rootRt);
@@ -92,6 +93,11 @@ namespace ThaiMystery
             var sprite = string.IsNullOrEmpty(portraitSprite) ? null : SpriteLibrary.Get(portraitSprite);
             portrait.sprite = sprite;
             portrait.gameObject.SetActive(sprite != null);
+            // Fixed height, width from the image, so portraits of any shape keep their bottom
+            // edge on the screen edge instead of floating in a letterboxed frame.
+            if (sprite != null)
+                portrait.rectTransform.sizeDelta = new Vector2(
+                    PortraitHeight * sprite.rect.width / sprite.rect.height, PortraitHeight);
             float rightInset = TextInset + (sprite != null ? PortraitInset : 0f);
             words.offsetMax = new Vector2(-rightInset, words.offsetMax.y);
 
