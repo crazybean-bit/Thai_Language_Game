@@ -1,16 +1,18 @@
 {
-  "_comment": "Which text-to-speech voice reads each speaker. Keys are the speaker names from dialogue.json; \"\" is narration (object labels). \"words\" reads single words in the journal. Azure Thai voices: th-TH-PremwadeeNeural (female), th-TH-AcharaNeural (female), th-TH-NiwatNeural (male). Google Thai voices include th-TH-Neural2-C and th-TH-Standard-A.",
+  "_comment": "Which text-to-speech voice reads each speaker. Keys are the speaker names from dialogue.json. \"words\" reads single words the way Mali teaches them, \"own\" is the protagonist's own voice for words he has learned, and \"\" is anyone else. Azure Thai voices: th-TH-PremwadeeNeural (female), th-TH-AcharaNeural (female), th-TH-NiwatNeural (male). Google Thai voices include th-TH-Neural2-C and th-TH-Standard-A. The Unity window (Thai Mystery > Generate Voices) also sets pitch and speed.",
   "azure": {
-    "มะลิ": "th-TH-PremwadeeNeural",
+    "มะลิ": "th-TH-AcharaNeural",
     "???": "th-TH-PremwadeeNeural",
-    "": "th-TH-NiwatNeural",
-    "words": "th-TH-AcharaNeural"
+    "": "th-TH-PremwadeeNeural",
+    "words": "th-TH-AcharaNeural",
+    "own": "th-TH-NiwatNeural"
   },
   "google": {
     "มะลิ": "th-TH-Neural2-C",
     "???": "th-TH-Neural2-C",
-    "": "th-TH-Standard-A",
-    "words": "th-TH-Neural2-C"
+    "": "th-TH-Neural2-C",
+    "words": "th-TH-Neural2-C",
+    "own": "th-TH-Standard-A"
   },
   "wordRate": "-20%"
 }

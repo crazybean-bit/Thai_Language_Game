@@ -8,6 +8,7 @@
 
     { "id": "mali_first", "portrait": "portrait_mali", "lines": [
       { "speaker": "???", "text": "คุณ ตื่น แล้ว" },
+      { "speaker": "", "text": "Her words slide right past me. I can't hold on to a single sound." },
       { "speaker": "???", "text": "ฉัน ชื่อ มะลิ" },
       { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร", "choices": [
         { "text": "ฉัน ไม่ รู้", "next": "mali_name" },
@@ -29,16 +30,33 @@
       { "speaker": "มะลิ", "text": "ไม่ หิว ไหม", "setFlag": "met_mali" },
       { "speaker": "มะลิ", "text": "ไม่เป็นไร" }
     ]},
-    { "id": "mali_door", "portrait": "portrait_mali", "lines": [
+    { "id": "mali_teach", "portrait": "portrait_mali", "heard": "always", "lines": [
+      { "speaker": "", "text": "She sits down across from me and points at herself." },
+      { "speaker": "มะลิ", "text": "ฉัน ชื่อ มะลิ" },
+      { "speaker": "", "text": "Slowly this time. One sound at a time." },
+      { "speaker": "มะลิ", "text": "มะลิ" },
+      { "speaker": "", "text": "Mali. That's her name." },
+      { "speaker": "มะลิ", "text": "คุณ ชื่อ อะไร" },
+      { "speaker": "", "text": "I try to copy the sounds. It comes out wrong, but she nods." },
+      { "speaker": "มะลิ", "text": "ใช่" },
+      { "speaker": "มะลิ", "text": "คุณ ตื่น แล้ว" },
+      { "speaker": "มะลิ", "text": "คุณ หิว ไหม" },
+      { "speaker": "มะลิ", "text": "กิน ข้าว" },
+      { "speaker": "มะลิ", "text": "ไม่เป็นไร", "setFlag": "mali_speaks" },
+      { "speaker": "", "text": "The noise is starting to come apart into words. Maybe she'll tell me what other things are called." }
+    ]},
+    { "id": "mali_door", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "อย่า ไป ข้างนอก", "setFlag": "warned_door" },
       { "speaker": "", "text": "Her voice is quiet, but she means it." }
     ]},
-    { "id": "mali_letter", "portrait": "portrait_mali", "lines": [
+    { "id": "mali_letter", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "จดหมาย", "setFlag": "asked_letter" },
       { "speaker": "", "text": "She stares at the letter for a long time." },
-      { "speaker": "มะลิ", "text": "ฉัน ไม่ รู้" }
+      { "speaker": "มะลิ", "text": "ฉัน ไม่ รู้" },
+      { "speaker": "", "text": "She reads the last two words out loud anyway, very quietly." },
+      { "speaker": "มะลิ", "text": "เจ็ด วัน" }
     ]},
-    { "id": "mali_idle", "portrait": "portrait_mali", "lines": [
+    { "id": "mali_idle", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "คุณ จำ ได้ ไหม" }
     ]},
 
@@ -92,9 +110,43 @@
       { "speaker": "", "text": "รูป" },
       { "speaker": "", "text": "A painting of a temple on a hill, under a pale moon." }
     ]},
-    { "id": "cat", "lines": [
+    { "id": "cat", "heard": "always", "lines": [
       { "speaker": "", "text": "แมว" },
       { "speaker": "???", "text": "เหมียว" }
+    ]},
+
+    { "id": "bed_named", "portrait": "portrait_mali", "heard": "always", "next": "bed", "lines": [
+      { "speaker": "มะลิ", "text": "เตียง", "setFlag": "named_bed" }
+    ]},
+    { "id": "window_named", "portrait": "portrait_mali", "heard": "always", "next": "window", "lines": [
+      { "speaker": "มะลิ", "text": "หน้าต่าง", "setFlag": "named_window" }
+    ]},
+    { "id": "mirror_named", "portrait": "portrait_mali", "heard": "always", "next": "mirror", "lines": [
+      { "speaker": "มะลิ", "text": "กระจก", "setFlag": "named_mirror" }
+    ]},
+    { "id": "door_named", "portrait": "portrait_mali", "heard": "always", "next": "door", "lines": [
+      { "speaker": "มะลิ", "text": "ประตู", "setFlag": "named_door" }
+    ]},
+    { "id": "table_named", "portrait": "portrait_mali", "heard": "always", "next": "table", "lines": [
+      { "speaker": "มะลิ", "text": "โต๊ะ", "setFlag": "named_table" }
+    ]},
+    { "id": "jar_named", "portrait": "portrait_mali", "heard": "always", "next": "jar", "lines": [
+      { "speaker": "มะลิ", "text": "น้ำ", "setFlag": "named_jar" }
+    ]},
+    { "id": "bookshelf_named", "portrait": "portrait_mali", "heard": "always", "next": "bookshelf", "lines": [
+      { "speaker": "มะลิ", "text": "หนังสือ", "setFlag": "named_bookshelf" }
+    ]},
+    { "id": "calendar_named", "portrait": "portrait_mali", "heard": "always", "next": "calendar", "lines": [
+      { "speaker": "มะลิ", "text": "ปฏิทิน", "setFlag": "named_calendar" }
+    ]},
+    { "id": "coat_named", "portrait": "portrait_mali", "heard": "always", "next": "coat", "lines": [
+      { "speaker": "มะลิ", "text": "เสื้อ", "setFlag": "named_coat" }
+    ]},
+    { "id": "painting_named", "portrait": "portrait_mali", "heard": "always", "next": "painting", "lines": [
+      { "speaker": "มะลิ", "text": "รูป", "setFlag": "named_painting" }
+    ]},
+    { "id": "cat_named", "portrait": "portrait_mali", "heard": "always", "next": "cat", "lines": [
+      { "speaker": "มะลิ", "text": "แมว", "setFlag": "named_cat" }
     ]}
   ]
 }

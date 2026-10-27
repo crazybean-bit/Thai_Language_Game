@@ -56,6 +56,7 @@ namespace ThaiMystery
 
             Game.Words.Changed += OnWordsChanged;
             Game.Words.GroupConfirmed += OnGroupConfirmed;
+            Game.Words.WordLearned += OnWordLearned;
         }
 
         private void OnDestroy()
@@ -63,6 +64,7 @@ namespace ThaiMystery
             if (Game.Words == null) return;
             Game.Words.Changed -= OnWordsChanged;
             Game.Words.GroupConfirmed -= OnGroupConfirmed;
+            Game.Words.WordLearned -= OnWordLearned;
         }
 
         private void Update()
@@ -95,6 +97,9 @@ namespace ThaiMystery
             foreach (var w in words) parts.Add($"{w} = {Game.Words.GetGuess(w)}");
             ShowToast("<color=#9BE3A8>Something clicks.</color>  " + string.Join("   ", parts));
         }
+
+        private void OnWordLearned(string thai) =>
+            ShowToast($"{thai}  <color=#C9B79C>sounds like my own voice now.</color>");
 
         public void ShowToast(string message)
         {

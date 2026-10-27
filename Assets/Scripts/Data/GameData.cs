@@ -38,6 +38,7 @@ namespace ThaiMystery
         public string portrait;        // overrides the dialogue's portrait; "none" hides it
         public string text;            // Thai words separated by spaces, or plain English for thoughts
         public string setFlag;         // set when the line is shown
+        public string heard;           // overrides the dialogue's "heard" for this line
         public ChoiceData[] choices;   // optional: shown after this line
     }
 
@@ -48,6 +49,11 @@ namespace ThaiMystery
         public string portrait;        // sprite shown beside the box for lines with a speaker
         public LineData[] lines;
         public string next;            // optional dialogue to continue into
+        // Whether the protagonist can make out what a speaker says: "always", a flag name
+        // (clear once that flag is set) or empty (just noise). Clear lines play their voice
+        // clip and teach him every word in them; noise shows only the words he already knows.
+        // Lines without a speaker are his own reading and recall, and ignore this.
+        public string heard;
     }
 
     [Serializable]
