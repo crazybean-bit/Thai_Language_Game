@@ -4,7 +4,7 @@ A 2D mystery RPG prototype in the spirit of *7 Days to End with You*, except the
 
 ## Opening the project
 
-1. Install **Unity 6** (any 6000.x LTS, e.g. 6000.3) through Unity Hub. Older versions like 2020 or 2022 won't work because the scripts use the TextMeshPro that ships inside `com.unity.ugui` 2.0. If Hub asks for a missing editor version, just pick the latest Unity 6 LTS.
+1. Install **Unity 6.3** (6000.3.27f1, the version the project is set to; any later 6000.x works too) through Unity Hub. Older versions like 2020 or 2022 won't work because the scripts use the TextMeshPro that ships inside `com.unity.ugui` 2.0. If Hub asks for a missing editor version, just pick the latest Unity 6 LTS.
 2. In Unity Hub choose **Add > Add project from disk** and pick this folder. Unity fills in the rest of `ProjectSettings` on first open.
 3. If Unity asks to import **TMP Essentials**, click *Import TMP Essentials* (or use *Window > TextMeshPro > Import TMP Essential Resources*).
 4. Use the menu **Thai Mystery > Open Prototype Scene**. The first time, this creates `Assets/Scenes/Prototype.unity` (choose *Don't Save* if asked about the Untitled scene). Then press **Play**.
