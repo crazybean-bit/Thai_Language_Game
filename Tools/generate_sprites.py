@@ -917,6 +917,12 @@ if __name__ == "__main__":
     # Characters made in PixelLab (Tools/art/pixellab) replace the hand-drawn sheets above.
     import import_pixellab
     import_pixellab.build_all()
+    # Finished props (Tools/art/props, already cropped to size) replace the hand-drawn ones.
+    props = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "props")
+    if os.path.isdir(props):
+        for f in sorted(os.listdir(props)):
+            if f.endswith(".png"):
+                shutil.copy(os.path.join(props, f), os.path.join(OUT, f))
     # Finished portraits (Tools/art/portraits) replace the hand-drawn ones.
     portraits = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "portraits")
     if os.path.isdir(portraits):
