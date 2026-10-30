@@ -194,7 +194,7 @@
       { "speaker": "", "text": "When I look up she's already turned away. But she left it there." }
     ]},
 
-    { "id": "job_intro", "lines": [
+    { "id": "job_intro", "portrait": "portrait_lung_daeng", "lines": [
       { "speaker": "", "text": "An old man in a faded red cap, grease up to his elbows. He grins at me like we've met before." },
       { "speaker": "ลุงแดง", "text": "มา ช่วย หน่อย", "heard": "always" },
       { "speaker": "", "text": "He jerks his thumb at a generator, half buried in wet sand.", "choices": [
@@ -202,66 +202,66 @@
         { "text": "Not now" }
       ]}
     ]},
-    { "id": "job_1", "heard": "always", "lines": [
+    { "id": "job_1", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "ลุงแดง", "text": "เติม น้ำมัน" },
       { "speaker": "", "text": "He unscrews a cap on the generator and nods at the red can by my feet.", "choices": [
         { "text": "Pour the can into the generator", "next": "job_2", "confidence": 3 },
         { "text": "Fetch the water jar", "next": "job_1_oops", "confidence": -3 }
       ]}
     ]},
-    { "id": "job_1_oops", "heard": "always", "next": "job_2", "lines": [
+    { "id": "job_1_oops", "portrait": "portrait_lung_daeng", "heard": "always", "next": "job_2", "lines": [
       { "speaker": "ลุงแดง", "text": "ไม่ ไม่" },
       { "speaker": "", "text": "He laughs and taps the red can." },
       { "speaker": "ลุงแดง", "text": "น้ำมัน" },
       { "speaker": "", "text": "The can, then. It smells like petrol." }
     ]},
-    { "id": "job_2", "heard": "always", "lines": [
+    { "id": "job_2", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "", "text": "We lift the generator onto a cart. He takes the front and waits for me to steer." },
       { "speaker": "ลุงแดง", "text": "ซ้าย", "choices": [
         { "text": "Push the cart right", "next": "job_2_oops", "confidence": -3 },
         { "text": "Push the cart left", "next": "job_3", "confidence": 3 }
       ]}
     ]},
-    { "id": "job_2_oops", "heard": "always", "next": "job_3", "lines": [
+    { "id": "job_2_oops", "portrait": "portrait_lung_daeng", "heard": "always", "next": "job_3", "lines": [
       { "speaker": "", "text": "The wheel sinks into the sand. He grabs my left hand and waggles it." },
       { "speaker": "ลุงแดง", "text": "ซ้าย" }
     ]},
-    { "id": "job_3", "heard": "always", "lines": [
+    { "id": "job_3", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "", "text": "A fallen palm blocks the path to the house." },
       { "speaker": "ลุงแดง", "text": "ขวา", "choices": [
         { "text": "Push the cart left", "next": "job_3_oops", "confidence": -3 },
         { "text": "Push the cart right", "next": "job_4", "confidence": 3 }
       ]}
     ]},
-    { "id": "job_3_oops", "heard": "always", "next": "job_4", "lines": [
+    { "id": "job_3_oops", "portrait": "portrait_lung_daeng", "heard": "always", "next": "job_4", "lines": [
       { "speaker": "", "text": "We bump straight into the palm. He slaps my right arm, not too hard." },
       { "speaker": "ลุงแดง", "text": "ขวา" }
     ]},
-    { "id": "job_4", "heard": "always", "lines": [
+    { "id": "job_4", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "", "text": "He puts the starter cord in my hand and holds up his fingers, one at a time." },
       { "speaker": "ลุงแดง", "text": "หนึ่ง สอง สาม", "choices": [
         { "text": "Pull right away", "next": "job_4_oops", "confidence": -3 },
         { "text": "Pull on the last finger", "next": "job_5", "confidence": 3 }
       ]}
     ]},
-    { "id": "job_4_oops", "heard": "always", "next": "job_5", "lines": [
+    { "id": "job_4_oops", "portrait": "portrait_lung_daeng", "heard": "always", "next": "job_5", "lines": [
       { "speaker": "", "text": "The cord snaps back and nearly takes my fingers with it. He shakes his head and counts again." },
       { "speaker": "ลุงแดง", "text": "หนึ่ง สอง สาม" },
       { "speaker": "", "text": "On the last one this time." }
     ]},
-    { "id": "job_5", "heard": "always", "lines": [
+    { "id": "job_5", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "", "text": "The engine coughs, catches and roars. Sparks spit from a loose wire right next to my hand." },
       { "speaker": "ลุงแดง", "text": "ระวัง", "choices": [
         { "text": "Reach for the wire", "next": "job_5_oops", "confidence": -3 },
         { "text": "Pull my hand back", "next": "job_done", "confidence": 3 }
       ]}
     ]},
-    { "id": "job_5_oops", "heard": "always", "next": "job_done", "lines": [
+    { "id": "job_5_oops", "portrait": "portrait_lung_daeng", "heard": "always", "next": "job_done", "lines": [
       { "speaker": "", "text": "A jolt of pain runs up my arm. He yanks me back by the collar." },
       { "speaker": "ลุงแดง", "text": "ระวัง" },
       { "speaker": "", "text": "I won't forget that word." }
     ]},
-    { "id": "job_done", "heard": "always", "lines": [
+    { "id": "job_done", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "", "text": "Inside, the lights flicker on. I hear Mali laugh in surprise." },
       { "speaker": "ลุงแดง", "text": "ทำงาน ดี" },
       { "speaker": "", "text": "He pulls a crumpled note from his pocket and presses it into my hand." },
@@ -271,27 +271,27 @@
         { "text": "Shrug", "next": "job_shrug" }
       ]}
     ]},
-    { "id": "job_phom", "heard": "always", "lines": [
+    { "id": "job_phom", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "", "text": "He bursts out laughing and slaps his knee." },
       { "speaker": "ลุงแดง", "text": "ผม" },
       { "speaker": "", "text": "He thumps his own chest, then mine, and says it again with my words." },
       { "speaker": "ลุงแดง", "text": "ผม จำ ไม่ ได้", "confidence": 6 },
       { "speaker": "", "text": "So I've been talking like Mali this whole time. Of course I have. She's the only one who's taught me anything." }
     ]},
-    { "id": "job_shrug", "heard": "always", "lines": [
+    { "id": "job_shrug", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "", "text": "He shrugs back, twice as big, then thumps his chest and points at the generator." },
       { "speaker": "ลุงแดง", "text": "ผม ทำงาน" },
       { "speaker": "", "text": "Then he points at me." },
       { "speaker": "ลุงแดง", "text": "คุณ ทำงาน ดี", "confidence": 3 }
     ]},
-    { "id": "lung_radio", "lines": [
+    { "id": "lung_radio", "portrait": "portrait_lung_daeng", "lines": [
       { "speaker": "", "text": "Lung Daeng has a little radio on the generator, turned up loud. A woman is reading the news, fast." },
-      { "speaker": "วิทยุ", "text": "เมื่อคืน เรือ โดยสาร ล่ม กลาง ทะเล มี คน หาย หลาย คน", "setFlag": "heard_radio",
+      { "speaker": "วิทยุ", "portrait": "none", "text": "เมื่อคืน เรือ โดยสาร ล่ม กลาง ทะเล มี คน หาย หลาย คน", "setFlag": "heard_radio",
         "catchWord": "เรือ", "catchOptions": ["เรือ", "น้ำ", "ข้าว"] },
       { "speaker": "", "text": "Lung Daeng switches it off. He doesn't look at me." },
       { "speaker": "", "text": "Without meaning to, I've put my hand in my pocket." }
     ]},
-    { "id": "lung_idle", "heard": "always", "lines": [
+    { "id": "lung_idle", "portrait": "portrait_lung_daeng", "heard": "always", "lines": [
       { "speaker": "ลุงแดง", "text": "ทำงาน ดี" },
       { "speaker": "", "text": "He's crouched by the generator, poking at it with a screwdriver." }
     ]},
