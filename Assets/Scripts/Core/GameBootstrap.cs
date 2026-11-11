@@ -32,8 +32,9 @@ namespace ThaiMystery
             var playerGo = new GameObject("Player");
             playerGo.AddComponent<SpriteRenderer>();
             Game.Player = playerGo.AddComponent<PlayerController>();
-            Game.Player.Init(SpriteLibrary.GetCharacterSheet("player"), Game.Map.FromRowCol(map.playerX, map.playerY),
-                CharacterSprite.ParseFacing(map.playerFacing), SpriteLibrary.GetWalkCycle("player"));
+            string look = PlayerController.LookForToday();
+            Game.Player.Init(SpriteLibrary.GetCharacterSheet(look), Game.Map.FromRowCol(map.playerX, map.playerY),
+                CharacterSprite.ParseFacing(map.playerFacing), SpriteLibrary.GetWalkCycle(look));
 
             SetupCamera(playerGo.transform);
 

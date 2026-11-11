@@ -37,6 +37,9 @@ namespace ThaiMystery
             return s;
         }
 
+        // True when Resources/Sprites/<name>.png exists, without logging an error if it doesn't.
+        public static bool Has(string name) => Resources.Load<Texture2D>("Sprites/" + name) != null;
+
         // RPG Maker style character sheet: 3 columns (step, idle, step) by 4 rows (down, left, right, up).
         // Returned as [row, column].
         public static Sprite[,] GetCharacterSheet(string name)

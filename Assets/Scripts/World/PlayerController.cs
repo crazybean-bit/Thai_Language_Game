@@ -22,6 +22,21 @@ namespace ThaiMystery
             transform.position = Game.Map.CellToWorld(startCell);
         }
 
+        // His look changes with the days: on day 1 he's just washed up (player_day1, if that
+        // sprite exists); from day 2 on he has his ordinary look (player).
+        public static string LookForToday()
+        {
+            const string washedUp = "player_day1";
+            return Game.State.Day <= 1 && SpriteLibrary.Has(washedUp) ? washedUp : "player";
+        }
+
+        public void Dress(string look)
+        {
+            var sheet = SpriteLibrary.GetCharacterSheet(look);
+            if (sheet == null) return;
+            character.Init(sheet, character.Facing, SpriteLibrary.GetWalkCycle(look));
+        }
+
         // Puts him somewhere new, e.g. on the other side of a door.
         public void PlaceAt(Vector2Int cell, Vector2Int facing)
         {

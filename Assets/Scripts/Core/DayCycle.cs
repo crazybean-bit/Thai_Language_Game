@@ -72,6 +72,7 @@ namespace ThaiMystery
 
             yield return ui.FadeOut(0.6f);
             Game.State.NextDay();
+            Game.Player.Dress(PlayerController.LookForToday());
             ui.Night.Hide();
             if (Game.World.Load(WakeMap) != null)
                 Game.Player.PlaceAt(Game.Map.FromRowCol(WakeX, WakeY), CharacterSprite.ParseFacing(WakeFacing));

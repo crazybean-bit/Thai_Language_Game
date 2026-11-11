@@ -1039,18 +1039,15 @@ if __name__ == "__main__":
     # Characters made in PixelLab (Tools/art/pixellab) replace the hand-drawn sheets above.
     import import_pixellab
     import_pixellab.build_all()
-    # Finished props (Tools/art/props, already cropped to size) replace the hand-drawn ones.
-    props = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "props")
-    if os.path.isdir(props):
-        for f in sorted(os.listdir(props)):
-            if f.endswith(".png"):
-                shutil.copy(os.path.join(props, f), os.path.join(OUT, f))
-    # Finished portraits (Tools/art/portraits) replace the hand-drawn ones.
-    portraits = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art", "portraits")
-    if os.path.isdir(portraits):
-        for f in sorted(os.listdir(portraits)):
-            if f.endswith(".png"):
-                shutil.copy(os.path.join(portraits, f), os.path.join(OUT, f))
+    # Finished art replaces the hand-drawn placeholders: props (already cropped to size),
+    # portraits, and ground tiles (Tools/import_tiles.py).
+    art = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art")
+    for kind in ("props", "portraits", "tiles"):
+        folder = os.path.join(art, kind)
+        if os.path.isdir(folder):
+            for f in sorted(os.listdir(folder)):
+                if f.endswith(".png"):
+                    shutil.copy(os.path.join(folder, f), os.path.join(OUT, f))
 
     ui_frame("ui_frame", rgb("e6dac2"))
     ui_frame("ui_card", rgb("d9cbb4"))
