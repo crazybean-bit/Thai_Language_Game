@@ -93,10 +93,10 @@ namespace ThaiMystery
                 case ':': return "sand_" + hash % 4;
                 case ';': return "grass_" + hash % 4;
                 case '_': return "path_" + hash % 4;
-                case '~': return "sea_" + hash % 2;
-                case '%': return "fence";
-                case 'R': return "roof_" + hash % 2;
-                case 'H': return "house_wall_" + hash % 2;
+                case '~': return "sea_" + hash % 4;
+                case '%': return "fence_" + hash % 4;
+                case 'R': return "roof_" + hash % 4;
+                case 'H': return "house_wall_" + hash % 4;
                 default: return null;
             }
         }

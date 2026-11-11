@@ -496,16 +496,16 @@ def sea(variant):
     save(c, f"sea_{variant}")
 
 
-def fence():
-    """Hedge and posts around the yard."""
+def fence(variant):
+    """Hedge around the yard."""
     c = Canvas(32, 32)
     leaf = rgb("33452c")
     for y in range(32):
         for x in range(32):
-            c.put(x, y, shade(leaf, (noise(x // 2, y // 2, 95) - 0.5) * 0.3))
+            c.put(x, y, shade(leaf, (noise(x // 2, y // 2, 95 + variant) - 0.5) * 0.3))
     for (x, y) in [(5, 6), (20, 4), (12, 18), (26, 22), (3, 26)]:
         c.ellipse(x, y, 3, 2, shade(leaf, 0.15))
-    save(c, "fence")
+    save(c, f"fence_{variant}")
 
 
 def roof(variant):
@@ -611,11 +611,11 @@ def outdoors():
     for v in range(4):
         sand(v)
         grass(v)
-    for v in range(2):
         sea(v)
         roof(v)
         house_wall(v)
-    for f in (fence, generator, spirit_house_fallen, boat, palm_fallen, debris):
+        fence(v)
+    for f in (generator, spirit_house_fallen, boat, palm_fallen, debris):
         f()
 
 

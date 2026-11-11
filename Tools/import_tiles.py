@@ -76,7 +76,7 @@ def main(argv):
             under.alpha_composite(crop)
             crop = under
         tile = fold(crop, i)
-        if tile.getchannel("A").getextrema()[0] < 255:
+        if not base and tile.getchannel("A").getextrema()[0] < 255:
             print(f"warning: {name}_{i} ({cell}) has see-through pixels; pass --base or pick another")
         for d in (ART, OUT):
             tile.save(os.path.join(d, f"{name}_{i}.png"))
