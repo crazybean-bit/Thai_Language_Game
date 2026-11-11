@@ -717,6 +717,7 @@
         "bonus": ["ครับ"],
         "reactions": [{ "text": "ฉัน เป็น ลูกพี่ลูกน้อง ของ มะลิ", "next": "cousin_chan" }],
         "correct": "cousin_done",
+        "wrong": "cousin_again",
         "retry": true,
         "warmth": 3
       }}
@@ -733,8 +734,13 @@
         "words": ["ฉัน", "คุณ", "ชื่อ"],
         "bonus": ["ครับ"],
         "correct": "cousin_done",
+        "wrong": "cousin_again",
         "retry": true
       }}
+    ]},
+    { "id": "cousin_again", "portrait": "portrait_mali", "heard": "always", "next": "cousin_try", "lines": [
+      { "speaker": "", "text": "She shakes her head and says it again, slowly, tapping the table once for every word." },
+      { "speaker": "มะลิ", "text": "ผม ... เป็น ... ลูกพี่ลูกน้อง ... ของ ... มะลิ" }
     ]},
     { "id": "cousin_done", "portrait": "portrait_mali", "heard": "always", "lines": [
       { "speaker": "มะลิ", "text": "ดี", "when": "warmth<housemate", "setFlag": "cousin_deal" },

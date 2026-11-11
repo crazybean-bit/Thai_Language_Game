@@ -89,9 +89,11 @@ namespace ThaiMystery
                 while (fogged.Count < Mathf.Min(FoggedWhenNervous, tiles.Count - 1))
                     fogged.Add(random.Next(tiles.Count));
 
+            // Active first: TextMeshPro can't measure text on an inactive object, and the
+            // tiles size themselves to their word.
+            root.SetActive(true);
             BuildTiles(fogged);
             RefreshSentence();
-            root.SetActive(true);
         }
 
         // Only words he has heard can be tiles: he can't say what he's never heard.
@@ -105,6 +107,17 @@ namespace ThaiMystery
                 if (w.Length == 0 || tiles.Contains(w) || !known) continue;
                 tiles.Add(w);
             }
+        }
+
+        private static int SpacingChars(string word)
+        {
+            int n = 0;
+            foreach (char c in word)
+            {
+                var cat = char.GetUnicodeCategory(c);
+                if (cat != System.Globalization.UnicodeCategory.NonSpacingMark) n++;
+            }
+            return n;
         }
 
         private void BuildTiles(HashSet<int> fogged)
@@ -121,7 +134,10 @@ namespace ThaiMystery
                 rt.pivot = new Vector2(0, 1);
 
                 var thai = UIFactory.Text("Thai", rt, word, 34, WordRow.InkFor(Game.Words.StageOf(word)));
-                float w = Mathf.Max(70f, thai.GetPreferredValues(word).x + 28f);
+                // Fallback estimate in case the measurement comes back short (about 0.5 em
+                // per Thai character, ignoring the vowel and tone marks that stack).
+                float estimate = 0.5f * 34f * SpacingChars(word);
+                float w = Mathf.Max(70f, Mathf.Max(thai.GetPreferredValues(word).x, estimate) + 28f);
                 UIFactory.Place(thai.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -6), new Vector2(w, 52));
 
                 bool foggy = fogged.Contains(i) || Game.Words.IsFaded(word);
