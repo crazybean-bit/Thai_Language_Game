@@ -13,6 +13,8 @@ namespace ThaiMystery
     //   confidence   how sure of himself he is, 0 to 100. Below 35 he stutters and words fog
     //                over in the tiles; from 70 he's fluent and gets extra tiles
     //   money        baht earned from jobs
+    //   day          which day of the story it is, from 1. Night falls when a line with
+    //                "endDay" finishes (DayCycle), and the next morning starts the next day
     public class GameState
     {
         public const int Housemate = 25;
@@ -28,6 +30,12 @@ namespace ThaiMystery
         public int Confidence { get; private set; } = 50;
         public int Money { get; private set; }
         public int ShutOffs { get; private set; }
+        public int Day { get; private set; } = 1;
+
+        // Set by a line with "endDay"; the dialogue runner starts the night once it closes.
+        public bool EndDayPending { get; private set; }
+        // Set by a line with "endAct"; the act's closing card shows once the dialogue closes.
+        public bool EndActPending { get; private set; }
 
         // Set when recognition crosses ShutOffAt; the dialogue runner cuts to the shut-off scene.
         public bool ShutOffPending { get; private set; }
@@ -87,6 +95,19 @@ namespace ThaiMystery
 
         public void KindMomentPlayed() => KindMomentPending = false;
 
+        public void RequestEndDay() => EndDayPending = true;
+        public void NightStarted() => EndDayPending = false;
+        public void RequestEndAct() => EndActPending = true;
+        public void EndActShown() => EndActPending = false;
+
+        // Morning: a new day starts. Objects with "showWhen": "day==2" and so on appear.
+        public void NextDay()
+        {
+            EndDayPending = false;
+            Day++;
+            Changed?.Invoke();
+        }
+
         public void NotifyFlagsChanged() => Changed?.Invoke();
 
         // Conditions look like "met_mali", "!warned_door", "warmth>=25" or
@@ -134,6 +155,7 @@ namespace ThaiMystery
                 case "confidence": return Confidence;
                 case "money": return Money;
                 case "shutoffs": return ShutOffs;
+                case "day": return Day;
             }
             Debug.LogWarning($"[ThaiMystery] Unknown value '{name}' in a dialogue condition");
             return 0;
@@ -156,7 +178,7 @@ namespace ThaiMystery
         }
 
         public string Describe() =>
-            $"Warmth {Warmth} ({WarmthTier})   Recognition {Recognition}/{ShutOffAt}   Confidence {Confidence}   " +
+            $"Day {Day}   Warmth {Warmth} ({WarmthTier})   Recognition {Recognition}/{ShutOffAt}   Confidence {Confidence}   " +
             $"Money {Money}   Shut-offs {ShutOffs}";
 
         public string WarmthTier => Warmth >= Close ? "close" : Warmth >= Housemate ? "housemate" : "stranger";

@@ -1,5 +1,5 @@
 {
-  "_comment": "Which text-to-speech voice reads each speaker. Keys are the speaker names from dialogue.json. \"words\" reads single words the way Mali teaches them, \"own\" is the protagonist's own voice for words he has learned, and \"\" is anyone else. Azure Thai voices: th-TH-PremwadeeNeural (female), th-TH-AcharaNeural (female), th-TH-NiwatNeural (male). Google Thai voices include th-TH-Neural2-C and th-TH-Standard-A. The Unity window (Thai Mystery > Generate Voices) also sets pitch and speed.",
+  "_comment": "Which text-to-speech voice reads each speaker. Keys are the speaker names from dialogue.json. \"words\" reads single words the way Mali teaches them, \"own\" is the protagonist's own voice for words he has learned, and \"\" is anyone else. Azure Thai voices: th-TH-PremwadeeNeural (female), th-TH-AcharaNeural (female), th-TH-NiwatNeural (male). Google Thai voices include th-TH-Neural2-C and th-TH-Standard-A. The Unity window (Thai Mystery > Generate Voices) also sets pitch and speed. \"child\" reads the words from his memory flashes. The command line can't change pitch, so the Unity window is the better way to make the child and old-woman voices.",
   "azure": {
     "มะลิ": "th-TH-AcharaNeural",
     "???": "th-TH-PremwadeeNeural",
@@ -7,7 +7,13 @@
     "words": "th-TH-AcharaNeural",
     "own": "th-TH-NiwatNeural",
     "ลุงแดง": "th-TH-NiwatNeural",
-    "วิทยุ": "th-TH-PremwadeeNeural"
+    "วิทยุ": "th-TH-PremwadeeNeural",
+    "ยายบัว": "th-TH-PremwadeeNeural",
+    "พี่น้อย": "th-TH-AcharaNeural",
+    "น้องฟ้า": "th-TH-PremwadeeNeural",
+    "เด็ก": "th-TH-NiwatNeural",
+    "เด็กหญิง": "th-TH-AcharaNeural",
+    "child": "th-TH-NiwatNeural"
   },
   "google": {
     "มะลิ": "th-TH-Neural2-C",
@@ -16,7 +22,13 @@
     "words": "th-TH-Neural2-C",
     "own": "th-TH-Standard-A",
     "ลุงแดง": "th-TH-Standard-A",
-    "วิทยุ": "th-TH-Neural2-C"
+    "วิทยุ": "th-TH-Neural2-C",
+    "ยายบัว": "th-TH-Standard-A",
+    "พี่น้อย": "th-TH-Neural2-C",
+    "น้องฟ้า": "th-TH-Neural2-C",
+    "เด็ก": "th-TH-Standard-A",
+    "เด็กหญิง": "th-TH-Neural2-C",
+    "child": "th-TH-Standard-A"
   },
   "wordRate": "-20%",
   "hesitantRate": "-25%"

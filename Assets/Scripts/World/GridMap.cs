@@ -11,7 +11,9 @@ namespace ThaiMystery
         public int Height { get; private set; }
 
         private char[,] tiles;
-        private readonly Dictionary<Vector2Int, Interactable> occupants = new Dictionary<Vector2Int, Interactable>();
+        // Several things can share a tile when only one shows at a time (a fallen spirit house
+        // and the same house set upright), or when one is an invisible exit.
+        private readonly Dictionary<Vector2Int, List<Interactable>> occupants = new Dictionary<Vector2Int, List<Interactable>>();
 
         public void Build(MapData data)
         {
@@ -67,7 +69,7 @@ namespace ThaiMystery
             sr.sortingOrder = -999;
         }
 
-        private const string Walkable = ".,:;";
+        private const string Walkable = ".,:;_";
         // What casts a soft shadow on the ground next to it (the sea doesn't).
         private const string Walls = "#-=HR%";
 
@@ -90,6 +92,7 @@ namespace ThaiMystery
                 case ',': return "rug_" + RugEdges(cell);
                 case ':': return "sand_" + hash % 4;
                 case ';': return "grass_" + hash % 4;
+                case '_': return "path_" + hash % 4;
                 case '~': return "sea_" + hash % 2;
                 case '%': return "fence";
                 case 'R': return "roof_" + hash % 2;
@@ -124,12 +127,34 @@ namespace ThaiMystery
         {
             if (!InBounds(c)) return false;
             if (!IsFloor(c)) return false;
-            return !(occupants.TryGetValue(c, out var o) && o.Solid);
+            if (occupants.TryGetValue(c, out var list))
+                foreach (var o in list)
+                    if (o.Solid) return false;
+            return true;
         }
 
-        public void Register(Interactable obj, Vector2Int cell) => occupants[cell] = obj;
+        public void Register(Interactable obj, Vector2Int cell)
+        {
+            if (!occupants.TryGetValue(cell, out var list)) occupants[cell] = list = new List<Interactable>();
+            list.Add(obj);
+        }
 
-        public Interactable GetInteractable(Vector2Int cell) =>
-            occupants.TryGetValue(cell, out var o) && o.Visible ? o : null;
+        // What he can inspect on a tile: the first visible thing there that isn't a step trigger.
+        public Interactable GetInteractable(Vector2Int cell)
+        {
+            if (!occupants.TryGetValue(cell, out var list)) return null;
+            foreach (var o in list)
+                if (o.Visible && !o.IsStep) return o;
+            return null;
+        }
+
+        // An exit or trigger he sets off by walking onto the tile.
+        public Interactable GetStepTrigger(Vector2Int cell)
+        {
+            if (!occupants.TryGetValue(cell, out var list)) return null;
+            foreach (var o in list)
+                if (o.Visible && o.IsStep) return o;
+            return null;
+        }
     }
 }

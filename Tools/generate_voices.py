@@ -7,6 +7,8 @@ Creates WAV files in Assets/Resources/Audio:
   Words/Own/w_<hex codepoints>.wav     every word in the protagonist's own voice
   Words/Hesitant/w_<hex codepoints>.wav  every word in his voice, stumbling over it (Azure only:
                                        the pause needs SSML)
+  Words/Child/w_<hex codepoints>.wav   words from his memory flashes ("child" in words.json), in
+                                       his voice as a boy (the "child" voice in voices.json)
 
 The game plays these automatically when they exist and falls back to voice blips
 when they don't, so you can generate them any time.
@@ -99,6 +101,13 @@ def collect():
             "speaker": "own",
             "word": True,
         })
+        if w.get("child"):
+            jobs.append({
+                "path": os.path.join(AUDIO, "Words", "Child", word_key(w["thai"]) + ".wav"),
+                "text": w["thai"],
+                "speaker": "child",
+                "word": True,
+            })
         jobs.append({
             "path": os.path.join(AUDIO, "Words", "Hesitant", word_key(w["thai"]) + ".wav"),
             "text": stutter_ssml(w),

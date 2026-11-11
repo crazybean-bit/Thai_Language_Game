@@ -74,6 +74,23 @@
 
     { "thai": "ใคร", "answers": ["who", "who?", "whom", "someone"], "romanization": "khrai", "group": "photo", "note": "Who. Like อะไร, it goes at the end of a question." },
     { "thai": "เอา", "answers": ["take", "give", "get", "bring", "want", "give it"], "romanization": "ao", "group": "photo", "note": "To take or get. เอา มา = give it here." },
-    { "thai": "เป็น", "answers": ["be", "is", "are", "am", "to be"], "romanization": "pen", "group": "be", "note": "To be, for saying what someone is: คุณ เป็น ใคร = who are you?" }
+    { "thai": "เป็น", "answers": ["be", "is", "are", "am", "to be"], "romanization": "pen", "group": "be", "note": "To be, for saying what someone is: คุณ เป็น ใคร = who are you?" },
+
+    { "thai": "ทะเล", "answers": ["sea", "the sea", "ocean", "beach", "seaside"], "romanization": "tha-le", "group": "flashes", "past": true, "child": true, "note": "Sea. It came back in a child's voice, his own." },
+    { "thai": "หอย", "answers": ["shell", "seashell", "shells", "clam", "shellfish", "snail"], "romanization": "hoi", "group": "flashes", "past": true, "child": true, "note": "Shell, or any shellfish. Another word he said as a boy." },
+
+    { "thai": "ไหว้", "answers": ["wai", "bow", "pray", "greet", "greeting", "pay respect", "pay respects", "respect"], "romanization": "wai", "group": "spirit", "note": "The wai: palms pressed together, head bowed. To greet, thank, apologise or pay respect." },
+    { "thai": "ดอก", "answers": ["flower", "flowers", "blossom", "bloom"], "romanization": "dok", "group": "spirit", "note": "Flower. ดอก มะลิ = jasmine flower. Her name is a flower." },
+
+    { "thai": "แปลก", "answers": ["strange", "weird", "odd", "funny", "unusual", "peculiar"], "romanization": "plaek", "group": "strange", "note": "Strange, odd." },
+    { "thai": "มัน", "answers": ["it", "its", "it's", "that", "he", "she", "the cat"], "romanization": "man", "group": "strange", "note": "'It', for animals and things. Also the มัน in น้ำมัน (oily)." },
+    { "thai": "ชอบ", "answers": ["like", "likes", "love", "enjoy", "fond of", "be fond of"], "romanization": "chop", "group": "strange", "note": "To like. ไม่ ชอบ = doesn't like." },
+
+    { "thai": "ห้าสิบ", "answers": ["fifty", "50"], "romanization": "ha-sip", "group": "fifty", "note": "Fifty. ห้า (five) + สิบ (ten)." },
+
+    { "thai": "ลูกพี่ลูกน้อง", "answers": ["cousin", "cousins", "relative"], "romanization": "luk-phi-luk-nong", "group": "cousin", "note": "Cousin. Literally child-of-older-sibling, child-of-younger-sibling.", "stutter": "ลูก... ลูกพี่ลูกน้อง" },
+    { "thai": "ของ", "answers": ["of", "belong", "belongs to", "belonging to", "'s", "s", "thing", "things"], "romanization": "khong", "group": "cousin", "note": "'Of' or 'belonging to': ลูกพี่ลูกน้อง ของ มะลิ = Mali's cousin. On its own it means 'thing'." },
+
+    { "thai": "สัญญา", "answers": ["promise", "vow", "oath", "pledge", "contract", "agreement", "deal"], "romanization": "san-ya", "group": "vow", "locked": true, "note": "Promise, or vow." }
   ]
 }

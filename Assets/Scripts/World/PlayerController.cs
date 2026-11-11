@@ -79,6 +79,13 @@ namespace ThaiMystery
             }
             transform.position = to;
             moving = false;
+            // Exits off the edge of a map go off as soon as he steps on them.
+            var trigger = Game.Map.GetStepTrigger(Cell);
+            if (trigger != null && Game.PlayerCanAct)
+            {
+                character.SetWalking(false);
+                trigger.Interact(this);
+            }
         }
 
         private void TryInteract()

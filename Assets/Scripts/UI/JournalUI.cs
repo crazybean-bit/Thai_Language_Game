@@ -122,8 +122,17 @@ namespace ThaiMystery
             body.raycastTarget = false;
             UIFactory.Place(body.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -46), new Vector2(222, 102));
 
-            var thaiText = UIFactory.Text("Thai", body.transform, thai, 40, Theme.Ink);
-            UIFactory.Stretch(thaiText.rectTransform, 4, 4, 4, confirmed ? 26 : 4);
+            // Faded overnight: the letters are out of focus until he clicks the card to remember.
+            bool faded = words.IsFaded(thai);
+            var thaiText = UIFactory.Text("Thai", body.transform, thai, 40, faded ? Theme.Unknown : Theme.Ink);
+            UIFactory.Stretch(thaiText.rectTransform, 4, 4, 4, confirmed || faded ? 26 : 4);
+            if (faded)
+            {
+                BlurredWord.Apply(thaiText, thai, scramble: false);
+                var hint = UIFactory.Text("Faded", body.transform, "faded · click to remember", 16, Theme.InkSoft);
+                hint.fontStyle = FontStyles.Italic;
+                UIFactory.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8), new Vector2(210, 24));
+            }
 
             // Four pips: Heard, Understood, Familiar and Owned, filled in as he gets there.
             int stage = (int)words.StageOf(thai);

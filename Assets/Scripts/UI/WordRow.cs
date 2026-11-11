@@ -60,17 +60,19 @@ namespace ThaiMystery
             {
                 bool thai = WordBook.IsThai(token);
                 var stage = thai ? Game.Words.StageOf(token) : WordStage.Owned;
-                bool jumbled = stage == WordStage.Noise;
+                // A word that faded overnight keeps its real letters, just out of focus.
+                bool faded = thai && Game.Words.IsFaded(token);
+                bool jumbled = stage == WordStage.Noise && !faded;
                 string shown = jumbled ? Jumble(token) : token;
                 var rt = UIFactory.Rect("Word " + token, container);
                 rt.anchorMin = rt.anchorMax = new Vector2(0, 1);
                 rt.pivot = new Vector2(0, 1);
 
-                var color = jumbled ? Theme.Unknown : InkFor(stage);
+                var color = jumbled || faded ? Theme.Unknown : InkFor(stage);
                 var word = UIFactory.Text("Thai", rt, shown, thaiSize, color);
                 float w = word.GetPreferredValues(shown).x;
 
-                if (thai && !jumbled)
+                if (thai && !jumbled && !faded)
                 {
                     var chip = new WordChip { Thai = token };
                     chip.GuessText = UIFactory.Text("Guess", rt, "?", guessSize, Theme.Unknown);
@@ -111,6 +113,7 @@ namespace ThaiMystery
                 wordRt.anchoredPosition = Vector2.zero;
                 wordRt.sizeDelta = new Vector2(0, thaiSize * 1.55f);
                 if (jumbled) BlurredWord.Apply(word, token);
+                else if (faded) BlurredWord.Apply(word, token, scramble: false);
 
                 w += 16f;
                 rt.sizeDelta = new Vector2(w, chipH);

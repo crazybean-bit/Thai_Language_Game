@@ -7,7 +7,9 @@ Run with: python3 Tools/check_data.py
   - every Thai word someone says clearly is in words.json
   - every word in words.json is said clearly somewhere, so every group can be confirmed
   - tile answers, tile words and listening-moment options are real words
+  - every flag a condition, rule or showWhen checks is set somewhere (catches typos)
 """
+import re
 import json
 import os
 import sys
@@ -55,7 +57,7 @@ def main():
                     if target is None:
                         problems.append(f"Maps/{name} {o['id']}: no map '{r['goTo']}'")
                     elif not (0 <= r.get("goY", 0) < len(target["rows"]) and
-                              target["rows"][r.get("goY", 0)][r.get("goX", 0):r.get("goX", 0) + 1] in (".", ",", ":", ";")):
+                              target["rows"][r.get("goY", 0)][r.get("goX", 0):r.get("goX", 0) + 1] in (".", ",", ":", ";", "_")):
                         problems.append(f"Maps/{name} {o['id']}: arrives on a tile you can't stand on in '{r['goTo']}'")
 
     for d in dialogues.values():
@@ -82,6 +84,37 @@ def main():
             if line.get("catchWord"):
                 for w in [line["catchWord"]] + (line.get("catchOptions") or []):
                     known(w, where + " catch")
+
+    # Flags: everything checked must be set by some line, choice or tile somewhere.
+    values = {"warmth", "recognition", "confidence", "money", "shutoffs", "day"}
+    set_flags, checked = set(), []
+
+    def check(cond, where):
+        for clause in (cond or "").split("&"):
+            clause = clause.strip().lstrip("!").strip()
+            if clause and not re.search(r"[<>=]", clause):
+                checked.append((clause, where))
+
+    for d in dialogues.values():
+        if d.get("heard") and d["heard"] != "always":
+            check(d["heard"], d["id"])
+        for i, line in enumerate(d["lines"]):
+            set_flags.add(line.get("setFlag"))
+            check(line.get("when"), f"{d['id']}[{i}]")
+            if line.get("heard") and line["heard"] != "always":
+                check(line["heard"], f"{d['id']}[{i}]")
+            for c in line.get("choices") or []:
+                set_flags.add(c.get("setFlag"))
+                check(c.get("when"), f"{d['id']}[{i}] choice")
+    for name, world in worlds.items():
+        for o in world["objects"]:
+            check(o.get("showWhen"), f"Maps/{name} {o['id']}")
+            for r in o.get("rules") or []:
+                for key in ("requireFlag", "blockFlag", "when"):
+                    check(r.get(key), f"Maps/{name} {o['id']}")
+    for flag, where in checked:
+        if flag not in set_flags and flag not in values:
+            problems.append(f"{where}: checks flag '{flag}', which nothing sets")
 
     for w, entry in words.items():
         if w not in heard:

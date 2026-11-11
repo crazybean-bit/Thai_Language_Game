@@ -72,7 +72,9 @@ namespace ThaiMystery
             prompt.text = string.IsNullOrEmpty(data.prompt) ? "Say something..." : data.prompt;
 
             tiles.Clear();
-            AddTiles(data.answer?.Split(' '));
+            // The answer's own words are always there, even one that faded overnight (it shows
+            // out of focus), so a faded word can never leave him unable to answer.
+            AddTiles(data.answer?.Split(' '), true);
             AddTiles(data.words);
             if (confident) AddTiles(data.bonus);
             // Always shuffled, so the tile order never gives the answer away.
@@ -93,13 +95,14 @@ namespace ThaiMystery
         }
 
         // Only words he has heard can be tiles: he can't say what he's never heard.
-        private void AddTiles(string[] words)
+        private void AddTiles(string[] words, bool evenFaded = false)
         {
             if (words == null) return;
             foreach (var raw in words)
             {
                 var w = raw.Trim();
-                if (w.Length == 0 || tiles.Contains(w) || !Game.Words.IsHeard(w)) continue;
+                bool known = Game.Words.IsHeard(w) || (evenFaded && Game.Words.IsFaded(w));
+                if (w.Length == 0 || tiles.Contains(w) || !known) continue;
                 tiles.Add(w);
             }
         }
@@ -121,8 +124,9 @@ namespace ThaiMystery
                 float w = Mathf.Max(70f, thai.GetPreferredValues(word).x + 28f);
                 UIFactory.Place(thai.rectTransform, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -6), new Vector2(w, 52));
 
+                bool foggy = fogged.Contains(i) || Game.Words.IsFaded(word);
                 string guess = Game.Words.GetGuess(word);
-                var hint = UIFactory.Text("Guess", rt, fogged.Contains(i) ? "" : guess ?? "?", 15,
+                var hint = UIFactory.Text("Guess", rt, foggy ? "" : guess ?? "?", 15,
                     Game.Words.IsConfirmed(word) ? Theme.Confirmed : Theme.InkSoft);
                 UIFactory.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 8), new Vector2(w, 22));
 
@@ -135,7 +139,7 @@ namespace ThaiMystery
                 }
 
                 // Nerves: he knows this word, but right now it won't come into focus.
-                if (fogged.Contains(i)) BlurredWord.Apply(thai, word, scramble: false);
+                if (foggy) BlurredWord.Apply(thai, word, scramble: false);
 
                 rt.sizeDelta = new Vector2(w, 90);
                 rt.anchoredPosition = new Vector2(x, 0);

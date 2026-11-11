@@ -24,14 +24,25 @@
       {"dialogue": "generator_running", "requireFlag": "job_done"},
       {"dialogue": "generator"}
     ]},
-    {"id": "lung_daeng", "sprite": "lung_daeng", "x": 13, "y": 5, "character": true, "showWhen": "thanked_mali", "rules": [
+    {"id": "lung_daeng", "sprite": "lung_daeng", "x": 13, "y": 5, "character": true, "showWhen": "thanked_mali & day<=3", "rules": [
       {"dialogue": "job_intro", "blockFlag": "job_done"},
-      {"dialogue": "lung_radio", "requireFlag": "job_done", "when": "named_boat & !heard_radio"},
+      {"dialogue": "lung_radio", "requireFlag": "job_done", "blockFlag": "heard_radio", "when": "day>=3"},
+      {"dialogue": "palm_job", "requireFlag": "heard_radio", "blockFlag": "palm_cleared"},
+      {"dialogue": "water_job", "requireFlag": "palm_cleared", "blockFlag": "fetching_water"},
+      {"dialogue": "water_back", "requireFlag": "got_water", "blockFlag": "water_done"},
+      {"dialogue": "water_wait", "requireFlag": "fetching_water", "blockFlag": "got_water"},
       {"dialogue": "lung_idle"}
     ]},
-    {"id": "spirit_house", "sprite": "spirit_house_fallen", "x": 3, "y": 4, "rules": [{"dialogue": "spirit_house"}]},
+    {"id": "spirit_house", "sprite": "spirit_house_fallen", "x": 3, "y": 4, "showWhen": "!spirit_raised", "rules": [
+      {"dialogue": "spirit_raise", "when": "day==3"},
+      {"dialogue": "spirit_house"}
+    ]},
+    {"id": "spirit_house_up", "sprite": "spirit_house", "x": 3, "y": 4, "showWhen": "spirit_raised", "rules": [{"dialogue": "spirit_house_up"}]},
+    {"id": "mali_yard", "sprite": "mali", "x": 4, "y": 5, "character": true, "showWhen": "day==3 & !spirit_raised", "rules": [{"dialogue": "spirit_raise"}]},
     {"id": "boat", "sprite": "boat", "x": 6, "y": 8, "width": 2, "rules": [{"dialogue": "boat"}]},
-    {"id": "palm", "sprite": "palm_fallen", "x": 17, "y": 5, "rules": [{"dialogue": "palm"}]},
+    {"id": "palm", "sprite": "palm_fallen", "x": 17, "y": 5, "showWhen": "!palm_cleared", "rules": [{"dialogue": "palm"}]},
+    {"id": "palm_cut", "sprite": "palm_cut", "x": 16, "y": 3, "showWhen": "palm_cleared"},
+    {"id": "lane_exit", "x": 17, "y": 5, "step": true, "showWhen": "palm_cleared", "rules": [{"goTo": "village", "goX": 1, "goY": 5, "goFacing": "right"}]},
     {"id": "debris_left", "sprite": "debris", "x": 2, "y": 8, "rules": [{"dialogue": "debris"}]},
     {"id": "debris_right", "sprite": "debris", "x": 12, "y": 7, "rules": [{"dialogue": "debris"}]}
   ],

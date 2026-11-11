@@ -14,6 +14,7 @@ namespace ThaiMystery
         public DialogueUI DialogueBox { get; private set; }
         public JournalUI Journal { get; private set; }
         public GuessPopup Popup { get; private set; }
+        public NightScreen Night { get; private set; }
 
         public bool ModalOpen => Journal.IsOpen || Popup.IsOpen;
         public bool IsFading { get; private set; }
@@ -42,6 +43,9 @@ namespace ThaiMystery
                 16, new Color(1, 1, 1, 0.55f), TextAlignmentOptions.TopLeft);
             UIFactory.Place(help.rectTransform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(16, -10), new Vector2(1000, 24));
 
+            // Under the dialogue box, so night dialogues and memory flashes play on top of it.
+            Night = new NightScreen(transform, this);
+
             DialogueBox = new DialogueUI(transform, () => Game.Dialogue.OnBoxClicked(), OpenGuess);
 
             // Baht earned from jobs, shown once he has any.
@@ -68,6 +72,7 @@ namespace ThaiMystery
             Game.Words.Changed += OnWordsChanged;
             Game.Words.GroupConfirmed += OnGroupConfirmed;
             Game.Words.StageRaised += OnStageRaised;
+            Game.Words.Remembered += OnRemembered;
             Game.State.Changed += OnStateChanged;
             Game.State.MoneyChanged += OnMoneyChanged;
             OnStateChanged();
@@ -79,6 +84,7 @@ namespace ThaiMystery
             Game.Words.Changed -= OnWordsChanged;
             Game.Words.GroupConfirmed -= OnGroupConfirmed;
             Game.Words.StageRaised -= OnStageRaised;
+            Game.Words.Remembered -= OnRemembered;
             if (Game.State == null) return;
             Game.State.Changed -= OnStateChanged;
             Game.State.MoneyChanged -= OnMoneyChanged;
@@ -105,7 +111,17 @@ namespace ThaiMystery
             }
         }
 
-        private void OpenGuess(string thai) => Popup.Open(thai);
+        // Clicking a word that faded overnight is enough to bring it back.
+        private void OpenGuess(string thai)
+        {
+            Game.Words.Remember(thai);
+            Popup.Open(thai);
+        }
+
+        private void OnRemembered(string thai) =>
+            ShowToast($"{thai}  <color=#C9B79C>comes back to me.</color>");
+
+        public void SetFlash(bool on) => Night.SetFlash(on);
 
         private void OnWordsChanged()
         {
@@ -162,6 +178,13 @@ namespace ThaiMystery
                 yield return null;
             }
             fade.color = Color.black;
+        }
+
+        // Drops the black fade at once, e.g. when the night screen takes over from it.
+        public void ClearFade()
+        {
+            fade.gameObject.SetActive(false);
+            IsFading = false;
         }
 
         public IEnumerator FadeIn(float seconds)

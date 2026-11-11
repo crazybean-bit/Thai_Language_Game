@@ -17,6 +17,8 @@ namespace ThaiMystery
         public string note;            // short learning note shown once confirmed
         public bool past;              // tied to his and Mali's past: fogs over when she shuts off
         public string stutter;         // how he stumbles into it when nervous, e.g. "ขอ... ขอบคุณ"
+        public bool child;             // came back in a memory flash: recalled in his child voice (Words/Child)
+        public bool locked;            // he can hear it but can't pin down its meaning yet (สัญญา in Act 1)
     }
 
     [Serializable]
@@ -81,6 +83,8 @@ namespace ThaiMystery
         public string catchWord;
         public string[] catchOptions;  // what he can answer, including catchWord
         public TileData tiles;         // optional: he answers by building a sentence
+        public bool endDay;            // when the dialogue ends, night falls (DayCycle)
+        public bool endAct;            // when the dialogue ends, the act's closing card shows
     }
 
     [Serializable]
@@ -95,6 +99,8 @@ namespace ThaiMystery
         // clip and teach him every word in them; noise shows only the words he already knows.
         // Lines without a speaker are his own reading and recall, and ignore this.
         public string heard;
+        // A memory flash: plays over a pale, washed-out screen during the night.
+        public bool flash;
     }
 
     [Serializable]
@@ -128,6 +134,7 @@ namespace ThaiMystery
         public bool character;         // uses a 3x4 RPG Maker style sheet and turns to face the player
         public bool passable;          // the player can walk over it
         public string showWhen;        // only there while this condition holds, e.g. a visitor
+        public bool step;              // triggers when the player walks onto it (an exit off the map's edge)
         public InteractionRule[] rules;
     }
 
@@ -154,7 +161,7 @@ namespace ThaiMystery
     public class MapData
     {
         // Indoors: '#' outer wall, '-' upper wall, '=' lower wall, '.' floor, ',' rug.
-        // Outdoors: ':' sand, ';' grass, '~' sea, '%' hedge, 'R' roof, 'H' house wall.
+        // Outdoors: ':' sand, ';' grass, '_' dirt path, '~' sea, '%' hedge, 'R' roof, 'H' house wall.
         public string[] rows;
         public int playerX;
         public int playerY;

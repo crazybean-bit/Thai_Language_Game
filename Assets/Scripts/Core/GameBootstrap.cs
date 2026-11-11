@@ -44,6 +44,7 @@ namespace ThaiMystery
             Game.Voice = uiGo.AddComponent<VoicePlayer>();
             Game.Dialogue = uiGo.AddComponent<DialogueRunner>();
             Game.Dialogue.Init(dialogue, Game.UI.DialogueBox, Game.Voice);
+            Game.Days = uiGo.AddComponent<DayCycle>();
 
             yield return Game.UI.FadeIn(1.8f);
             if (!string.IsNullOrEmpty(map.introDialogue)) Game.Dialogue.Play(map.introDialogue);

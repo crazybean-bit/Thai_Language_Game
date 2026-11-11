@@ -19,6 +19,8 @@ namespace ThaiMystery.Editor
     //   Words/<key>                every word, in the voice of whoever teaches the words (Mali)
     //   Words/Own/<key>            every word in the protagonist's own voice, for learned words
     //   Words/Hesitant/<key>       every word in his voice, stumbling over it, for when he's nervous
+    //   Words/Child/<key>          words from his memory flashes ("child" in words.json), in the
+    //                              voice the child speaker (เด็ก) uses
     public class VoiceGeneratorWindow : EditorWindow
     {
         private const string Prefs = "ThaiMystery.Voices.";
@@ -28,6 +30,8 @@ namespace ThaiMystery.Editor
         private const string HesitantRate = "-25%";
         // What he says before a word he's unsure of, unless the word has its own "stutter".
         private const string Filler = "เอ่อ";
+        // The speaker whose voice reads his childhood words in memory flashes.
+        private const string ChildSpeaker = "เด็ก";
 
         [Serializable]
         private class SpeakerVoice
@@ -100,6 +104,11 @@ namespace ThaiMystery.Editor
             // Characters added to the story since the list was saved get a starting voice.
             AddSpeakerIfMissing(new SpeakerVoice { speaker = "ลุงแดง", voice = "th-TH-NiwatNeural", pitch = "-10%", rate = "-5%" });
             AddSpeakerIfMissing(new SpeakerVoice { speaker = "วิทยุ", voice = "th-TH-PremwadeeNeural", rate = "+15%" });
+            AddSpeakerIfMissing(new SpeakerVoice { speaker = "ยายบัว", voice = "th-TH-PremwadeeNeural", pitch = "-12%", rate = "-8%" });
+            AddSpeakerIfMissing(new SpeakerVoice { speaker = "พี่น้อย", voice = "th-TH-AcharaNeural", pitch = "-4%", rate = "+12%" });
+            AddSpeakerIfMissing(new SpeakerVoice { speaker = "น้องฟ้า", voice = "th-TH-PremwadeeNeural", pitch = "+28%", rate = "+8%" });
+            AddSpeakerIfMissing(new SpeakerVoice { speaker = ChildSpeaker, voice = "th-TH-NiwatNeural", pitch = "+40%", rate = "-5%" });
+            AddSpeakerIfMissing(new SpeakerVoice { speaker = "เด็กหญิง", voice = "th-TH-AcharaNeural", pitch = "+30%", rate = "+5%" });
         }
 
         private void AddSpeakerIfMissing(SpeakerVoice voice)
@@ -308,6 +317,8 @@ namespace ThaiMystery.Editor
                 jobs.Add(new Job { path = $"{AudioRoot}/Words/{key}.wav", text = thai, voice = VoiceFor(wordSpeaker), rate = wordRate, group = "words" });
                 jobs.Add(new Job { path = $"{AudioRoot}/Words/Own/{key}.wav", text = thai, voice = ownVoice, rate = wordRate, group = "own" });
                 jobs.Add(new Job { path = $"{AudioRoot}/Words/Hesitant/{key}.wav", text = Stutter(w), voice = ownVoice, rate = HesitantRate, group = "hesitant", ssml = true });
+                if (w.child)
+                    jobs.Add(new Job { path = $"{AudioRoot}/Words/Child/{key}.wav", text = thai, voice = VoiceFor(ChildSpeaker), rate = wordRate, group = "line:" + ChildSpeaker });
             }
             return jobs;
         }

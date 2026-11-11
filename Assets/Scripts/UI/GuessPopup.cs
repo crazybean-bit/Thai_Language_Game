@@ -59,7 +59,14 @@ namespace ThaiMystery
             var words = Game.Words;
             var entry = words.GetEntry(thai);
 
-            if (words.IsConfirmed(thai))
+            if (entry != null && entry.locked)
+            {
+                // Heard perfectly, but the meaning won't come (สัญญา until Act 3).
+                field.text = "";
+                field.interactable = false;
+                infoText.text = "I heard it perfectly. I have no idea what it means. Not yet.  ·  Esc to close";
+            }
+            else if (words.IsConfirmed(thai))
             {
                 field.text = words.GetGuess(thai);
                 field.interactable = false;

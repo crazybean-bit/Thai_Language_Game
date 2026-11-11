@@ -11,7 +11,8 @@ namespace ThaiMystery
         private ObjectData data;
         private CharacterSprite character;
 
-        public bool Solid => !data.passable && Visible;
+        public bool Solid => !data.passable && !data.step && Visible;
+        public bool IsStep => data.step;
         public bool Visible { get; private set; } = true;
 
         public void Init(ObjectData objectData, Vector2Int cell)
@@ -28,7 +29,7 @@ namespace ThaiMystery
                 character.Init(SpriteLibrary.GetCharacterSheet(data.sprite), Vector2Int.down,
                     SpriteLibrary.GetWalkCycle(data.sprite));
             }
-            else
+            else if (!string.IsNullOrEmpty(data.sprite))
             {
                 var sr = gameObject.AddComponent<SpriteRenderer>();
                 sr.sprite = SpriteLibrary.Get(data.sprite);

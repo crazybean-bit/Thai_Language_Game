@@ -14,6 +14,7 @@ namespace ThaiMystery
         public static GameUI UI;
         public static PlayerController Player;
         public static VoicePlayer Voice;
+        public static DayCycle Days;
 
         private static int lockedFrame = -1;
 
@@ -24,6 +25,6 @@ namespace ThaiMystery
 
         public static bool PlayerCanAct =>
             !InputConsumed && (Dialogue == null || !Dialogue.IsOpen) && (UI == null || !UI.ModalOpen) &&
-            (UI == null || !UI.IsFading);
+            (UI == null || (!UI.IsFading && !UI.Night.IsOpen));
     }
 }

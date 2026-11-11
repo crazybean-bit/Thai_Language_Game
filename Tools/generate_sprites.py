@@ -631,6 +631,117 @@ def debris():
     save(c, "debris")
 
 
+
+# ============================================================== the village lane
+
+def path(variant):
+    """Packed dirt lane, rutted and puddled after the storm."""
+    c = Canvas(32, 32)
+    base = rgb("6e5a44")
+    for y in range(32):
+        for x in range(32):
+            n = noise(x // 2, y // 2, 140 + variant)
+            col = shade(base, (n - 0.5) * 0.18)
+            if noise(x, y, 150 + variant) > 0.94:
+                col = shade(base, 0.2)                        # pebbles
+            c.put(x, y, col)
+    for i in range(2):                                        # cart ruts
+        y = 9 + i * 13 + variant % 3
+        c.hline(0, 31, y, shade(base, -0.22))
+    if variant == 2:                                          # a puddle
+        c.ellipse(18, 16, 6, 3, rgb("3c4a52"))
+        c.hline(15, 19, 15, rgb("5a6a72"))
+    save(c, f"path_{variant}")
+
+
+def spirit_house():
+    """The san phra phum set back on its post, with fresh jasmine."""
+    c = Canvas(32, 64)
+    c.rect(14, 34, 17, 62, rgb("8a7a6a"))                     # post
+    c.vline(14, 34, 62, rgb("a89a88"))
+    c.rect(7, 31, 24, 34, rgb("9a8a78"))                      # platform
+    c.rect(9, 17, 22, 31, rgb("c8a85a"))                      # little house
+    c.rect(13, 22, 18, 31, rgb("3a2a20"))                     # doorway
+    c.poly([(6, 18), (15.5, 6), (25, 18)], rgb("a83a2a"))     # roof
+    c.poly([(15, 6), (16, 2), (17, 6)], rgb("d8b860"))        # finial
+    for x in range(8, 24, 3):                                 # jasmine garland
+        c.ellipse(x, 33, 1.3, 1.3, rgb("eee6d0"))
+    c.rect(20, 28, 22, 31, rgb("c8402a"))                     # glass of red drink
+    c.soft_outline()
+    drop_shadow(c, 16, 62, 8)
+    save(c, "spirit_house")
+
+
+def palm_cut():
+    """The fallen palm sawn into lengths and rolled off the path."""
+    c = Canvas(32, 32)
+    trunk = rgb("7a6248")
+    for i, (x, y) in enumerate([(3, 18), (11, 22), (19, 18)]):
+        c.rect(x, y, x + 9, y + 6, shade(trunk, (i % 2) * -0.1))
+        c.ellipse(x + 9, y + 3, 2, 3, rgb("b09a78"))          # sawn end
+        c.put(x + 9, y + 3, rgb("8a7458"))
+    c.ellipse(26, 26, 5, 3, rgb("4a6a34"))                    # a heap of fronds
+    c.soft_outline()
+    drop_shadow(c, 16, 30, 13)
+    save(c, "palm_cut")
+
+
+def well():
+    """A big concrete rain jar with a tin lid and a scoop."""
+    c = Canvas(32, 48)
+    body = rgb("8a8680")
+    c.ellipse(16, 30, 12, 14, body)
+    c.rect(4, 18, 28, 30, body)
+    for y in range(18, 44, 4):
+        c.hline(5, 27, y, shade(body, -0.12))
+    c.ellipse(16, 17, 12, 4, rgb("6a6e72"))                   # tin lid
+    c.ellipse(16, 16, 9, 2.5, rgb("8a8e92"))
+    c.rect(20, 10, 22, 16, rgb("c8402a"))                     # red plastic scoop handle
+    c.ellipse(21, 10, 3, 2, rgb("d85a40"))
+    c.soft_outline()
+    drop_shadow(c, 16, 45, 12)
+    save(c, "well")
+
+
+def stall():
+    """A roadside noodle stall knocked askew by the water."""
+    c = Canvas(64, 48)
+    c.rect(6, 22, 56, 40, rgb("6a5a48"))                      # counter
+    c.hline(6, 56, 22, rgb("8a7a64"))
+    c.rect(8, 26, 54, 38, rgb("4e7a8a"))                      # glass case, cracked
+    for (x0, y0, x1, y1) in [(20, 26, 28, 38), (40, 26, 46, 33)]:
+        c.put(x0, y0, rgb("c8d8dc")); c.put((x0 + x1) // 2, (y0 + y1) // 2, rgb("c8d8dc"))
+    c.vline(8, 4, 22, rgb("5a4a3a")); c.vline(54, 8, 22, rgb("5a4a3a"))
+    c.poly([(2, 6), (58, 2), (62, 10), (6, 14)], rgb("b04a3a"))   # sagging awning
+    for x in range(6, 60, 8):
+        c.poly([(x, 9), (x + 4, 8), (x + 4, 12), (x, 13)], rgb("e6dac2"))
+    c.ellipse(46, 44, 5, 2, rgb("2e5a8a"))                    # an upturned plastic stool
+    c.soft_outline()
+    drop_shadow(c, 32, 44, 26)
+    save(c, "stall")
+
+
+def nets():
+    """Fishing nets heaped on the sand, floats tangled through them."""
+    c = Canvas(32, 32)
+    c.ellipse(16, 22, 13, 7, rgb("4a5a5a"))
+    for x in range(4, 29, 3):
+        c.vline(x, 16, 28, rgb("6a7a78"))
+    for y in range(17, 29, 3):
+        c.hline(4, 28, y, rgb("6a7a78"))
+    for (x, y) in [(8, 18), (15, 24), (22, 19), (26, 25)]:
+        c.ellipse(x, y, 2, 1.5, rgb("e08a2a"))
+    c.soft_outline()
+    drop_shadow(c, 16, 29, 13)
+    save(c, "nets")
+
+
+def village():
+    for v in range(4):
+        path(v)
+    for f in (spirit_house, palm_cut, well, stall, nets):
+        f()
+
 # ============================================================== characters
 
 class Look:
@@ -902,6 +1013,7 @@ if __name__ == "__main__":
               window, mirror, door, shrine, calendar, painting, coat):
         f()
     outdoors()
+    village()
 
     # The amnesiac protagonist: messy dark hair, plain off-white shirt.
     character("player", Look(hair=rgb("2a2224"), skin=rgb("e2c0a0"), top=rgb("cfc9bc"),
@@ -913,6 +1025,16 @@ if __name__ == "__main__":
     # Lung Daeng: placeholder until he has PixelLab art. Faded red cap, work shirt.
     character("lung_daeng", Look(hair=rgb("8a3a32"), skin=rgb("c89a78"), top=rgb("5a6470"),
                                  bottom=rgb("3c3a36"), shoes=rgb("2e2622"), eyes=rgb("3e3028")))
+    # Placeholders until they have PixelLab art.
+    # Yai Bua: Mali's grandmother. White hair, dark wrap skirt, faded purple blouse.
+    character("yai_bua", Look(hair=rgb("d8d4cc"), skin=rgb("c8a080"), top=rgb("5e4a66"),
+                              bottom=rgb("2e2a30"), shoes=rgb("2e2622"), eyes=rgb("3e3028"), skirt=True))
+    # Nong Fah: a village kid in a school shirt that's seen better days.
+    character("nong_fah", Look(hair=rgb("1e1a1c"), skin=rgb("d8aa84"), top=rgb("e0dccc"),
+                               bottom=rgb("2e3a5a"), shoes=rgb("c84a3a"), eyes=rgb("3e3028")))
+    # Pi Noi: market stall owner, floral blouse, hair tied up.
+    character("pi_noi", Look(hair=rgb("2a2022"), skin=rgb("d8b090"), top=rgb("b8607a"),
+                             bottom=rgb("3a3440"), shoes=rgb("3e2c24"), eyes=rgb("3e3028"), skirt=True))
     portrait_mali()
     # Characters made in PixelLab (Tools/art/pixellab) replace the hand-drawn sheets above.
     import import_pixellab

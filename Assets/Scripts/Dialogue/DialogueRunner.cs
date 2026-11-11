@@ -15,6 +15,9 @@ namespace ThaiMystery
     //
     // Two things can cut in: a Mali shut-off when recognition crosses its threshold
     // (dialogue "mali_shutoff"), and a kind moment after a run of failures ("kind_moment").
+    //
+    // A line with "endDay" makes night fall once the dialogue closes (DayCycle), and one with
+    // "endAct" shows the act's closing card.
     public class DialogueRunner : MonoBehaviour
     {
         private const float SecondsPerWord = 0.09f;
@@ -61,6 +64,8 @@ namespace ThaiMystery
             foreach (var d in list.dialogues) dialogues[d.id] = d;
         }
 
+        public bool Has(string id) => !string.IsNullOrEmpty(id) && dialogues.ContainsKey(id);
+
         public void Play(string id, Action done = null)
         {
             if (!dialogues.TryGetValue(id, out var d) || d.lines == null || d.lines.Length == 0)
@@ -77,6 +82,7 @@ namespace ThaiMystery
 
         private void Begin(DialogueData d)
         {
+            Game.UI.SetFlash(d.flash);
             current = d;
             lineIndex = 0;
             ShowLine();
@@ -114,6 +120,8 @@ namespace ThaiMystery
             var line = Line;
             Game.Flags.Set(line.setFlag);
             Game.State.Apply(line.warmth, line.recognition, line.confidence, line.money);
+            if (line.endDay) Game.State.RequestEndDay();
+            if (line.endAct) Game.State.RequestEndAct();
             if (line.fogPast)
             {
                 var slipped = Game.Words.FogPast();
@@ -127,6 +135,8 @@ namespace ThaiMystery
             var words = ThaiWords(text);
             // Before the line is drawn, so the words he just heard show clearly.
             if (clear) foreach (var w in words) Game.Words.Hear(w);
+            // Reading a label he once knew brings a word back that faded overnight.
+            else if (!spoken) foreach (var w in words) Game.Words.Remember(w);
 
             ui.ShowLine(line, PortraitFor(line));
             voice.Stop();
@@ -457,10 +467,14 @@ namespace ThaiMystery
             mode = Mode.Waiting;
             voice.Stop();
             ui.Hide();
+            Game.UI.SetFlash(false);
             Game.ConsumeInputThisFrame();
             var callback = onFinished;
             onFinished = null;
             callback?.Invoke();
+            if (IsOpen) return;
+            if (Game.State.EndDayPending) Game.Days.EndDay();
+            else if (Game.State.EndActPending) Game.Days.EndAct();
         }
     }
 }

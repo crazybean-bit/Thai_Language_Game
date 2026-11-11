@@ -1,0 +1,71 @@
+{
+  "rows": [
+    "%%%RRRRRRR%%%%RRRRRRR%%%",
+    "%;;HHHHHHH;;;;HHHHHHH;;%",
+    "%;;HHHHHHH;;;;HHHHHHH;;%",
+    "%;;;;;;;;;;;;;;;;;;;;;;%",
+    "%;;;;;;;;;;;;;;;;;;;;;;%",
+    "________________________",
+    "________________________",
+    "%;;;;;;;;;;;;;;;;;;;;;;%",
+    "%;;;;;;;;;;;;;;;;;;;;;;%",
+    "%::::;;;;;;;;;;;;;;::::%",
+    "%::::::::::::::::::::::%",
+    "~~~~~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~~~~~"
+  ],
+  "playerX": 1,
+  "playerY": 5,
+  "playerFacing": "right",
+  "objects": [
+    {"id": "yard_exit_top", "x": 0, "y": 5, "step": true, "rules": [{"goTo": "yard", "goX": 16, "goY": 5, "goFacing": "left"}]},
+    {"id": "yard_exit_bottom", "x": 0, "y": 6, "step": true, "rules": [{"goTo": "yard", "goX": 16, "goY": 5, "goFacing": "left"}]},
+
+    {"id": "neighbour_door", "sprite": "door", "x": 6, "y": 2, "rules": [{"dialogue": "neighbour_door"}]},
+    {"id": "neighbour_window_left", "sprite": "window", "x": 4, "y": 2, "rules": [{"dialogue": "neighbour_window"}]},
+    {"id": "neighbour_window_right", "sprite": "window", "x": 8, "y": 2, "rules": [{"dialogue": "neighbour_window"}]},
+    {"id": "pinoi_door", "sprite": "door", "x": 17, "y": 2, "rules": [{"dialogue": "pinoi_window"}]},
+    {"id": "pinoi_window_left", "sprite": "window", "x": 15, "y": 2, "rules": [{"dialogue": "pinoi_window"}]},
+    {"id": "pinoi_window_right", "sprite": "window", "x": 19, "y": 2, "rules": [{"dialogue": "pinoi_window"}]},
+
+    {"id": "well", "sprite": "well", "x": 11, "y": 3, "rules": [
+      {"dialogue": "well_fill", "requireFlag": "fetching_water", "blockFlag": "got_water"},
+      {"dialogue": "well"}
+    ]},
+    {"id": "pi_noi", "sprite": "pi_noi", "x": 16, "y": 4, "character": true, "rules": [
+      {"dialogue": "pinoi", "blockFlag": "met_pinoi"},
+      {"dialogue": "pinoi_again"}
+    ]},
+    {"id": "nong_fah", "sprite": "nong_fah", "x": 10, "y": 4, "character": true, "showWhen": "day<=3 & !met_fah", "rules": [{"dialogue": "nongfah"}]},
+    {"id": "nong_fah_wall", "sprite": "nong_fah", "x": 20, "y": 4, "character": true, "showWhen": "day>=4", "rules": [{"dialogue": "nongfah_wave"}]},
+
+    {"id": "stall", "sprite": "stall", "x": 13, "y": 8, "width": 2, "rules": [{"dialogue": "stall"}]},
+    {"id": "nets", "sprite": "nets", "x": 4, "y": 9, "rules": [{"dialogue": "nets"}]},
+    {"id": "boat", "sprite": "boat", "x": 17, "y": 10, "width": 2, "rules": [{"dialogue": "boat"}]},
+    {"id": "debris", "sprite": "debris", "x": 21, "y": 8, "rules": [{"dialogue": "debris"}]},
+    {"id": "debris_lane", "sprite": "debris", "x": 8, "y": 7, "rules": [{"dialogue": "debris"}]},
+    {"id": "plant_left", "sprite": "plant", "x": 2, "y": 3},
+    {"id": "plant_right", "sprite": "plant", "x": 21, "y": 3},
+    {"id": "jar_pinoi", "sprite": "jar", "x": 13, "y": 3, "rules": [{"dialogue": "jar"}]},
+
+    {"id": "town_road_top", "x": 23, "y": 5, "step": true, "rules": [
+      {"dialogue": "act1_end", "when": "day>=4", "blockFlag": "act1_done"},
+      {"dialogue": "town_after", "requireFlag": "act1_done"},
+      {"dialogue": "town_not_yet"}
+    ]},
+    {"id": "town_road_bottom", "x": 23, "y": 6, "step": true, "rules": [
+      {"dialogue": "act1_end", "when": "day>=4", "blockFlag": "act1_done"},
+      {"dialogue": "town_after", "requireFlag": "act1_done"},
+      {"dialogue": "town_not_yet"}
+    ]}
+  ],
+  "lighting": {
+    "darkness": 0.42,
+    "darkColor": "#141a26",
+    "lights": [
+      {"x": 12, "y": 6, "radius": 13, "intensity": 0.6, "color": "#9AA8C4", "flicker": false},
+      {"x": 15, "y": 3, "radius": 2.4, "intensity": 0.6, "color": "#FFB060", "flicker": true},
+      {"x": 19, "y": 3, "radius": 2.4, "intensity": 0.6, "color": "#FFB060", "flicker": true}
+    ]
+  }
+}

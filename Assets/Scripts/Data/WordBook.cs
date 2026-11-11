@@ -17,6 +17,12 @@ namespace ThaiMystery
 
     // Tracks every Thai word the player has heard, what they think it means, and how far
     // each word has come. Everything is saved with PlayerPrefs.
+    //
+    // Night forgetting: at the end of each day a few shaky words (Heard or Understood, the
+    // ones he has met least) fade. A faded word looks and sounds like noise again until he
+    // remembers it, which takes much less than learning it did: hearing it clearly, reading
+    // its label, picking it out of speech, saying it, or clicking it in the journal brings it
+    // straight back with his guess intact. Familiar and Owned words never fade.
     public class WordBook
     {
         private const string SaveKey = "ThaiMystery.WordBook";
@@ -32,6 +38,11 @@ namespace ThaiMystery
             public List<string> confirmed = new List<string>();
             public List<string> caught = new List<string>();
             public List<string> used = new List<string>();
+            public List<string> faded = new List<string>();
+            public List<string> touchKeys = new List<string>();
+            public List<int> touchValues = new List<int>();
+            public List<string> dayKeys = new List<string>();
+            public List<int> dayValues = new List<int>();
         }
 
         private readonly Dictionary<string, WordEntry> entries = new Dictionary<string, WordEntry>();
@@ -40,11 +51,18 @@ namespace ThaiMystery
         private readonly HashSet<string> confirmed = new HashSet<string>();
         private readonly HashSet<string> caught = new HashSet<string>();
         private readonly HashSet<string> used = new HashSet<string>();
+        private readonly HashSet<string> faded = new HashSet<string>();
+        // How often each word has come up (heard, recalled, caught, said): the least used fade first.
+        private readonly Dictionary<string, int> touches = new Dictionary<string, int>();
+        // The day each word was first heard, for the end-of-day summary.
+        private readonly Dictionary<string, int> firstDay = new Dictionary<string, int>();
 
         public event Action Changed;
         public event Action<List<string>> GroupConfirmed;
         // A word reached Familiar or Owned.
         public event Action<string, WordStage> StageRaised;
+        // A word that faded overnight came back.
+        public event Action<string> Remembered;
 
         public IReadOnlyList<string> Discovered => discovered;
         public int TotalWords => entries.Count;
@@ -74,13 +92,16 @@ namespace ThaiMystery
 
         public string GetGuess(string thai) => guesses.TryGetValue(thai, out var g) ? g : null;
 
-        public bool IsConfirmed(string thai) => confirmed.Contains(thai);
+        public bool IsConfirmed(string thai) => confirmed.Contains(thai) && !faded.Contains(thai);
 
-        public bool IsHeard(string thai) => discovered.Contains(thai);
+        // Heard and not faded overnight: he can see it, say it and hear it in his head.
+        public bool IsHeard(string thai) => discovered.Contains(thai) && !faded.Contains(thai);
+
+        public bool IsFaded(string thai) => faded.Contains(thai);
 
         public WordStage StageOf(string thai)
         {
-            if (!discovered.Contains(thai)) return WordStage.Noise;
+            if (!discovered.Contains(thai) || faded.Contains(thai)) return WordStage.Noise;
             if (!confirmed.Contains(thai)) return WordStage.Heard;
             if (!caught.Contains(thai)) return WordStage.Understood;
             if (!used.Contains(thai)) return WordStage.Familiar;
@@ -102,18 +123,67 @@ namespace ThaiMystery
         // Someone said the word slowly and clearly to him.
         public void Hear(string thai)
         {
-            if (string.IsNullOrEmpty(thai) || discovered.Contains(thai)) return;
+            if (string.IsNullOrEmpty(thai)) return;
+            if (discovered.Contains(thai))
+            {
+                Touch(thai);
+                Remember(thai);
+                return;
+            }
             if (!entries.ContainsKey(thai))
                 Debug.LogWarning($"[ThaiMystery] '{thai}' appears in dialogue but is not in words.json");
             discovered.Add(thai);
+            firstDay[thai] = Today;
+            Touch(thai);
             Save();
             Changed?.Invoke();
+        }
+
+        private static int Today => Game.State != null ? Game.State.Day : 1;
+
+        private void Touch(string thai) => touches[thai] = (touches.TryGetValue(thai, out int n) ? n : 0) + 1;
+
+        // A faded word comes back. Returns true if it had faded.
+        public bool Remember(string thai)
+        {
+            if (!faded.Remove(thai)) return false;
+            Touch(thai);
+            Save();
+            Changed?.Invoke();
+            Remembered?.Invoke(thai);
+            return true;
+        }
+
+        // Words first heard on a given day, in the order he heard them.
+        public List<string> HeardOn(int day) => discovered.Where(w => firstDay.TryGetValue(w, out int d) && d == day).ToList();
+
+        // Night forgetting: the shakiest words fade. Returns the ones that did.
+        public List<string> FadeOvernight(int count)
+        {
+            var shaky = discovered
+                .Where(w => !faded.Contains(w))
+                .Where(w => { var s = StageOf(w); return s == WordStage.Heard || s == WordStage.Understood; })
+                .Where(w => { var e = GetEntry(w); return e == null || (!e.child && !e.locked); })
+                .OrderBy(w => StageOf(w))
+                .ThenBy(w => touches.TryGetValue(w, out int n) ? n : 0)
+                .ThenBy(w => firstDay.TryGetValue(w, out int d) ? d : 0)
+                .Take(Mathf.Max(0, count))
+                .ToList();
+            foreach (var w in shaky) faded.Add(w);
+            if (shaky.Count > 0)
+            {
+                Save();
+                Changed?.Invoke();
+            }
+            return shaky;
         }
 
         // He picked the word out of fast speech. Only counts once he knows what it means.
         public CatchResult Catch(string thai)
         {
             if (!discovered.Contains(thai)) return CatchResult.NotHeard;
+            Remember(thai);
+            Touch(thai);
             if (!confirmed.Contains(thai)) return CatchResult.NotUnderstood;
             if (!caught.Add(thai)) return CatchResult.AlreadyCaught;
             Raised(thai);
@@ -123,6 +193,11 @@ namespace ThaiMystery
         // He said the word himself. Only counts once he knows what it means.
         public void Use(string thai)
         {
+            if (discovered.Contains(thai))
+            {
+                Remember(thai);
+                Touch(thai);
+            }
             if (!confirmed.Contains(thai) || !used.Add(thai)) return;
             Raised(thai);
         }
@@ -184,6 +259,8 @@ namespace ThaiMystery
             if (entry == null || string.IsNullOrEmpty(entry.group)) return;
 
             var group = entries.Values.Where(e => e.group == entry.group).Select(e => e.thai.Trim()).ToList();
+            // Some words can't be pinned down yet, however good the guess.
+            if (entries.Values.Any(e => e.group == entry.group && e.locked)) return;
             if (group.All(w => discovered.Contains(w) && IsGuessCorrect(w)))
             {
                 var newly = group.Where(w => !confirmed.Contains(w)).ToList();
@@ -217,7 +294,12 @@ namespace ThaiMystery
                 guessValues = guesses.Values.ToList(),
                 confirmed = confirmed.ToList(),
                 caught = caught.ToList(),
-                used = used.ToList()
+                used = used.ToList(),
+                faded = faded.ToList(),
+                touchKeys = touches.Keys.ToList(),
+                touchValues = touches.Values.ToList(),
+                dayKeys = firstDay.Keys.ToList(),
+                dayValues = firstDay.Values.ToList()
             };
             PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data));
             PlayerPrefs.Save();
@@ -234,6 +316,11 @@ namespace ThaiMystery
             foreach (var c in data.confirmed) confirmed.Add(c);
             if (data.caught != null) foreach (var c in data.caught) caught.Add(c);
             if (data.used != null) foreach (var u in data.used) used.Add(u);
+            if (data.faded != null) foreach (var f in data.faded) faded.Add(f);
+            if (data.touchKeys != null && data.touchValues != null)
+                for (int i = 0; i < data.touchKeys.Count && i < data.touchValues.Count; i++) touches[data.touchKeys[i]] = data.touchValues[i];
+            if (data.dayKeys != null && data.dayValues != null)
+                for (int i = 0; i < data.dayKeys.Count && i < data.dayValues.Count; i++) firstDay[data.dayKeys[i]] = data.dayValues[i];
         }
 
         public static void ClearSave()

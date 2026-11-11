@@ -13,6 +13,8 @@ namespace ThaiMystery
     //   Words/<WordKey(thai)>            one clip per word in Mali's voice
     //   Words/Own/<WordKey(thai)>        the same word in the protagonist's own voice
     //   Words/Hesitant/<WordKey(thai)>   his voice stumbling over it, for when he's nervous
+    //   Words/Child/<WordKey(thai)>      words that came back in a memory flash ("child" in
+    //                                    words.json), in his voice as a boy
     // Thai Mystery > Generate Voices creates them with text-to-speech.
     //
     // When the protagonist recalls a word (reading a label, clicking a word) it plays as he
@@ -87,7 +89,7 @@ namespace ThaiMystery
         public bool PlayWord(string thai) => PlayRecall(new List<string> { thai });
 
         public static bool CanRecall(string thai) =>
-            Game.Words.IsHeard(thai) && (MaliClip(thai) != null || OwnClip(thai) != null);
+            Game.Words.IsHeard(thai) && (MaliClip(thai) != null || OwnClip(thai) != null || ChildClip(thai) != null);
 
         // Reads words out one after another as remembered, e.g. a label on an object.
         // When he's low on confidence the words take a moment to come back.
@@ -119,8 +121,21 @@ namespace ThaiMystery
         // Returns how long it plays for.
         private float PlayRecalled(string thai, WordStage stage)
         {
+            // Words from a memory flash always come back the way he said them as a boy, a
+            // little far away, until he owns them as a man.
+            var child = Game.Words.GetEntry(thai)?.child == true ? ChildClip(thai) : null;
+            if (child != null && stage != WordStage.Owned)
+            {
+                SetFog(0.3f);
+                return PlayOn(memory, child, memory.volume, memory.pitch);
+            }
             var own = OwnClip(thai);
             var teacher = MaliClip(thai);
+            if (own == null && teacher == null)
+            {
+                child = ChildClip(thai);
+                return child != null ? PlayOn(voice, child, 1f, 1f) : 0f;
+            }
             if (own != null && (stage == WordStage.Owned || teacher == null))
                 return PlayOn(voice, own, 1f, 1f);
             if (own != null && stage == WordStage.Familiar)
@@ -193,6 +208,8 @@ namespace ThaiMystery
         private static AudioClip MaliClip(string thai) => Resources.Load<AudioClip>("Audio/Words/" + WordKey(thai));
 
         private static AudioClip OwnClip(string thai) => Resources.Load<AudioClip>("Audio/Words/Own/" + WordKey(thai));
+
+        private static AudioClip ChildClip(string thai) => Resources.Load<AudioClip>("Audio/Words/Child/" + WordKey(thai));
 
         private static AudioClip HesitantClip(string thai) => Resources.Load<AudioClip>("Audio/Words/Hesitant/" + WordKey(thai));
 
