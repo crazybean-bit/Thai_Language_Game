@@ -1,6 +1,6 @@
 # Thai_Language_Game
 
-A 2D mystery RPG prototype in the spirit of *7 Days to End with You*, except the "unknown language" is real Thai. You wash up on Ko Saeng, a Thai island, the morning after a tsunami, with no memory. A young woman, Mali, takes you in. Everyone speaks Thai. You work out what words mean from context and write your guesses in a journal, and as you get groups of words right they lock in and show how they're pronounced. The story and the plan for the full game are in the design doc.
+A 2D mystery RPG prototype, the "unknown language" is real Thai. You wash up on Ko Saeng, a Thai island, the morning after a tsunami, with no memory. A young woman, Mali, takes you in. Everyone speaks Thai. You work out what words mean from context and write your guesses in a journal, and as you get groups of words right they lock in and show how they're pronounced. The story and the plan for the full game are in the design doc.
 
 ## Opening the project
 
